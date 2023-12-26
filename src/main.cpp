@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 16:09:14 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/26 14:22:44 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/26 15:23:54 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int main( int argc, char **argv )
 		std::string	input = argv[1];
 		server.parsePortNumber(input);
 		server.setupServerSocket();
+		server.runServerLoop();
 	}
 	catch (const std::exception& e)
 	{

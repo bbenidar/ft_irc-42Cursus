@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:10:41 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/26 14:24:52 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/26 15:02:31 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,5 +67,9 @@
 # define SOCKET_BINDING			BOLD FG_RED "Error: binding socket"
 
 # define LISTENING_ERROR		BOLD FG_RED "Error: listening for connections"
+
+# define ACCEPT_CONNECTION		BOLD FG_RED "Error: accepting connection"
+
+# define POLL_FAILURE		BOLD FG_RED "Error: poll() failed"
 
 #endif

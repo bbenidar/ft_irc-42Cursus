@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/26 14:24:36 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/26 16:11:57 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	Server::setupServerSocket( void )
 	{
 		throw std::runtime_error(SOCKET_CREATION);
 	}
-	std::cout << BOLD "Socket created\n";
+	// std::cout << BOLD "Socket created\n";
 
 	sockaddr_in	serverAddress;
 	
@@ -55,11 +55,82 @@ void	Server::setupServerSocket( void )
 		close(this->serverSocket);
 		throw std::runtime_error(SOCKET_BINDING);
 	}
-	std::cout << BOLD "successfully binding the socket\n";
+	// std::cout << BOLD "successfully binding the socket\n";
 
 	if (listen(this->serverSocket, 1) == -1)
 	{
 		close(this->serverSocket);
 		throw std::runtime_error(LISTENING_ERROR);
+	}
+}
+
+void	Server::initializePollStructure()
+{
+	struct pollfd	newSocket;
+
+	newSocket.fd = this->serverSocket;
+	newSocket.events = POLLIN;
+	this->fds.push_back(newSocket);
+}
+
+void	Server::acceptNewClient()
+{
+	struct pollfd	newSocket;
+	sockaddr_in	clientAddress;
+	socklen_t	clientAddressSize = sizeof(clientAddress);
+
+	newSocket.fd = accept(this->serverSocket, reinterpret_cast<sockaddr *>(&clientAddress), &clientAddressSize);
+	if (newSocket.fd == -1)
+	{
+		perror("accept");
+		return ;
+	}
+	else
+	{
+		newSocket.events = POLLIN;
+		this->fds.push_back(newSocket);
+		std::cout << "Client connected\n";
+	}
+}
+
+void Server::handleClientCommunication(size_t clientIndex)
+{
+	char	buffer[BUFFER_SIZE];
+	int		recvBytes = recv(this->fds[clientIndex].fd, buffer, sizeof(buffer), 0);
+
+	if (recvBytes <= 0)
+	{
+		if (recvBytes == 0)
+			std::cout << "Client disconnected\n";
+		else
+			perror("recv");
+		close(this->fds[clientIndex].fd);
+		this->fds.erase(this->fds.begin() + clientIndex);
+	}
+}
+
+void	Server::runServerLoop()
+{
+	initializePollStructure();
+
+	while (true)
+	{
+		int pollResult = poll(this->fds.data(), this->fds.size(), 0);
+
+		if (pollResult == -1)
+		{
+			throw std::runtime_error(POLL_FAILURE);
+		}
+		
+		for (size_t clientIndex = 0; clientIndex < this->fds.size(); clientIndex++)
+		{
+			if (this->fds[clientIndex].revents & POLLIN)
+			{
+				if (clientIndex == 0)
+					acceptNewClient();
+				else
+					handleClientCommunication(clientIndex);
+			}	
+		}
 	}
 }
