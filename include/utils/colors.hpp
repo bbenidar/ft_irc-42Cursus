@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:10:41 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/19 13:18:13 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/26 14:24:52 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,16 @@
 # define BG_LCYAN    "\e[106m"
 # define BG_WHITE    "\e[107m"
 
-# define INVALID_ARGUMENTS BOLD FG_RED "Error: " FG_WHITE "invalid arguments."
-# define VALID_INPUT "Try ./ft_irc + \"Port number\" + \"Password\""
+# define INVALID_ARGUMENTS		BOLD FG_RED "Error: " FG_WHITE "invalid arguments."
+# define VALID_INPUT			"Try ./ft_irc + \"Port number\" + \"Password\""
 
-# define INVALID_PORT_NUMBER BOLD FG_RED "Error: " FG_WHITE "invalid port number."
-# define VALID_PORT_NUMBER "The port number must be between 0 and 65535"
+# define INVALID_PORT_NUMBER	BOLD FG_RED "Error: " FG_WHITE "invalid port number."
+# define VALID_PORT_NUMBER		"The port number must be between 0 and 65535"
+
+# define SOCKET_CREATION		BOLD FG_RED "Error: creating socket"
+
+# define SOCKET_BINDING			BOLD FG_RED "Error: binding socket"
+
+# define LISTENING_ERROR		BOLD FG_RED "Error: listening for connections"
 
 #endif

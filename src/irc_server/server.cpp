@@ -6,11 +6,15 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/19 13:20:51 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/26 14:24:36 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <poll.h>
 #include <sstream>
+#include <fcntl.h>
+#include <unistd.h>
+#include <arpa/inet.h>
 #include "../../include/utils/colors.hpp"
 #include "../../include/irc_server/server.hpp"
 
@@ -31,3 +35,31 @@ void	Server::parsePortNumber( const std::string& input )
 	this->port = port;
 }
 
+void	Server::setupServerSocket( void )
+{
+	this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (this->serverSocket == -1)
+	{
+		throw std::runtime_error(SOCKET_CREATION);
+	}
+	std::cout << BOLD "Socket created\n";
+
+	sockaddr_in	serverAddress;
+	
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_addr.s_addr = INADDR_ANY;
+	serverAddress.sin_port = htons(this->port);
+	
+	if (bind(this->serverSocket, reinterpret_cast<sockaddr *>(&serverAddress), sizeof(serverAddress)) == -1)
+	{
+		close(this->serverSocket);
+		throw std::runtime_error(SOCKET_BINDING);
+	}
+	std::cout << BOLD "successfully binding the socket\n";
+
+	if (listen(this->serverSocket, 1) == -1)
+	{
+		close(this->serverSocket);
+		throw std::runtime_error(LISTENING_ERROR);
+	}
+}
