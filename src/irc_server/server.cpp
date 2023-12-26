@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/26 16:11:57 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/26 16:39:51 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,20 @@ void	Server::parsePortNumber( const std::string& input )
 	this->port = port;
 }
 
+void Server::setNonBlocking(int fd)
+{
+	int	flags = fcntl(fd, F_GETFL, 0);
+	if (flags == -1)
+	{
+		perror("Error getting flags for socket");
+		return ;
+	}
+	if (fcntl(fd, flags | O_NONBLOCK, 0) == -1)
+	{
+		perror("Error setting non-blocking mode for socket");
+	}
+}
+
 void	Server::setupServerSocket( void )
 {
 	this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -43,6 +57,8 @@ void	Server::setupServerSocket( void )
 		throw std::runtime_error(SOCKET_CREATION);
 	}
 	// std::cout << BOLD "Socket created\n";
+
+	setNonBlocking(this->serverSocket);
 
 	sockaddr_in	serverAddress;
 	
@@ -85,12 +101,10 @@ void	Server::acceptNewClient()
 		perror("accept");
 		return ;
 	}
-	else
-	{
-		newSocket.events = POLLIN;
-		this->fds.push_back(newSocket);
-		std::cout << "Client connected\n";
-	}
+	setNonBlocking(newSocket.fd);
+	newSocket.events = POLLIN;
+	this->fds.push_back(newSocket);
+	std::cout << BOLD FG_GREEN << "Client connected\n";
 }
 
 void Server::handleClientCommunication(size_t clientIndex)
@@ -101,7 +115,7 @@ void Server::handleClientCommunication(size_t clientIndex)
 	if (recvBytes <= 0)
 	{
 		if (recvBytes == 0)
-			std::cout << "Client disconnected\n";
+			std::cout << BOLD FG_RED << "Client disconnected\n";
 		else
 			perror("recv");
 		close(this->fds[clientIndex].fd);

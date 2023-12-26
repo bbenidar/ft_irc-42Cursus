@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/26 15:44:27 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/26 16:32:25 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ public:
 	void	runServerLoop();
 	void	acceptNewClient();
 	void	handleClientCommunication(size_t clientIndex);
+	void	setNonBlocking(int fd);
 };
 
 #endif
