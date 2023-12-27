@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 21:23:25 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/27 21:28:47 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/27 23:18:22 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	Server::acceptNewClient()
 	setNonBlocking(newSocket.fd);
 	newSocket.events = POLLIN;
 	this->fds.push_back(newSocket);
-	std::cout << BOLD FG_GREEN << "Client connected\n";
+	std::cout << BOLD FG_GREEN "Client connected\n" FG_WHITE;
 }
 
 void	Server::runServerLoop()

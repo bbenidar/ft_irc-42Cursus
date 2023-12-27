@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/27 22:17:14 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/27 23:18:17 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,10 @@ void Server::handleClientCommunication(size_t clientIndex)
 	if (recvBytes <= 0)
 	{
 		if (recvBytes == 0)
-			std::cout << BOLD FG_RED << "Client disconnected\n";
+		{
+			this->clientStates.erase(this->fds[clientIndex].fd);
+			std::cout << BOLD FG_RED "Client disconnected\n" FG_WHITE;
+		}
 		else
 			perror("recv");
 		close(this->fds[clientIndex].fd);
