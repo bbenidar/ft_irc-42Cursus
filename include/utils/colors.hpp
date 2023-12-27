@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:10:41 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/26 15:02:31 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/26 22:25:07 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@
 
 # define ACCEPT_CONNECTION		BOLD FG_RED "Error: accepting connection"
 
-# define POLL_FAILURE		BOLD FG_RED "Error: poll() failed"
+# define POLL_FAILURE			BOLD FG_RED "Error: poll() failed"
+
+# define INVALID_PASSWORD		BOLD FG_RED "Error: poll() failed"
 
 #endif

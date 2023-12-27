@@ -6,7 +6,7 @@
 #    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2023/12/26 14:23:34 by moudrib          ###   ########.fr        #
+#    Updated: 2023/12/27 21:29:01 by moudrib          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,11 @@ NAME	=	ircserv
 CC		=	c++
 FLAGS	=	-Wall -Wextra -Werror -std=c++98
 OBJDIR	=	Object_files/
+
 SRC		=	src/main.cpp \
-			src/irc_server/server.cpp
+			src/irc_server/server.cpp \
+			src/irc_server/multiplexing.cpp \
+			src/Commands/authentication.cpp
 
 HEADERS =	include/utils/colors.hpp
 

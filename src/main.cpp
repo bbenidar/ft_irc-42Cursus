@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 16:09:14 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/26 15:23:54 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/27 11:41:06 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@ int main( int argc, char **argv )
 	{
 		if (argc != 3)
 			throw std::invalid_argument(INVALID_ARGUMENTS "\n   " VALID_INPUT);
-		std::string	input = argv[1];
-		server.parsePortNumber(input);
+		std::string	portNumber = argv[1];
+		std::string	serverPassword = argv[2];
+		server.parsePortNumberAndPassword(portNumber, serverPassword);
 		server.setupServerSocket();
 		server.runServerLoop();
 	}
