@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 10:24:51 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/27 23:25:55 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/28 12:53:54 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ bool Server::handlePassCommand( int clientSocket, const std::string& message )
 		return false;
 	if (message.substr(5, message.length() - 6) != this->serverPassword)
 	{
-		send(clientSocket, "Wrong password\n", 16 , 0);
+		send(clientSocket, FG_RED "   Wrong password\n" FG_DEFAULT, 28 , 0);
 		return false;
 	}
 
@@ -43,10 +43,7 @@ bool Server::handleNickCommand( int clientSocket, const std::string& message )
 		return true;
 	std::string	nickname = message.substr(5, message.length() - 6);
 	if (message.substr(0, 4) != "NICK" || nickname.length() == 0)
-	{
-		send(clientSocket, "Enter your nickname: ", 22 , 0);
 		return false;
-	}
 	this->clientStates[clientSocket].hasNick = true;
 	this->clientStates[clientSocket].nickname = nickname;
 	return true;
@@ -81,10 +78,8 @@ bool Server::handleUserCommand( int clientSocket, const std::string& message )
 	{
 		this->clientStates[clientSocket].realname = message.substr(pos + 1, message.length() - pos - 2);
 		this->clientStates[clientSocket].hasUser = true;
-		send(clientSocket, BOLD FG_GREEN "authentication succeeded\n" FG_WHITE, 39, 0);
+		send(clientSocket, BOLD FG_GREEN "authentication succeeded\n" FG_DEFAULT, 39, 0);
 		return true;
 	}
 	return false;
 }
-
-// USER fdsfdsfs fdsff fdsfsd :mouad oudrib

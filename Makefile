@@ -6,7 +6,7 @@
 #    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2023/12/27 21:29:01 by moudrib          ###   ########.fr        #
+#    Updated: 2023/12/28 10:50:42 by moudrib          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,11 +16,13 @@ FLAGS	=	-Wall -Wextra -Werror -std=c++98
 OBJDIR	=	Object_files/
 
 SRC		=	src/main.cpp \
+			src/utils/utils.cpp \
 			src/irc_server/server.cpp \
 			src/irc_server/multiplexing.cpp \
 			src/Commands/authentication.cpp
 
-HEADERS =	include/utils/colors.hpp
+HEADERS =	include/utils/utils.hpp \
+			include/utils/colors.hpp \
 
 G		= \x1B[32m \033[1m
 W		= \x1B[0m
