@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/27 22:01:42 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/30 16:20:01 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,20 +47,21 @@ private:
 
 public:
 
+	void	runServerLoop( void );
+	void	acceptNewClient( void );
+	void	setNonBlocking(int fd);
 	void	setupServerSocket( void );
 	void	setPort( unsigned short port );
+	void	initializePollStructure( void );
+	bool	isClientFullyAuthenticated( int clientSocket );
+	void	handleClientCommunication( size_t clientIndex );
 	void	parsePortNumberAndPassword( const std::string& s_port, const std::string& serverPassword );
-	void	initializePollStructure();
-	void	runServerLoop();
-	void	acceptNewClient();
-	void	handleClientCommunication(size_t clientIndex);
-	void	setNonBlocking(int fd);
-	bool	isClientFullyAuthenticated(int clientSocket);
 
-	void	authenticateClient( int clientSocket, const std::string& message );
+	bool	isNicknameAvailable( const std::string& nickname );
 	bool	handlePassCommand( int clientSocket, const std::string& input );
 	bool	handleNickCommand( int clientSocket, const std::string& input );
 	bool	handleUserCommand( int clientSocket, const std::string& input );
+	void	authenticateClient( int clientSocket, const std::string& message );
 };
 
 #endif

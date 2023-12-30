@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 21:23:25 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/28 12:54:07 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/28 14:06:42 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	Server::runServerLoop()
 		{
 			throw std::runtime_error(POLL_FAILURE);
 		}
-		
+
 		for (size_t clientIndex = 0; clientIndex < this->fds.size(); clientIndex++)
 		{
 			if (this->fds[clientIndex].revents & POLLIN)
@@ -57,7 +57,7 @@ void	Server::runServerLoop()
 					acceptNewClient();
 				else
 					handleClientCommunication(clientIndex);
-			}	
+			}
 		}
 	}
 }

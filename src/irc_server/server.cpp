@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/28 12:54:19 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/28 14:10:17 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
 #include "../../include/irc_server/server.hpp"
 

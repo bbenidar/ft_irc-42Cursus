@@ -6,11 +6,12 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 16:09:14 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/27 11:41:06 by moudrib          ###   ########.fr       */
+/*   Updated: 2023/12/28 14:10:05 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
+#include "../include/utils/utils.hpp"
 #include "../include/utils/colors.hpp"
 #include "../include/irc_server/server.hpp"
 
