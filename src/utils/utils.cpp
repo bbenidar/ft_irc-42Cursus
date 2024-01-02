@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/28 12:44:00 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/02 20:59:24 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,10 @@ void	sendAuthenticationInstructions(int clientSocket)
 		"  Note: All three steps are required for successful authentication.\n" FG_DEFAULT;
 
 	send(clientSocket, authInstructions.c_str(), authInstructions.length(), 0);
+}
+
+void sendwrongCommandMessage(int clientSocket)
+{
+	std::string wrongCommandMsg = FG_RED "   Wrong command\n" FG_DEFAULT;
+	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
 }

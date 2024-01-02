@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/27 22:01:42 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/02 20:45:26 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ public:
 	bool	handlePassCommand( int clientSocket, const std::string& input );
 	bool	handleNickCommand( int clientSocket, const std::string& input );
 	bool	handleUserCommand( int clientSocket, const std::string& input );
+	bool 	handleCommand(int clientSocket, const std::string& message);
+
 };
 
 #endif

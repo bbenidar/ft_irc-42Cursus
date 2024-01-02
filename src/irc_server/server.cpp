@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/28 12:54:19 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/02 21:01:14 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <arpa/inet.h>
 #include "../../include/utils/colors.hpp"
 #include "../../include/irc_server/server.hpp"
+#include "../../include/utils/utils.hpp"
 
 void	Server::setPort( unsigned short port )
 {
@@ -89,6 +90,18 @@ void	Server::initializePollStructure()
 	this->fds.push_back(newSocket);
 }
 
+bool Server::handleCommand(int clientSocket, const std::string& message)
+{
+	(void)clientSocket;
+    if (message.substr(0, 4) == "JOIN")
+        return true;
+    if (message.substr(0, 7) == "PRIVMSG")
+        return true;
+    if (message.substr(0, 4) == "NICK")
+        return true;
+    return false;
+}
+
 void Server::handleClientCommunication(size_t clientIndex)
 {
 	char	buffer[BUFFER_SIZE];
@@ -111,7 +124,8 @@ void Server::handleClientCommunication(size_t clientIndex)
 		authenticateClient(this->fds[clientIndex].fd, message);
 	else
 	{
-		fprintf(stderr, "!!!!!!!!!\n");
+			if(!handleCommand(this->fds[clientIndex].fd, message))
+				sendwrongCommandMessage(this->fds[clientIndex].fd);
 	}
 }
 
