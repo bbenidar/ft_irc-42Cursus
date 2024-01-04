@@ -6,11 +6,12 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/03 20:46:03 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/04 21:25:04 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
+#include <sstream>
 #include <sys/socket.h>
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
@@ -33,30 +34,49 @@ void	sendAuthenticationInstructions(int clientSocket)
 	send(clientSocket, authInstructions.c_str(), authInstructions.length(), 0);
 }
 
-void sendwrongCommandMessage(int clientSocket)
+bool	validCommands( const std::string& command )
 {
-	std::string wrongCommandMsg = FG_RED "   Wrong command\n" FG_DEFAULT;
-	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
+	std::string	commands[5] = { "PASS",
+								"NICK",
+								"USER",
+								"JOIN",
+								"PRIVMSG"};
+
+	for (int i = 0; i < 5; i++)	
+		if (commands[i] == command)
+			return true;
+	return false;
 }
 
-void sendwrongUserMessage(int clientSocket, std::string& nickname)
+std::string	getCommand( int clientSocket, const std::string& message )
 {
-	std::string wrongCommandMsg = FG_RED "   no user with this nickname : " FG_DEFAULT + nickname + "\n";
-	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
+	std::string	command;
+	std::stringstream	input(message);
+
+	while (command.length() == 0)
+		getline(input, command, ' ');
+	int lastChar = command.length() - 1;
+	command = (command[lastChar] == '\n') ? command.substr(0, lastChar) : command;
+	if (!validCommands(command) || message[0] == ' ')
+	{
+		std::string	unkonwn = ":IRCServer 421 " + command + " :Unknown command\r\n";
+		send(clientSocket, unkonwn.c_str(), unkonwn.length(), 0);
+		return "";
+	}
+	return command;
 }
 
-std::string removeMsgCommand(const std::string& fullMessage) {
-    std::istringstream iss(fullMessage);
-    std::string command, channel, message;
-    iss >> command >> channel;
-    std::getline(iss, message);
+std::string	getParameters( int clientSocket, const std::string& command, const std::string& message )
+{
+	int start = command.length() + 1;
 
-    message.erase(0, message.find_first_not_of(" \t\n\r\f\v"));
-    message.erase(message.find_last_not_of(" \t\n\r\f\v") + 1);
-
-    // if (command == "PRIVMSG" && channel.substr(0, 1) == "#") {
-        return channel;
-    // }
-
-    // return "";
+	int flag = (message.find('\r', 0) != std::string::npos) ? 2 : 1;
+	std::string	parameters = message.substr(start, message.length() - start - flag);
+	if ((message[start - 1] != ' ' || parameters.length() == 0))
+	{
+		std::string	notEnoughMsg = ":IRCServer 461 " + command + " :Not enough parameters\r\n";
+		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
+		return "";
+	}
+	return parameters;
 }

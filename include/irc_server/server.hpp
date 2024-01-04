@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/03 17:55:48 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/04 21:23:07 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,16 @@ private:
 
 public:
 
-	void	setupServerSocket( void );
-	void	setPort( unsigned short port );
-	void	parsePortNumberAndPassword( const std::string& s_port, const std::string& serverPassword );
-	void	initializePollStructure();
-	void	runServerLoop();
-	void	acceptNewClient();
-	void	handleClientCommunication(size_t clientIndex);
+	void	runServerLoop( void );
+	void	acceptNewClient( void );
 	void	setNonBlocking(int fd);
-	bool	isClientFullyAuthenticated(int clientSocket);
+	void	setupServerSocket( void );
+	void	signalHandler( int signal );
+	void	setPort( unsigned short port );
+	void	initializePollStructure( void );
+	bool	isClientFullyAuthenticated( int clientSocket );
+	void	handleClientCommunication( size_t clientIndex );
+	void	parsePortNumberAndPassword( const std::string& s_port, const std::string& serverPassword );
 
 	void	authenticateClient( int clientSocket, const std::string& message );
 	bool	handlePassCommand( int clientSocket, const std::string& input );
@@ -63,6 +64,15 @@ public:
 	bool	handleUserCommand( int clientSocket, const std::string& input );
 	bool 	handleCommand(int clientSocket, const std::string& message);
 	bool 	send_message(const std::string& msge, int clientSocket);
+	bool	isNicknameAvailable( const std::string& nickname );
+	bool	handlePassCommand( int clientSocket, const std::string& command, const std::string& parameters );
+	bool	handleNickCommand( int clientSocket, const std::string& command, const std::string& parameters );
+	bool	handleUserCommand( int clientSocket, const std::string& command, const std::string& parameters );
+	void	authenticateClient( int clientSocket, const std::string& command, const std::string& parameters );
+
+	void	sendRegistrationMessages( int clientSocket );
+	void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
+	void	connectionRegistration( int clientSocket, const std::string& command );
 
 };
 
