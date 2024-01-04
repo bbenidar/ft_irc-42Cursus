@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/04 21:25:51 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/04 23:12:48 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
 #include "../../include/irc_server/server.hpp"
-#include "../../include/utils/utils.hpp"
 
 void	Server::setPort( unsigned short port )
 {
@@ -77,17 +76,6 @@ void	Server::setupServerSocket( void )
 	}
 }
 
-void	Server::initializePollStructure()
-{
-	struct pollfd	newSocket;
-
-	newSocket.fd = this->serverSocket;
-	newSocket.events = POLLIN;
-	this->fds.push_back(newSocket);
-}
-
-
-
 bool Server::send_message(const std::string& msge, int clientSocket)
 {
 	std::string channel = removeMsgCommand(msge);
@@ -141,14 +129,11 @@ void Server::handleClientCommunication(size_t clientIndex)
 	if (parameters.empty())
 		return ;
 	if (!isClientFullyAuthenticated(this->fds[clientIndex].fd))
-		authenticateClient(this->fds[clientIndex].fd, message);
-	else
-	{
-			if(!handleCommand(this->fds[clientIndex].fd, message))
-				sendwrongCommandMessage(this->fds[clientIndex].fd);
-	}
 		authenticateClient(this->fds[clientIndex].fd, command, parameters);
-
+	else{
+		if(!handleCommand(this->fds[clientIndex].fd, message))
+					sendwrongCommandMessage(this->fds[clientIndex].fd);
+	}
 }
 
 void	Server::my_send( int clientSocket, int num
