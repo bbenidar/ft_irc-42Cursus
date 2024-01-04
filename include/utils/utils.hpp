@@ -6,12 +6,14 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:33:47 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/28 14:02:41 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/04 15:35:57 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_HPP
 #define UTILS_HPP
+
+# include <iostream>
 
 # define INVALID_ARGUMENTS		BOLD FG_RED "Error: " FG_WHITE "invalid arguments."
 # define VALID_INPUT			"Try ./ft_irc + \"Port number\" + \"Password\""
@@ -32,6 +34,9 @@
 # define INVALID_PASSWORD		BOLD FG_RED "Error: poll() failed"
 
 void	sendWelcomeMessage(int clientSocket);
+bool	validCommands( const std::string& command );
 void	sendAuthenticationInstructions(int clientSocket);
+std::string	getCommand( int clientSocket, const std::string& message );
+std::string	getParameters( int clientSocket, const std::string& command, const std::string& message );
 
 #endif

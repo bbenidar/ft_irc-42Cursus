@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/30 16:20:01 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/04 15:50:39 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ public:
 	void	acceptNewClient( void );
 	void	setNonBlocking(int fd);
 	void	setupServerSocket( void );
+	void	signalHandler( int signal );
 	void	setPort( unsigned short port );
 	void	initializePollStructure( void );
 	bool	isClientFullyAuthenticated( int clientSocket );
@@ -58,10 +59,15 @@ public:
 	void	parsePortNumberAndPassword( const std::string& s_port, const std::string& serverPassword );
 
 	bool	isNicknameAvailable( const std::string& nickname );
-	bool	handlePassCommand( int clientSocket, const std::string& input );
-	bool	handleNickCommand( int clientSocket, const std::string& input );
-	bool	handleUserCommand( int clientSocket, const std::string& input );
-	void	authenticateClient( int clientSocket, const std::string& message );
+	bool	handlePassCommand( int clientSocket, const std::string& command, const std::string& parameters );
+	bool	handleNickCommand( int clientSocket, const std::string& command, const std::string& parameters );
+	bool	handleUserCommand( int clientSocket, const std::string& command, const std::string& parameters );
+	void	authenticateClient( int clientSocket, const std::string& command, const std::string& parameters );
+
+	void	sendRegistrationMessages( int clientSocket );
+	void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
+	void	connectionRegistration( int clientSocket, const std::string& command );
+
 };
 
 #endif
