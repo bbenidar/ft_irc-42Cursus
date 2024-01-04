@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/02 21:01:14 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/03 20:47:14 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,33 @@ void	Server::initializePollStructure()
 	this->fds.push_back(newSocket);
 }
 
+
+
+bool Server::send_message(const std::string& msge, int clientSocket)
+{
+	std::string channel = removeMsgCommand(msge);
+	if (channel.length() == 0)
+		return false;
+	std::string message = msge.substr(msge.find(channel) + channel.length() + 1);
+	if (message.length() == 0)
+		return false;
+	for (size_t i = 0; i < this->fds.size(); i++)
+	{
+		if (this->clientStates[this->fds[i].fd].nickname == channel)
+		{
+			std::string msg = BOLD FG_LGRAY "➤ " + this->clientStates[clientSocket].nickname + FG_DEFAULT  + message + "\n";
+			return (send(this->fds[i].fd, msg.c_str(), msg.length(), 0), true);
+		}
+	}
+	return (sendwrongUserMessage(clientSocket, channel), true);
+}
+
 bool Server::handleCommand(int clientSocket, const std::string& message)
 {
-	(void)clientSocket;
     if (message.substr(0, 4) == "JOIN")
         return true;
     if (message.substr(0, 7) == "PRIVMSG")
-        return true;
+        return send_message(message, clientSocket);
     if (message.substr(0, 4) == "NICK")
         return true;
     return false;

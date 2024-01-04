@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/02 20:45:26 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/03 17:55:48 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ public:
 	bool	handleNickCommand( int clientSocket, const std::string& input );
 	bool	handleUserCommand( int clientSocket, const std::string& input );
 	bool 	handleCommand(int clientSocket, const std::string& message);
+	bool 	send_message(const std::string& msge, int clientSocket);
 
 };
 
