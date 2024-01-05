@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/04 15:42:44 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/05 10:47:38 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,7 @@ std::string	getCommand( int clientSocket, const std::string& message )
 	std::string	command;
 	std::stringstream	input(message);
 
-	while (command.length() == 0)
-		getline(input, command, ' ');
+	getline(input, command, ' ');
 	int lastChar = command.length() - 1;
 	command = (command[lastChar] == '\n') ? command.substr(0, lastChar) : command;
 	if (!validCommands(command) || message[0] == ' ')

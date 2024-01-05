@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/04 15:52:46 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/05 10:51:00 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ void Server::handleClientCommunication(size_t clientIndex)
 		else
 			perror("recv");
 		this->fds.erase(this->fds.begin() + clientIndex);
+		return ;
 	}
 	std::string	message(buffer, recvBytes);
 	if (message[0] == '\n')
