@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/04 23:12:48 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/06 00:54:13 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,17 +88,73 @@ bool Server::send_message(const std::string& msge, int clientSocket)
 	{
 		if (this->clientStates[this->fds[i].fd].nickname == channel)
 		{
-			std::string msg = BOLD FG_LGRAY "➤ " + this->clientStates[clientSocket].nickname + FG_DEFAULT  + message + "\n";
+			std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel + " :" + message + "\r\n";
 			return (send(this->fds[i].fd, msg.c_str(), msg.length(), 0), true);
 		}
 	}
 	return (sendwrongUserMessage(clientSocket, channel), true);
 }
 
+int countChanels(const std::string& channels)
+{
+	int chanelnum = 0;
+	for (size_t i = 0; i < channels.length(); i++)
+	{
+		if (channels[i] == ',')
+			chanelnum++;
+	}
+	if (channels[channels.length() - 1] != ',')
+		chanelnum++;
+	return chanelnum;
+}
+
+std::string* split(const std::string& channels, char c)
+{
+	std::string* chanel = new std::string[countChanels(channels)];
+	int j = 0;
+	for (size_t i = 0; i < channels.length(); i++)
+	{
+		if (channels[i] == c)
+			j++;
+		else
+			chanel[j] += channels[i];
+	}
+	return chanel;
+}
+
+bool Server::handelJoinchannel(const std::string& msge, int clientSocket)
+{
+	(void)clientSocket;
+	std::string channels = removeMsgCommand(msge);
+	if (channels.length() == 0)
+		return false;
+	std::string passwords = msge.substr(msge.find(channels) + channels.length() + 1);
+	if (passwords.length() == 0)
+		return false;
+	//need to split the chanels in 2d array
+	int chanelnum = countChanels(channels);
+	std::string* chanel;
+	chanel = split(channels, ',');
+	for (int i = 0; i < chanelnum; i++)
+	{
+		if(this->channelClients.count(chanel[i]))
+		{
+			this->channelClients[chanel[i]].insert(std::pair<int, ClientState>(clientSocket, this->clientStates[clientSocket]));
+		}
+		else
+		{
+			std::map<int, ClientState> newmap;
+			newmap.insert(std::pair<int, ClientState>(clientSocket, this->clientStates[clientSocket]));
+			this->channelClients.insert(std::pair<std::string, std::map<int, ClientState> >(chanel[i], newmap));
+		}
+	}
+	return true;
+}
+
 bool Server::handleCommand(int clientSocket, const std::string& message)
 {
     if (message.substr(0, 4) == "JOIN")
-        return true;
+        return handelJoinchannel(message, clientSocket);
     if (message.substr(0, 7) == "PRIVMSG")
         return send_message(message, clientSocket);
     if (message.substr(0, 4) == "NICK")
@@ -122,6 +178,7 @@ void Server::handleClientCommunication(size_t clientIndex)
 		this->fds.erase(this->fds.begin() + clientIndex);
 	}
 	std::string	message(buffer, recvBytes);
+	std::cout << message << std::endl;
 	if (message[0] == '\n')
 		return ;
 	std::string	command = getCommand(this->fds[clientIndex].fd, message);

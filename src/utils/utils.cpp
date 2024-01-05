@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/04 23:05:29 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/06 00:29:16 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,10 +101,16 @@ std::string removeMsgCommand(const std::string& fullMessage) {
 
     message.erase(0, message.find_first_not_of(" \t\n\r\f\v"));
     message.erase(message.find_last_not_of(" \t\n\r\f\v") + 1);
-
-    // if (command == "PRIVMSG" && channel.substr(0, 1) == "#") {
         return channel;
-    // }
+}
 
-    // return "";
+std::string Joinchannelpars(const std::string& msge)
+{
+	std::string channel = removeMsgCommand(msge);
+	if (channel.length() == 0)
+		return "";
+	std::string message = msge.substr(msge.find(channel) + channel.length() + 1);
+	if (message.length() == 0)
+		return "";
+	return channel;
 }

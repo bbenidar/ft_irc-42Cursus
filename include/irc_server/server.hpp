@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/04 23:09:24 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/06 00:49:38 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ private:
 	unsigned short	port;
 	std::vector<struct pollfd>	fds;
 	std::map<int, ClientState>	clientStates;	
+	std::map<std::string, std::map<int, ClientState> >	channelClients;
 
 public:
 
@@ -70,7 +71,10 @@ public:
 	void	connectionRegistration( int clientSocket, const std::string& command );
 	bool 	handleCommand(int clientSocket, const std::string& message);
 	bool 	send_message(const std::string& msge, int clientSocket);
+	bool handelJoinchannel(const std::string& msge, int clientSocket);
 
 };
+
+
 
 #endif
