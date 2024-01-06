@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/05 10:51:00 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/06 16:50:33 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,14 @@ void Server::handleClientCommunication(size_t clientIndex)
 		return ;
 	}
 	std::string	message(buffer, recvBytes);
+	// fprintf(stderr, "|%s|\n", message.substr(0, recvBytes - 2).c_str());
 	if (message[0] == '\n')
 		return ;
 	std::string	command = getCommand(this->fds[clientIndex].fd, message);
+	if (command.length() == 0)
+		return ;
 	std::string parameters = getParameters(this->fds[clientIndex].fd, command, message);
+	// fprintf(stderr, "|parameter: %s|\n", parameters.c_str());
 	if (parameters.empty())
 		return ;
 	if (!isClientFullyAuthenticated(this->fds[clientIndex].fd))
@@ -129,8 +133,8 @@ void	Server::connectionRegistration( int clientSocket, const std::string& comman
 		send(clientSocket, registrationMsg.c_str(), registrationMsg.length(), 0);
 	else if (command == "USER" && !this->clientStates[clientSocket].hasNick)
 		send(clientSocket, registrationMsg.c_str(), registrationMsg.length(), 0);
-	else if (command != "PASS" && !this->clientStates[clientSocket].isAuthenticated
-		&& !this->clientStates[clientSocket].hasNick)
+	else if (command != "PASS" && command != "NICK" && command != "USER"
+		&& !isClientFullyAuthenticated(clientSocket))
 		send(clientSocket, registrationMsg.c_str(), registrationMsg.length(), 0);
 }
 
@@ -138,15 +142,16 @@ void	Server::sendRegistrationMessages( int clientSocket )
 {
 	time_t now = time(0);
 	char* date_time = ctime(&now);
+	std::string	date(date_time, strlen(date_time) - 1);
 
 	my_send(clientSocket, 1, " :Welcome ", " to the IRCServer !");
 	my_send(clientSocket, 2, " :Your host is ", " , running version 1.0 !");
-	my_send(clientSocket, 3, " :This server was created ", date_time);
+	my_send(clientSocket, 3, " :This server was created ", date);
 	my_send(clientSocket, 4, " version 1.0", "");
 	my_send(clientSocket, 5, " are supported by this server", "");
 }
 
-void	Server::authenticateClient( int clientSocket, const std::string& command, const std::string& parameters  )
+void	Server::authenticateClient( int clientSocket, std::string& command, const std::string& parameters  )
 {
 	ClientState	state;
 

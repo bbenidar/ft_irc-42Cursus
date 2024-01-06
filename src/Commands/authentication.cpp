@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 10:24:51 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/04 15:22:08 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/06 17:02:23 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,15 @@ bool Server::isClientFullyAuthenticated(int clientSocket) {
 			clientStates[clientSocket].hasUser;
 }
 
-bool Server::handlePassCommand( int clientSocket, const std::string& command, const std::string& parameters )
+bool Server::handlePassCommand( int clientSocket, std::string& command, const std::string& parameters )
 {
 	if (this->clientStates[clientSocket].isAuthenticated == true)
 		return true;
 	if (command != "PASS")
 		return false;
 	std::string	password = parameters;
+	if (password[0] == ':')
+		password = parameters.substr(1, parameters.length() - 1);
 	if (password != this->serverPassword)
 	{
 	    std::string passwordMsg = ":IRCServer 464 PASS :Password incorrect\r\n";
@@ -46,19 +48,47 @@ bool Server::handlePassCommand( int clientSocket, const std::string& command, co
 		return false;
 	}
 	this->clientStates[clientSocket].isAuthenticated = true;
+	command = "";
 	return true;
 }
 
-bool Server::handleNickCommand( int clientSocket, const std::string& command, const std::string& parameters )
+bool	validNickname( int clientSocket, const std::string& nickname )
+{
+	size_t i = -1, length = nickname.length();
+	while (++i < length && nickname[i] == ' ');
+	if (i == length)
+	{
+		std::string	noNicknameMsg = ":IRCServer 431 NICK :No nickname given\r\n";
+		send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);
+		return false;
+	}
+	for (i = 0; i < nickname.length(); i++)
+	{
+		if (!isalnum(nickname[i]))
+		{
+			std::string	noNicknameMsg = ":IRCServer 431 NICK :Erroneus nickname\r\n";
+			send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Server::handleNickCommand( int clientSocket, std::string& command, const std::string& parameters )
 {
 	if (this->clientStates[clientSocket].hasNick == true)
 		return true;
+	if (command != "NICK")
+		return false;
 	std::string	nickname = parameters;
-	if (command != "NICK" || nickname.length() == 0)
+	if (nickname[0] == ':')
+		nickname = parameters.substr(1, parameters.length() - 1);
+	if (!validNickname(clientSocket, nickname))
 		return false;
 	if (!isNicknameAvailable(nickname))
 	{
-		send(clientSocket, FG_RED "   That nickname is taken. Try another.\n" FG_DEFAULT, 50 , 0);
+		std::string	alreadyinuseMsg = ":IRCServer 433 " + nickname + " :Nickname is already in use\r\n";
+		send(clientSocket, alreadyinuseMsg.c_str(), alreadyinuseMsg.length(), 0);
 		return false;
 	}
 	this->clientStates[clientSocket].hasNick = true;
@@ -66,7 +96,7 @@ bool Server::handleNickCommand( int clientSocket, const std::string& command, co
 	return true;
 }
 
-bool Server::handleUserCommand( int clientSocket, const std::string& command, const std::string& parameters )
+bool Server::handleUserCommand( int clientSocket, std::string& command, const std::string& parameters )
 {
 	if (this->clientStates[clientSocket].hasUser == true)
 		return true;

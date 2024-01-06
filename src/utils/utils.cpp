@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/05 10:47:38 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/05 18:58:30 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ std::string	getCommand( int clientSocket, const std::string& message )
 std::string	getParameters( int clientSocket, const std::string& command, const std::string& message )
 {
 	int start = command.length() + 1;
-
 	int flag = (message.find('\r', 0) != std::string::npos) ? 2 : 1;
 	std::string	parameters = message.substr(start, message.length() - start - flag);
 	if ((message[start - 1] != ' ' || parameters.length() == 0))
