@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/05 18:58:30 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/06 17:48:41 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,14 @@ void	sendAuthenticationInstructions(int clientSocket)
 
 bool	validCommands( const std::string& command )
 {
-	std::string	commands[5] = { "PASS",
+	std::string	commands[6] = { "PASS",
 								"NICK",
 								"USER",
 								"JOIN",
-								"PRIVMSG"};
+								"PRIVMSG",
+								"QUIT"};
 
-	for (int i = 0; i < 5; i++)	
+	for (int i = 0; i < 6; i++)	
 		if (commands[i] == command)
 			return true;
 	return false;

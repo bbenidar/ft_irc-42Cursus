@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/06 16:50:33 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/06 18:47:05 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,34 @@ void Server::setNonBlocking(int fd)
 	{
 		perror("Error setting non-blocking mode for socket");
 	}
+}
+
+void	Server::my_send( int clientSocket, int num
+	, const std::string& part1, const std::string& part2 )
+{
+	std::string	hostname = ":IRCserver";
+	std::string	nickname = this->clientStates[clientSocket].nickname;
+	std::string	numeric =	(num == 1) ? " 001 " + nickname + part1 + nickname + part2:
+							(num == 2) ? " 002 " + nickname + part1 + hostname.substr(1, 10) + part2:
+							(num == 3) ? " 003 " + nickname + part1 + part2:
+							(num == 4) ? " 004 " + nickname + " " + hostname + part1:
+							(num == 5) ? " 005 " + nickname + part1: "";
+	std::string	endPart = "\r\n";
+	std::string	fullMessage = hostname + numeric + endPart;
+	send(clientSocket, fullMessage.c_str(), fullMessage.length(), 0);
+}
+
+void	Server::sendRegistrationMessages( int clientSocket )
+{
+	time_t now = time(0);
+	char* date_time = ctime(&now);
+	std::string	date(date_time, strlen(date_time) - 1);
+
+	my_send(clientSocket, 1, " :Welcome ", " to the IRCServer !");
+	my_send(clientSocket, 2, " :Your host is ", " , running version 1.0 !");
+	my_send(clientSocket, 3, " :This server was created ", date);
+	my_send(clientSocket, 4, " version 1.0", "");
+	my_send(clientSocket, 5, " are supported by this server", "");
 }
 
 void	Server::setupServerSocket( void )
@@ -97,6 +125,7 @@ void Server::handleClientCommunication(size_t clientIndex)
 	if (message[0] == '\n')
 		return ;
 	std::string	command = getCommand(this->fds[clientIndex].fd, message);
+	// fprintf(stderr, "|command: %s|\n", command.c_str());
 	if (command.length() == 0)
 		return ;
 	std::string parameters = getParameters(this->fds[clientIndex].fd, command, message);
@@ -105,51 +134,21 @@ void Server::handleClientCommunication(size_t clientIndex)
 		return ;
 	if (!isClientFullyAuthenticated(this->fds[clientIndex].fd))
 		authenticateClient(this->fds[clientIndex].fd, command, parameters);
-// 	else
-// 	{
-// 		fprintf(stderr, "!!!!!!!!!\n");
-// 	}
-}
-
-void	Server::my_send( int clientSocket, int num
-	, const std::string& part1, const std::string& part2 )
-{
-	std::string	hostname = ":IRCserver";
-	std::string	nickname = this->clientStates[clientSocket].nickname;
-	std::string	numeric =	(num == 1) ? " 001 " + nickname + part1 + nickname + part2:
-							(num == 2) ? " 002 " + nickname + part1 + hostname.substr(1, 10) + part2:
-							(num == 3) ? " 003 " + nickname + part1 + part2:
-							(num == 4) ? " 004 " + nickname + " " + hostname + part1:
-							(num == 5) ? " 005 " + nickname + part1: "";
-	std::string	endPart = "\r\n";
-	std::string	fullMessage = hostname + numeric + endPart;
-	send(clientSocket, fullMessage.c_str(), fullMessage.length(), 0);
+	else
+	{
+		
+	}
 }
 
 void	Server::connectionRegistration( int clientSocket, const std::string& command )
 {
 	std::string	registrationMsg = ":IRCServer 462 " + command + " :You have not registered\r\n";
-	if (command == "NICK" && !this->clientStates[clientSocket].isAuthenticated)
-		send(clientSocket, registrationMsg.c_str(), registrationMsg.length(), 0);
-	else if (command == "USER" && !this->clientStates[clientSocket].hasNick)
-		send(clientSocket, registrationMsg.c_str(), registrationMsg.length(), 0);
-	else if (command != "PASS" && command != "NICK" && command != "USER"
-		&& !isClientFullyAuthenticated(clientSocket))
+	if ((command == "NICK" && !this->clientStates[clientSocket].isAuthenticated)
+		|| (command != "PASS" && command != "NICK" && command != "USER"
+		&& !isClientFullyAuthenticated(clientSocket)))
 		send(clientSocket, registrationMsg.c_str(), registrationMsg.length(), 0);
 }
 
-void	Server::sendRegistrationMessages( int clientSocket )
-{
-	time_t now = time(0);
-	char* date_time = ctime(&now);
-	std::string	date(date_time, strlen(date_time) - 1);
-
-	my_send(clientSocket, 1, " :Welcome ", " to the IRCServer !");
-	my_send(clientSocket, 2, " :Your host is ", " , running version 1.0 !");
-	my_send(clientSocket, 3, " :This server was created ", date);
-	my_send(clientSocket, 4, " version 1.0", "");
-	my_send(clientSocket, 5, " are supported by this server", "");
-}
 
 void	Server::authenticateClient( int clientSocket, std::string& command, const std::string& parameters  )
 {
@@ -158,12 +157,18 @@ void	Server::authenticateClient( int clientSocket, std::string& command, const s
 	if (command.length() != 0)
 		connectionRegistration(clientSocket, command);
 	this->clientStates.insert(std::pair<int, ClientState>(clientSocket, state));
-	if (!handlePassCommand(clientSocket, command, parameters))
-		return ;
-	if (!handleNickCommand(clientSocket, command, parameters))
-		return ;
-	if (!handleUserCommand(clientSocket, command, parameters))
-		return ;
-
-	sendRegistrationMessages(clientSocket);
+	if (!this->clientStates[clientSocket].isAuthenticated)
+		handlePassCommand(clientSocket, command, parameters);
+	if (!this->clientStates[clientSocket].hasNick)
+		handleNickCommand(clientSocket, command, parameters);
+	if (!this->clientStates[clientSocket].hasUser)
+		handleUserCommand(clientSocket, command, parameters);
+	if (isClientFullyAuthenticated(clientSocket))
+		sendRegistrationMessages(clientSocket);
+	// if (!handlePassCommand(clientSocket, command, parameters))
+	// 	return ;
+	// if (!handleNickCommand(clientSocket, command, parameters))
+	// 	return ;
+	// if (!handleUserCommand(clientSocket, command, parameters))
+	// 	return ;
 }

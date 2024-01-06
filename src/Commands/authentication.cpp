@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 10:24:51 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/06 17:02:23 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/06 18:47:00 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ bool Server::handlePassCommand( int clientSocket, std::string& command, const st
 		return false;
 	}
 	this->clientStates[clientSocket].isAuthenticated = true;
-	command = "";
 	return true;
 }
 
@@ -64,7 +63,7 @@ bool	validNickname( int clientSocket, const std::string& nickname )
 	}
 	for (i = 0; i < nickname.length(); i++)
 	{
-		if (!isalnum(nickname[i]))
+		if (!isalnum(nickname[i]) && nickname[i] != '_' && nickname[i] != '\n')
 		{
 			std::string	noNicknameMsg = ":IRCServer 431 NICK :Erroneus nickname\r\n";
 			send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);
