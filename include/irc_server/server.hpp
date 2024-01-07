@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/05 20:20:27 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/07 16:31:23 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ struct ClientState {
 };
 
 
-
 class Server
 {
 
@@ -47,13 +46,14 @@ private:
 
 public:
 
+	void	passCommand( int clientSocket );
+	void	changeClientNickname( int clientSocket, const std::string& parameters );
+
 	void	runServerLoop( void );
 	void	acceptNewClient( void );
-	void	setNonBlocking(int fd);
+
 	void	setupServerSocket( void );
-	void	signalHandler( int signal );
-	void	setPort( unsigned short port );
-	void	initializePollStructure( void );
+	void	initializePollStructure( int fd );
 	bool	isClientFullyAuthenticated( int clientSocket );
 	void	handleClientCommunication( size_t clientIndex );
 	void	parsePortNumberAndPassword( const std::string& s_port, const std::string& serverPassword );
@@ -67,6 +67,7 @@ public:
 	void	sendRegistrationMessages( int clientSocket );
 	void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
 	void	connectionRegistration( int clientSocket, const std::string& command );
+	void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
 
 };
 

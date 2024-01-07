@@ -6,24 +6,18 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/06 18:47:05 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/07 16:28:58 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <poll.h>
 #include <sstream>
-#include <fcntl.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
 #include "../../include/irc_server/server.hpp"
-
-void	Server::setPort( unsigned short port )
-{
-	this->port = port;
-}
 
 void	Server::parsePortNumberAndPassword( const std::string& s_port, const std::string& password )
 {
@@ -37,14 +31,6 @@ void	Server::parsePortNumberAndPassword( const std::string& s_port, const std::s
 	if (password.length() == 0)
 		throw std::invalid_argument(INVALID_PORT_NUMBER "\n  " VALID_PORT_NUMBER);
 	this->serverPassword = password;
-}
-
-void Server::setNonBlocking(int fd)
-{
-	if (fcntl(fd, F_SETFL, O_NONBLOCK) == -1)
-	{
-		perror("Error setting non-blocking mode for socket");
-	}
 }
 
 void	Server::my_send( int clientSocket, int num
@@ -81,11 +67,9 @@ void	Server::setupServerSocket( void )
 	if (this->serverSocket == -1)
 		throw std::runtime_error(SOCKET_CREATION);
 	// std::cout << BOLD "Socket created\n";
-
 	setNonBlocking(this->serverSocket);
 
 	sockaddr_in	serverAddress;
-	
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_addr.s_addr = INADDR_ANY;
 	serverAddress.sin_port = htons(this->port);
@@ -96,7 +80,6 @@ void	Server::setupServerSocket( void )
 		throw std::runtime_error(SOCKET_BINDING);
 	}
 	// std::cout << BOLD "successfully binding the socket\n";
-
 	if (listen(this->serverSocket, 1) == -1)
 	{
 		close(this->serverSocket);
@@ -111,13 +94,13 @@ void Server::handleClientCommunication(size_t clientIndex)
 
 	if (recvBytes <= 0)
 	{
-		this->clientStates.erase(this->fds[clientIndex].fd);
+		this->clientStates.erase(this->fds[clientIndex].fd); // erase client from the map
 		close(this->fds[clientIndex].fd);
+		this->fds.erase(this->fds.begin() + clientIndex);
 		if (recvBytes == 0)
 			std::cout << BOLD FG_RED "➖ Client disconnected\n" FG_DEFAULT;
 		else
 			perror("recv");
-		this->fds.erase(this->fds.begin() + clientIndex);
 		return ;
 	}
 	std::string	message(buffer, recvBytes);
@@ -126,7 +109,7 @@ void Server::handleClientCommunication(size_t clientIndex)
 		return ;
 	std::string	command = getCommand(this->fds[clientIndex].fd, message);
 	// fprintf(stderr, "|command: %s|\n", command.c_str());
-	if (command.length() == 0)
+	if (command.empty())
 		return ;
 	std::string parameters = getParameters(this->fds[clientIndex].fd, command, message);
 	// fprintf(stderr, "|parameter: %s|\n", parameters.c_str());
@@ -136,7 +119,7 @@ void Server::handleClientCommunication(size_t clientIndex)
 		authenticateClient(this->fds[clientIndex].fd, command, parameters);
 	else
 	{
-		
+		processAuthenticatedClientCommand(this->fds[clientIndex].fd, command, parameters);
 	}
 }
 
@@ -165,10 +148,4 @@ void	Server::authenticateClient( int clientSocket, std::string& command, const s
 		handleUserCommand(clientSocket, command, parameters);
 	if (isClientFullyAuthenticated(clientSocket))
 		sendRegistrationMessages(clientSocket);
-	// if (!handlePassCommand(clientSocket, command, parameters))
-	// 	return ;
-	// if (!handleNickCommand(clientSocket, command, parameters))
-	// 	return ;
-	// if (!handleUserCommand(clientSocket, command, parameters))
-	// 	return ;
 }

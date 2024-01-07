@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:10:41 by moudrib           #+#    #+#             */
-/*   Updated: 2023/12/28 14:02:30 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/07 12:21:36 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,8 @@
 #define COLORS_HPP
 
 # define BOLD        "\e[1m"
-# define UNDERLINED  "\e[4m"
 
 # define RESET_ALL         "\e[0m"
-# define RESET_BOLD        "\e[21m"
-# define RESET_UNDERLINED  "\e[24m"
 
 # define FG_DEFAULT  "\e[39m"
 # define FG_BLACK    "\e[30m"

@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 21:23:25 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/03 12:38:22 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/07 12:46:15 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,38 +17,35 @@
 #include "../../include/utils/colors.hpp"
 #include "../../include/irc_server/server.hpp"
 
-void	Server::initializePollStructure()
+void	Server::initializePollStructure( int fd )
 {
 	struct pollfd	newSocket;
 
-	newSocket.fd = this->serverSocket;
+	setNonBlocking(fd);
+	newSocket.fd = fd;
 	newSocket.events = POLLIN;
 	this->fds.push_back(newSocket);
 }
 
 void	Server::acceptNewClient()
 {
-	struct pollfd	newSocket;
+	int	newSocket;
 	sockaddr_in	clientAddress;
 	socklen_t	clientAddressSize = sizeof(clientAddress);
 
-	newSocket.fd = accept(this->serverSocket, reinterpret_cast<sockaddr *>(&clientAddress), &clientAddressSize);
-	if (newSocket.fd == -1)
+	newSocket = accept(this->serverSocket, reinterpret_cast<sockaddr *>(&clientAddress), &clientAddressSize);
+	if (newSocket == -1)
 	{
 		perror("accept");
 		return ;
 	}
-	// sendWelcomeMessage(newSocket.fd);
-	// sendAuthenticationInstructions(newSocket.fd);
-	setNonBlocking(newSocket.fd);
-	newSocket.events = POLLIN;
-	this->fds.push_back(newSocket);
+	initializePollStructure(newSocket);
 	std::cout << BOLD FG_GREEN "➕ Client connected\n" FG_DEFAULT;
 }
 
 void	Server::runServerLoop()
 {
-	initializePollStructure();
+	initializePollStructure(this->serverSocket);
 
 	while (true)
 	{
