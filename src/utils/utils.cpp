@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/06 00:29:16 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/07 00:57:05 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ std::string	getCommand( int clientSocket, const std::string& message )
 	command = (command[lastChar] == '\n') ? command.substr(0, lastChar) : command;
 	if (!validCommands(command) || message[0] == ' ')
 	{
-		std::string	unkonwn = ":IRCServer 421 " + command + " :Unknown command\r\n";
+		std::string	unkonwn = ":IRCServer 421 " + command + " :\r\n";
 		send(clientSocket, unkonwn.c_str(), unkonwn.length(), 0);
 		return "";
 	}

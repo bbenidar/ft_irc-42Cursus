@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
+#    By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2023/12/28 10:50:42 by moudrib          ###   ########.fr        #
+#    Updated: 2024/01/06 22:35:15 by bbenidar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ SRC		=	src/main.cpp \
 			src/utils/utils.cpp \
 			src/irc_server/server.cpp \
 			src/irc_server/multiplexing.cpp \
-			src/Commands/authentication.cpp
+			src/Commands/authentication.cpp \
+			src/irc_server/channel.cpp
 
 HEADERS =	include/utils/utils.hpp \
 			include/utils/colors.hpp \
