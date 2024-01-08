@@ -6,7 +6,11 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:33:47 by moudrib           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/01/04 23:05:53 by bbenidar         ###   ########.fr       */
+=======
+/*   Updated: 2024/01/07 16:33:40 by moudrib          ###   ########.fr       */
+>>>>>>> upstream/master
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +35,9 @@
 
 # define POLL_FAILURE			BOLD FG_RED "Error: poll() failed"
 
-# define INVALID_PASSWORD		BOLD FG_RED "Error: poll() failed"
-
-void	sendWelcomeMessage(int clientSocket);
+void	setNonBlocking(int fd);
 bool	validCommands( const std::string& command );
-void	sendAuthenticationInstructions(int clientSocket);
+bool	validNickname( int clientSocket, const std::string& nickname );
 std::string	getCommand( int clientSocket, const std::string& message );
 std::string	getParameters( int clientSocket, const std::string& command, const std::string& message );
 // dyawli maytems7och fl merg =====================================================================

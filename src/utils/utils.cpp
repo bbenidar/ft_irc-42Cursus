@@ -6,43 +6,36 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/07 00:57:05 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/08 20:24:09 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
+#include <fcntl.h>
 #include <sstream>
+#include <iostream>
 #include <sys/socket.h>
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
 
-void	sendWelcomeMessage(int clientSocket)
+void setNonBlocking(int fd)
 {
-	std::string welcomeMsg = BOLD FG_GREEN "Welcome to the IRC Server!\n" FG_WHITE;
-	send(clientSocket, welcomeMsg.c_str(), welcomeMsg.length(), 0);
-}
-
-void	sendAuthenticationInstructions(int clientSocket)
-{
-	std::string authInstructions = FG_LGRAY
-		"  Authentication Instructions:\n"
-		"  1. PASS <server_password>: Set the server password.\n"
-		"  2. NICK <nickname>: Set your nickname.\n"
-		"  3. USER <username> <hostname> <servername> :<realname>: Set your user details.\n"
-		"  Note: All three steps are required for successful authentication.\n" FG_DEFAULT;
-
-	send(clientSocket, authInstructions.c_str(), authInstructions.length(), 0);
+	if (fcntl(fd, F_SETFL, O_NONBLOCK) == -1)
+	{
+		perror("Error setting non-blocking mode for socket");
+	}
 }
 
 bool	validCommands( const std::string& command )
 {
-	std::string	commands[5] = { "PASS",
+	std::string	commands[7] = { "PASS",
 								"NICK",
 								"USER",
 								"JOIN",
-								"PRIVMSG"};
+								"PRIVMSG",
+								"PONG",
+								"QUIT"};
 
-	for (int i = 0; i < 5; i++)	
+	for (int i = 0; i < 7; i++)	
 		if (commands[i] == command)
 			return true;
 	return false;
@@ -53,10 +46,11 @@ std::string	getCommand( int clientSocket, const std::string& message )
 	std::string	command;
 	std::stringstream	input(message);
 
-	while (command.length() == 0)
-		getline(input, command, ' ');
+	getline(input, command, ' ');
 	int lastChar = command.length() - 1;
 	command = (command[lastChar] == '\n') ? command.substr(0, lastChar) : command;
+	for (size_t i = 0; i < command.length(); i++)
+		command[i] = std::toupper(command[i]);
 	if (!validCommands(command) || message[0] == ' ')
 	{
 		std::string	unkonwn = ":IRCServer 421 " + command + " :\r\n";
@@ -69,7 +63,6 @@ std::string	getCommand( int clientSocket, const std::string& message )
 std::string	getParameters( int clientSocket, const std::string& command, const std::string& message )
 {
 	int start = command.length() + 1;
-
 	int flag = (message.find('\r', 0) != std::string::npos) ? 2 : 1;
 	std::string	parameters = message.substr(start, message.length() - start - flag);
 	if ((message[start - 1] != ' ' || parameters.length() == 0))
@@ -113,4 +106,26 @@ std::string Joinchannelpars(const std::string& msge)
 	if (message.length() == 0)
 		return "";
 	return channel;
+}
+
+bool	validNickname( int clientSocket, const std::string& nickname )
+{
+	size_t i = -1, length = nickname.length();
+	while (++i < length && nickname[i] == ' ');
+	if (i == length)
+	{
+		std::string	noNicknameMsg = ":IRCServer 431 NICK :No nickname given\r\n";
+		send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);
+		return false;
+	}
+	for (i = 0; i < nickname.length(); i++)
+	{
+		if (!isalnum(nickname[i]) && nickname[i] != '_' && nickname[i] != '\n')
+		{
+			std::string	noNicknameMsg = ":IRCServer 431 NICK :Erroneus nickname\r\n";
+			send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);
+			return false;
+		}
+	}
+	return true;
 }

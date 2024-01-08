@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 17:00:30 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/08 20:28:15 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,10 @@ class Server
 		std::map<int, ClientState>	clientStates;	
 		std::map<std::string, Channels>	channels;
 
+public:
+
+	void	passCommand( int clientSocket );
+	void	changeClientNickname( int clientSocket, const std::string& parameters );
 	public:
 
 		void	runServerLoop( void );
@@ -98,11 +102,14 @@ class Server
 		void	handleClientCommunication( size_t clientIndex );
 		void	parsePortNumberAndPassword( const std::string& s_port, const std::string& serverPassword );
 
+
+
+
 		bool	isNicknameAvailable( const std::string& nickname );
-		bool	handlePassCommand( int clientSocket, const std::string& command, const std::string& parameters );
-		bool	handleNickCommand( int clientSocket, const std::string& command, const std::string& parameters );
-		bool	handleUserCommand( int clientSocket, const std::string& command, const std::string& parameters );
-		void	authenticateClient( int clientSocket, const std::string& command, const std::string& parameters );
+		bool	handlePassCommand( int clientSocket, std::string& command, const std::string& parameters );
+		bool	handleNickCommand( int clientSocket, std::string& command, const std::string& parameters );
+		bool	handleUserCommand( int clientSocket, std::string& command, const std::string& parameters );
+		void	authenticateClient( int clientSocket, std::string& command, const std::string& parameters );
 
 		void	sendRegistrationMessages( int clientSocket );
 		void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
@@ -110,6 +117,7 @@ class Server
 		bool 	handleCommand(int clientSocket, const std::string& message);
 		bool 	send_message(const std::string& msge, int clientSocket);
 		bool handelJoinchannel(const std::string& msge, int clientSocket);
+	void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
 
 };
 
