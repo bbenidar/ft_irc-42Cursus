@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 20:28:15 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/08 20:55:14 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,11 +93,8 @@ public:
 
 		void	runServerLoop( void );
 		void	acceptNewClient( void );
-		void	setNonBlocking(int fd);
 		void	setupServerSocket( void );
-		void	signalHandler( int signal );
-		void	setPort( unsigned short port );
-		void	initializePollStructure( void );
+		void	initializePollStructure( int fd );
 		bool	isClientFullyAuthenticated( int clientSocket );
 		void	handleClientCommunication( size_t clientIndex );
 		void	parsePortNumberAndPassword( const std::string& s_port, const std::string& serverPassword );
@@ -113,11 +110,9 @@ public:
 
 		void	sendRegistrationMessages( int clientSocket );
 		void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
-		void	connectionRegistration( int clientSocket, const std::string& command );
-		bool 	handleCommand(int clientSocket, const std::string& message);
-		bool 	send_message(const std::string& msge, int clientSocket);
-		bool handelJoinchannel(const std::string& msge, int clientSocket);
-	void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
+		void	connectionRegistration( int clientSocket, const std::string& command );		void 	send_message(const std::string& msge, int clientSocket);
+		void	 handelJoinchannel(const std::string& msge, int clientSocket);
+		void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
 
 };
 

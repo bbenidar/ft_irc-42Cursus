@@ -6,13 +6,14 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 20:29:56 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/08 21:03:59 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <poll.h>
 #include <sstream>
+#include <iostream>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include "../../include/utils/utils.hpp"
@@ -33,20 +34,6 @@ void	Server::parsePortNumberAndPassword( const std::string& s_port, const std::s
 	this->serverPassword = password;
 }
 
-void	Server::my_send( int clientSocket, int num
-	, const std::string& part1, const std::string& part2 )
-{
-	std::string	hostname = ":IRCserver";
-	std::string	nickname = this->clientStates[clientSocket].nickname;
-	std::string	numeric =	(num == 1) ? " 001 " + nickname + part1 + nickname + part2:
-							(num == 2) ? " 002 " + nickname + part1 + hostname.substr(1, 10) + part2:
-							(num == 3) ? " 003 " + nickname + part1 + part2:
-							(num == 4) ? " 004 " + nickname + " " + hostname + part1:
-							(num == 5) ? " 005 " + nickname + part1: "";
-	std::string	endPart = "\r\n";
-	std::string	fullMessage = hostname + numeric + endPart;
-	send(clientSocket, fullMessage.c_str(), fullMessage.length(), 0);
-}
 
 void	Server::sendRegistrationMessages( int clientSocket )
 {
@@ -86,24 +73,43 @@ void	Server::setupServerSocket( void )
 		throw std::runtime_error(LISTENING_ERROR);
 	}
 }
-
-bool Server::send_message(const std::string& msge, int clientSocket)
+void	Server::my_send( int clientSocket, int num
+	, const std::string& part1, const std::string& part2 )
 {
+	std::string	hostname = ":IRCserver";
+	std::string	nickname = this->clientStates[clientSocket].nickname;
+	std::string	numeric =	(num == 1) ? " 001 " + nickname + part1 + nickname + part2:
+							(num == 2) ? " 002 " + nickname + part1 + hostname.substr(1, 10) + part2:
+							(num == 3) ? " 003 " + nickname + part1 + part2:
+							(num == 4) ? " 004 " + nickname + " " + hostname + part1:
+							(num == 5) ? " 005 " + nickname + part1: "";
+	std::string	endPart = "\r\n";
+	std::string	fullMessage = hostname + numeric + endPart;
+	send(clientSocket, fullMessage.c_str(), fullMessage.length(), 0);
+}
+
+void Server::send_message(const std::string& msge, int clientSocket)
+{
+	std::cout << msge << std::endl;
 	std::string channel = removeMsgCommand(msge);
 	if (channel.length() == 0)
-		return false;
+		return ;
+	std::cout << "channel: " << channel << std::endl;
 	std::string message = msge.substr(msge.find(channel) + channel.length() + 1);
 	if (message.length() == 0)
-		return false;
+		return ;
 	for (size_t i = 0; i < this->fds.size(); i++)
 	{
+		std::cout << "client name: " << this->clientStates[this->fds[i].fd].nickname << std::endl;
 		if (this->clientStates[this->fds[i].fd].nickname == channel)
 		{
 			std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel + " :" + message + "\r\n";
-			return (send(this->fds[i].fd, msg.c_str(), msg.length(), 0), true);
+			send(this->fds[i].fd, msg.c_str(), msg.length(), 0);
+			return ;
 		}
 	}
-	return (sendwrongUserMessage(clientSocket, channel), true);
+	sendwrongUserMessage(clientSocket, channel);
+	return ;
 }
 
 size_t countChanels(const std::string& channels)
@@ -137,11 +143,11 @@ std::vector<std::string> split(std::string s, char del)
 	return res;
 }
 
-bool Server::handelJoinchannel(const std::string& msge, int clientSocket)
+void Server::handelJoinchannel(const std::string& msge, int clientSocket)
 {
 	std::string channelsstr = removeMsgCommand(msge);
 	if (channelsstr.length() == 0)
-		return false;
+		return ;
 	std::string passwords = msge.substr(msge.find(channelsstr) + channelsstr.length() + 1);
 	std::cout << "passwords: " << passwords << std::endl;
 	std::vector<std::string> chanel;
@@ -186,18 +192,7 @@ bool Server::handelJoinchannel(const std::string& msge, int clientSocket)
 		std::cout << "has pass word "<< (bool)this->channels[chanel[i]].getPassMode() << std::endl;
 	}
 	std::cout << "im here" << std::endl;
-	return true;
-}
-
-bool Server::handleCommand(int clientSocket, const std::string& message)
-{
-    if (message.substr(0, 4) == "JOIN")
-        return handelJoinchannel(message, clientSocket);
-    if (message.substr(0, 7) == "PRIVMSG")
-        return send_message(message, clientSocket);
-    if (message.substr(0, 4) == "NICK")
-        return true;
-    return false;
+	return ;
 }
 
 void Server::handleClientCommunication(size_t clientIndex)
@@ -217,7 +212,7 @@ void Server::handleClientCommunication(size_t clientIndex)
 		return ;
 	}
 	std::string	message(buffer, recvBytes);
-	std::cout << message << std::endl;
+	// std::cout << message << std::endl;
 	if (message[0] == '\n')
 		return ;
 	std::string	command = getCommand(this->fds[clientIndex].fd, message);
@@ -231,24 +226,9 @@ void Server::handleClientCommunication(size_t clientIndex)
 	if (!isClientFullyAuthenticated(this->fds[clientIndex].fd))
 		authenticateClient(this->fds[clientIndex].fd, command, parameters);
 	else{
-		if(!handleCommand(this->fds[clientIndex].fd, message))
-					sendwrongCommandMessage(this->fds[clientIndex].fd);
+		processAuthenticatedClientCommand(this->fds[clientIndex].fd, command, parameters);
+		// handleCommand(this->fds[clientIndex].fd, message);
 	}
-}
-
-void	Server::my_send( int clientSocket, int num
-	, const std::string& part1, const std::string& part2 )
-{
-	std::string	hostname = ":IRCserver";
-	std::string	nickname = this->clientStates[clientSocket].nickname;
-	std::string	numeric =	(num == 1) ? " 001 " + nickname + part1 + nickname + part2:
-							(num == 2) ? " 002 " + nickname + part1 + hostname.substr(1, 10) + part2:
-							(num == 3) ? " 003 " + nickname + part1 + part2:
-							(num == 4) ? " 004 " + nickname + " " + hostname + part1:
-							(num == 5) ? " 005 " + nickname + part1: "";
-	std::string	endPart = "\r\n";
-	std::string	fullMessage = hostname + numeric + endPart;
-	send(clientSocket, fullMessage.c_str(), fullMessage.length(), 0);
 }
 
 void	Server::connectionRegistration( int clientSocket, const std::string& command )

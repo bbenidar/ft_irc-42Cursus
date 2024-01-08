@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:28:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/07 16:30:35 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/08 21:14:44 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 void	Server::processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& parameters )
 {
 	int cmd	=	command == "PASS" ? 1 :
-				command == "NICK" ? 2 : 3;
+				command == "NICK" ? 2 :
+				command == "JOIN" ? 3 :
+				command == "PRIVMSG" ? 4 : 5;
 	switch (cmd)
 	{
 		case 1:
@@ -23,6 +25,12 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 			break;
 		case 2:
 			changeClientNickname(clientSocket, parameters);
+			break;
+		case 3:
+			handelJoinchannel(command + " " + parameters, clientSocket);
+			break;
+		case 4:
+			send_message(command + " " + parameters, clientSocket);
 			break;
 		default:
 			break;

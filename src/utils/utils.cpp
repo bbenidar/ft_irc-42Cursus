@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 20:24:09 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/08 21:12:10 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ std::string removeMsgCommand(const std::string& fullMessage) {
     std::getline(iss, message);
 
     message.erase(0, message.find_first_not_of(" \t\n\r\f\v"));
-    message.erase(message.find_last_not_of(" \t\n\r\f\v") + 1);
+    message.erase(message.find_first_not_of(" \t\n\r\f\v") + 1);
         return channel;
 }
 

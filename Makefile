@@ -6,7 +6,7 @@
 #    By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/08 20:29:13 by bbenidar         ###   ########.fr        #
+#    Updated: 2024/01/08 20:45:31 by bbenidar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,16 +18,16 @@ OBJDIR	=	Object_files/
 SRC		=	src/main.cpp \
 			src/utils/utils.cpp \
 			src/irc_server/server.cpp \
+			src/irc_server/channel.cpp \
 			src/irc_server/multiplexing.cpp \
-			src/Commands/authentication.cpp \
-			src/irc_server/channel.cpp
 			src/Commands/Pass.cpp \
 			src/Commands/Nick.cpp \
 			src/Commands/commands.cpp \
-			src/Commands/authentication.cpp
+			src/Commands/authentication.cpp 
 
-HEADERS =	include/utils/utils.hpp \
+EADERS =	include/utils/utils.hpp \
 			include/utils/colors.hpp \
+			include/irc_server/server.hpp \
 
 G		= \x1B[32m \033[1m
 W		= \x1B[0m
