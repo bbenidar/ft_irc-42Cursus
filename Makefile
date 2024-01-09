@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+         #
+#    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/08 20:45:31 by bbenidar         ###   ########.fr        #
+#    Updated: 2024/01/09 10:22:48 by moudrib          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@ FLAGS	=	-Wall -Wextra -Werror -std=c++98 -fsanitize=address
 OBJDIR	=	Object_files/
 
 SRC		=	src/main.cpp \
+			src/Bot/Bot.cpp \
 			src/utils/utils.cpp \
 			src/irc_server/server.cpp \
 			src/irc_server/channel.cpp \
@@ -25,7 +26,8 @@ SRC		=	src/main.cpp \
 			src/Commands/commands.cpp \
 			src/Commands/authentication.cpp 
 
-EADERS =	include/utils/utils.hpp \
+HEADERS =	include/Bot/Bot.hpp \
+			include/utils/utils.hpp \
 			include/utils/colors.hpp \
 			include/irc_server/server.hpp \
 
