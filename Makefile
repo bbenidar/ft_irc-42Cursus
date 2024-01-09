@@ -6,13 +6,13 @@
 #    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/09 10:22:48 by moudrib          ###   ########.fr        #
+#    Updated: 2024/01/09 10:58:07 by moudrib          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	ircserv
 CC		=	c++
-FLAGS	=	-Wall -Wextra -Werror -std=c++98 -fsanitize=address
+FLAGS	=	-Wall -Wextra -Werror -g -std=c++98 -fsanitize=address
 OBJDIR	=	Object_files/
 
 SRC		=	src/main.cpp \

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 21:03:59 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/09 16:29:01 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,12 +197,14 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket)
 
 void Server::handleClientCommunication(size_t clientIndex)
 {
+	size_t 	end;
 	char	buffer[BUFFER_SIZE];
 	int		recvBytes = recv(this->fds[clientIndex].fd, buffer, sizeof(buffer), 0);
 
 	if (recvBytes <= 0)
 	{
 		this->clientStates.erase(this->fds[clientIndex].fd); // erase client from the map
+		this->clientBuffers.erase(this->fds[clientIndex].fd);
 		close(this->fds[clientIndex].fd);
 		this->fds.erase(this->fds.begin() + clientIndex);
 		if (recvBytes == 0)
@@ -211,23 +213,31 @@ void Server::handleClientCommunication(size_t clientIndex)
 			perror("recv");
 		return ;
 	}
-	std::string	message(buffer, recvBytes);
-	// std::cout << message << std::endl;
-	if (message[0] == '\n')
-		return ;
-	std::string	command = getCommand(this->fds[clientIndex].fd, message);
-	// fprintf(stderr, "|command: %s|\n", command.c_str());
-	if (command.empty())
-		return ;
-	std::string parameters = getParameters(this->fds[clientIndex].fd, command, message);
-	// fprintf(stderr, "|parameter: %s|\n", parameters.c_str());
-	if (parameters.empty())
-		return ;
-	if (!isClientFullyAuthenticated(this->fds[clientIndex].fd))
-		authenticateClient(this->fds[clientIndex].fd, command, parameters);
-	else{
-		processAuthenticatedClientCommand(this->fds[clientIndex].fd, command, parameters);
-		// handleCommand(this->fds[clientIndex].fd, message);
+	this->clientBuffers[this->fds[clientIndex].fd].append(buffer, recvBytes);
+	if ((end = this->clientBuffers[this->fds[clientIndex].fd].find('\n')) != std::string::npos)
+	{
+		std::string	completeMessage = this->clientBuffers[this->fds[clientIndex].fd].substr(0, end);
+		if (completeMessage[0] == '\n')
+			return ;
+		std::string	command = getCommand(this->fds[clientIndex].fd, completeMessage);
+		// fprintf(stderr, "|command: %s|\n", command.c_str());
+		if (command.empty())
+		{
+			this->clientBuffers[this->fds[clientIndex].fd].clear();
+			return ;
+		}
+		std::string parameters = getParameters(this->fds[clientIndex].fd, command, completeMessage);
+		// fprintf(stderr, "|parameter: %s|\n", parameters.c_str());
+		if (parameters.empty())
+		{
+			this->clientBuffers[this->fds[clientIndex].fd].clear();
+			return ;
+		}
+		if (!isClientFullyAuthenticated(this->fds[clientIndex].fd))
+			authenticateClient(this->fds[clientIndex].fd, command, parameters);
+		else
+			processAuthenticatedClientCommand(this->fds[clientIndex].fd, command, parameters);
+		this->clientBuffers[this->fds[clientIndex].fd].clear();
 	}
 }
 
@@ -248,6 +258,7 @@ void	Server::authenticateClient( int clientSocket, std::string& command, const s
 	if (command.length() != 0)
 		connectionRegistration(clientSocket, command);
 	this->clientStates.insert(std::pair<int, ClientState>(clientSocket, state));
+	this->clientBuffers.insert(std::pair<int, std::string>(clientSocket, ""));
 	if (!this->clientStates[clientSocket].isAuthenticated)
 		handlePassCommand(clientSocket, command, parameters);
 	if (!this->clientStates[clientSocket].hasNick)

@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 10:16:17 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/09 10:22:04 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/09 10:38:11 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ private:
 	std::vector<std::vector<std::string> >	questions;
 
 public:
-	Bot();
-	~Bot();
+	// Bot();
+	// ~Bot();
 
 	void	getQuestions( void);
 	void	botCommand( int clientSocket );

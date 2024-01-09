@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 20:55:14 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/09 16:07:48 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <poll.h>
 # include <vector>
 # include <iostream>
+#include "../../include/Bot/Bot.hpp"
 
 # define BUFFER_SIZE 4096
 
@@ -84,12 +85,13 @@ class Server
 		std::vector<struct pollfd>	fds;
 		std::map<int, ClientState>	clientStates;	
 		std::map<std::string, Channels>	channels;
+		std::map<int, std::string>	clientBuffers;
 
-public:
-
-	void	passCommand( int clientSocket );
-	void	changeClientNickname( int clientSocket, const std::string& parameters );
 	public:
+
+		Bot		bot;
+		void	passCommand( int clientSocket );
+		void	changeClientNickname( int clientSocket, const std::string& parameters );
 
 		void	runServerLoop( void );
 		void	acceptNewClient( void );
@@ -98,9 +100,6 @@ public:
 		bool	isClientFullyAuthenticated( int clientSocket );
 		void	handleClientCommunication( size_t clientIndex );
 		void	parsePortNumberAndPassword( const std::string& s_port, const std::string& serverPassword );
-
-
-
 
 		bool	isNicknameAvailable( const std::string& nickname );
 		bool	handlePassCommand( int clientSocket, std::string& command, const std::string& parameters );
@@ -111,7 +110,7 @@ public:
 		void	sendRegistrationMessages( int clientSocket );
 		void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
 		void	connectionRegistration( int clientSocket, const std::string& command );		void 	send_message(const std::string& msge, int clientSocket);
-		void	 handelJoinchannel(const std::string& msge, int clientSocket);
+		void	handelJoinchannel(const std::string& msge, int clientSocket);
 		void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
 
 };

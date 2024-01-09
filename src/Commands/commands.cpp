@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:28:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 21:14:44 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/09 11:28:28 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 	int cmd	=	command == "PASS" ? 1 :
 				command == "NICK" ? 2 :
 				command == "JOIN" ? 3 :
-				command == "PRIVMSG" ? 4 : 5;
+				command == "PRIVMSG" ? 4 :
+				command == "ANON" ? 5 : 6;
 	switch (cmd)
 	{
 		case 1:
@@ -31,6 +32,9 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 			break;
 		case 4:
 			send_message(command + " " + parameters, clientSocket);
+			break;
+		case 5:
+			this->bot.botCommand(clientSocket);
 			break;
 		default:
 			break;

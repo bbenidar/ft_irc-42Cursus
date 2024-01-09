@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 21:12:10 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/09 16:29:58 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,16 @@ void setNonBlocking(int fd)
 
 bool	validCommands( const std::string& command )
 {
-	std::string	commands[7] = { "PASS",
+	std::string	commands[8] = { "PASS",
 								"NICK",
 								"USER",
 								"JOIN",
 								"PRIVMSG",
 								"PONG",
+								"ASKME",
 								"QUIT"};
 
-	for (int i = 0; i < 7; i++)	
+	for (int i = 0; i < 8; i++)	
 		if (commands[i] == command)
 			return true;
 	return false;
@@ -53,7 +54,7 @@ std::string	getCommand( int clientSocket, const std::string& message )
 		command[i] = std::toupper(command[i]);
 	if (!validCommands(command) || message[0] == ' ')
 	{
-		std::string	unkonwn = ":IRCServer 421 " + command + " :\r\n";
+		std::string	unkonwn = ":IRCServer 421 " + command + " :Unknown command\r\n";
 		send(clientSocket, unkonwn.c_str(), unkonwn.length(), 0);
 		return "";
 	}
@@ -63,8 +64,10 @@ std::string	getCommand( int clientSocket, const std::string& message )
 std::string	getParameters( int clientSocket, const std::string& command, const std::string& message )
 {
 	int start = command.length() + 1;
-	int flag = (message.find('\r', 0) != std::string::npos) ? 2 : 1;
-	std::string	parameters = message.substr(start, message.length() - start - flag);
+	int flag = (message.find('\r', 0) != std::string::npos) ? 1 : 0;
+	std::string	parameters;
+	if (message[start])
+		parameters = message.substr(start, message.length() - start - flag);
 	if ((message[start - 1] != ' ' || parameters.length() == 0))
 	{
 		std::string	notEnoughMsg = ":IRCServer 461 " + command + " :Not enough parameters\r\n";
