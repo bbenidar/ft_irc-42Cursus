@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/09 16:07:48 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/10 13:30:17 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ class Server
 		void	handelJoinchannel(const std::string& msge, int clientSocket);
 		void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
 
+		void	notice( int clientSocket, const std::string& parameter );
 };
 
 

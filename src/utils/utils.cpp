@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/09 16:29:58 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/10 12:57:02 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ bool	validCommands( const std::string& command )
 								"JOIN",
 								"PRIVMSG",
 								"PONG",
-								"ASKME",
+								"NOTICE",
 								"QUIT"};
 
 	for (int i = 0; i < 8; i++)	
