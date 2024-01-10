@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/10 13:30:17 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/10 22:01:06 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # include <poll.h>
 # include <vector>
 # include <iostream>
-#include "../../include/Bot/Bot.hpp"
 
 # define BUFFER_SIZE 4096
 
@@ -89,7 +88,6 @@ class Server
 
 	public:
 
-		Bot		bot;
 		void	passCommand( int clientSocket );
 		void	changeClientNickname( int clientSocket, const std::string& parameters );
 

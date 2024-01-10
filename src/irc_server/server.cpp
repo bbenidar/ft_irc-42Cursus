@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/09 16:29:01 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/10 21:31:40 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	Server::sendRegistrationMessages( int clientSocket )
 	std::string	date(date_time, strlen(date_time) - 1);
 
 	my_send(clientSocket, 1, " :Welcome ", " to the IRCServer !");
-	my_send(clientSocket, 2, " :Your host is ", " , running version 1.0 !");
+	my_send(clientSocket, 2, " :Your host is ", ", running version 1.0 !");
 	my_send(clientSocket, 3, " :This server was created ", date);
 	my_send(clientSocket, 4, " version 1.0", "");
 	my_send(clientSocket, 5, " are supported by this server", "");

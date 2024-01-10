@@ -6,7 +6,7 @@
 #    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/09 10:58:07 by moudrib          ###   ########.fr        #
+#    Updated: 2024/01/10 22:00:46 by moudrib          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,6 @@ FLAGS	=	-Wall -Wextra -Werror -g -std=c++98 -fsanitize=address
 OBJDIR	=	Object_files/
 
 SRC		=	src/main.cpp \
-			src/Bot/Bot.cpp \
 			src/utils/utils.cpp \
 			src/irc_server/server.cpp \
 			src/irc_server/channel.cpp \
@@ -26,8 +25,7 @@ SRC		=	src/main.cpp \
 			src/Commands/commands.cpp \
 			src/Commands/authentication.cpp 
 
-HEADERS =	include/Bot/Bot.hpp \
-			include/utils/utils.hpp \
+HEADERS =	include/utils/utils.hpp \
 			include/utils/colors.hpp \
 			include/irc_server/server.hpp \
 

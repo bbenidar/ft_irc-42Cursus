@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:28:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/10 13:41:02 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/10 22:24:02 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,13 @@ void	Server::notice( int clientSocket, const std::string& parameter )
 		if (parameters.eof())
 			break ;
 	}
-	std::string			noticeMsg = ":" + this->clientStates[clientSocket].nickname
-		+ " NOTICE " + parameter + "\r\n";
+	size_t	nickLength = nickname.length();
+	std::string	noticeMsg = ":" + this->clientStates[clientSocket].nickname + " NOTICE " + parameter.substr(0, nickLength) + " ";
+	if (parameter.find(' ') != std::string::npos)
+		noticeMsg += ":";
+	if (!parameter[nickLength] || !parameter[nickLength + 1])
+		return ;
+	noticeMsg += parameter.substr(nickLength + 1, parameter.length() - nickLength - 1) + "\r\n";
 	std::map<int, ClientState>::iterator	it;
 	for (it = this->clientStates.begin(); it != this->clientStates.end(); it++)
 	{
