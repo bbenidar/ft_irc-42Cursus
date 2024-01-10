@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 21:03:59 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/09 18:26:21 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,88 +112,7 @@ void Server::send_message(const std::string& msge, int clientSocket)
 	return ;
 }
 
-size_t countChanels(const std::string& channels)
-{
-	int chanelnum = 0;
-	for (size_t i = 0; i < channels.length(); i++)
-	{
-		if (channels[i] == ',')
-			chanelnum++;
-	}
-	if (channels[channels.length() - 1] != ',')
-		chanelnum++;
-	return chanelnum;
-}
-std::vector<std::string> split(std::string s, char del)
-{
-	std::vector<std::string> res;
-	std::string tmp;
-	for (size_t i = 0; i < s.length(); i++)
-	{
-		if (s[i] == del)
-		{
-			res.push_back(tmp);
-			tmp = "";
-		}
-		else
-			tmp += s[i];
-	}
-	if (tmp.length() != 0)
-		res.push_back(tmp);
-	return res;
-}
 
-void Server::handelJoinchannel(const std::string& msge, int clientSocket)
-{
-	std::string channelsstr = removeMsgCommand(msge);
-	if (channelsstr.length() == 0)
-		return ;
-	std::string passwords = msge.substr(msge.find(channelsstr) + channelsstr.length() + 1);
-	std::cout << "passwords: " << passwords << std::endl;
-	std::vector<std::string> chanel;
-	std::vector<std::string> pass;
-	chanel = split(channelsstr, ',');
-	if (chanel.size() != 0)
-		pass = split(passwords, ',');
-	for (int i = 0; i < (int)chanel.size(); i++)
-	{
-		std::cout<<"- " << chanel[i] << std::endl;
-		if (!this->channels.count(chanel[i])) {
-            std::vector<ClientState> user;
-            user.push_back(this->clientStates[clientSocket]);
-
-            if (!pass.empty() && i < static_cast<int>(pass.size())) {
-                std::cout << "new channel: " << chanel[i] << " with pass " << pass[i] << std::endl;
-                Channels newChannel(ADMIN, clientSocket, chanel[i], "", pass[i], "", 100, user);
-                this->channels.insert(std::pair<std::string, Channels>(chanel[i], newChannel));
-            } else {
-                std::cout << "new channel no pass " << std::endl;
-                Channels newchanel(ADMIN, clientSocket, chanel[i], "", "", "", 100, user);
-                this->channels.insert(std::pair<std::string, Channels>(chanel[i], newchanel));
-            }
-        }
-		else
-		{
-			if (channels[chanel[i]].getPassMode())
-			{
-				std::cout << "password need" << std::endl;
-			}
-			else{
-				std::cout << "no password need" << std::endl;
-				std::vector<ClientState> user;
-				user.push_back(this->clientStates[clientSocket]);
-				this->channels[chanel[i]].setChannelClients(clientSocket, user);	
-			}
-				
-		}
-	}
-	for (int i = 0; i < (int)chanel.size(); i++)
-	{
-		std::cout << "has pass word "<< (bool)this->channels[chanel[i]].getPassMode() << std::endl;
-	}
-	std::cout << "im here" << std::endl;
-	return ;
-}
 
 void Server::handleClientCommunication(size_t clientIndex)
 {
@@ -227,7 +146,6 @@ void Server::handleClientCommunication(size_t clientIndex)
 		authenticateClient(this->fds[clientIndex].fd, command, parameters);
 	else{
 		processAuthenticatedClientCommand(this->fds[clientIndex].fd, command, parameters);
-		// handleCommand(this->fds[clientIndex].fd, message);
 	}
 }
 

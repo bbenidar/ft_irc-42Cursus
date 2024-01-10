@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 20:55:14 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/10 15:16:53 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,11 @@ class Channels
 		std::string		channelTopic;
 		std::string		channelMode;
 		int		channelUserLimit;
-		std::map<int, std::vector<ClientState> >	channelClients;
 		std::map<int, std::vector<ClientState> >	channelModerators;
 		bool 	channelIsPrivate;
 		
 	public:
+		std::map<int, std::vector<ClientState> >	channelClients;
 		Channels(){};
 		Channels(int usermode,int clientSocket,std::string name, std::string topic, std::string password, std::string mode, int limit, std::vector<ClientState> user);
 		~Channels();
@@ -62,6 +62,7 @@ class Channels
 		std::string	getChannelTopic() const;
 		std::string	getChannelMode() const;
 		std::string	getChannelPrivMode() const;
+		void printChannelClients() const;
 		bool getPassMode() const;
 		std::vector<ClientState>	getChannelClients() const;
 

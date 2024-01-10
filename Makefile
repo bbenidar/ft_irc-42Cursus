@@ -6,7 +6,7 @@
 #    By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/08 20:45:31 by bbenidar         ###   ########.fr        #
+#    Updated: 2024/01/09 19:42:26 by bbenidar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,8 @@ SRC		=	src/main.cpp \
 			src/Commands/Pass.cpp \
 			src/Commands/Nick.cpp \
 			src/Commands/commands.cpp \
-			src/Commands/authentication.cpp 
+			src/Commands/authentication.cpp \
+			src/irc_server/joinCommand.cpp  
 
 EADERS =	include/utils/utils.hpp \
 			include/utils/colors.hpp \
