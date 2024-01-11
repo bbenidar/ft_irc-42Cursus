@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:14:07 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/10 15:17:32 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:53:29 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,28 @@ bool Channels::getPassMode() const
 std::string	Channels::getChannelPassword() const
 {
     return this->channelPassword;
+}
+
+int Channels::getChannelUserLimit() const
+{
+    return this->channelUserLimit;
+}
+
+int Channels::getChannelClientsSize() const
+{
+    return this->channelClients.size();
+}
+
+bool Channels::getifClientIsBanned(int clientSocket) const
+{
+    if (this->channelBannedClients.count(clientSocket))
+        return true;
+    return false;
+}
+
+std::string Channels::getChannelMode() const
+{
+    return this->channelMode;
 }
 
 void Channels::printChannelClients() const

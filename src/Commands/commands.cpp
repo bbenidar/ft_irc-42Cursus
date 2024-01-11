@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:28:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 21:14:44 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:22:07 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 			changeClientNickname(clientSocket, parameters);
 			break;
 		case 3:
-			handelJoinchannel(command + " " + parameters, clientSocket);
+			handelJoinchannel(command + " " + parameters, clientSocket, command);
 			break;
 		case 4:
 			send_message(command + " " + parameters, clientSocket);

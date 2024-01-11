@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/10 15:18:14 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:53:57 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,33 @@ std::string returnpassonyl(const std::string& fullMessage)
 	return pass;
 }
 
-void Server::handelJoinchannel(const std::string& msge, int clientSocket)
+bool checkNumberOfParams(const std::string& msge, int clientSocket, const std::string& command)
 {
-	(void)clientSocket;
+	std::string modifiedMsg = msge;
+	 if (modifiedMsg.size() > command.size() + 1 && modifiedMsg[command.size() + 1] == '#') {
+        modifiedMsg.erase(command.size() + 1, 1);
+    }
+	std::cout << "modifiedMsg: " << modifiedMsg << std::endl;
+	std::vector<std::string> check = split(modifiedMsg, ' ');
+	if (check.size() < 2)
+	{
+		std::string tmp = ":IRCserver 461 " + command +" :Not enough parameters\r\n";
+		send(clientSocket, tmp.c_str(), strlen(tmp.c_str()), 0);
+		return false;
+	}
+	return true;
+
+}
+
+
+
+void Server::handelJoinchannel(const std::string& msge, int clientSocket, const std::string& command)
+{
+	if (!checkNumberOfParams(msge, clientSocket, command))
+		return ;
+
+   
+	// (void)clientSocket;
 	std::string channelsstr = removeMsgCommand(msge);
 	if (channelsstr.length() == 0)
 		return ;
@@ -74,26 +98,42 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket)
 
             if (!pass.empty() && i < static_cast<int>(pass.size())) {
                 std::cout << "new channel: " << chanel[i] << " with pass " << pass[i] << std::endl;
-                Channels newChannel(ADMIN, clientSocket, chanel[i], "", pass[i], "", 100, user);
+                Channels newChannel(ADMIN, clientSocket, chanel[i], "", pass[i], "", 1e9, user);
                 this->channels.insert(std::pair<std::string, Channels>(chanel[i], newChannel));
             } else {
                 std::cout << "new channel no pass " << std::endl;
-                Channels newchanel(ADMIN, clientSocket, chanel[i], "", "", "", 100, user);
+                Channels newchanel(ADMIN, clientSocket, chanel[i], "", "", "", 1e9, user);
                 this->channels.insert(std::pair<std::string, Channels>(chanel[i], newchanel));
             }
         }
 		else
 		{
+			if(channels[chanel[i]].getifClientIsBanned(clientSocket))
+			{
+				std::string tmp = ":IRCserver 474 " + chanel[i] + " :Cannot join channel (+b)\r\n";
+				send(clientSocket, tmp.c_str() , tmp.size(), 0);
+				return ;
+			}
+			if (channels[chanel[i]].getChannelClientsSize() <= channels[chanel[i]].getChannelUserLimit())
+			{
+				std::string tmp = ":IRCserver 471 " + chanel[i] + " :Cannot join channel (+l)\r\n";
+				send(clientSocket, tmp.c_str() , tmp.size(), 0);
+				return ;
+			}
+			
 			if (channels[chanel[i]].getPassMode())
 			{
-                if (pass.empty() || i >= static_cast<int>(pass.size())) {
-                    std::cout << "password need" << std::endl;
-                    return;
-                }
-                else if (pass[i] != channels[chanel[i]].getChannelPassword())
+				if (channels[chanel[i]].getChannelMode() == "i")
+				{
+					std::string tmp = ":IRCserver 473 " + chanel[i] + " :Cannot join channel (+i)\r\n";
+					send(clientSocket, tmp.c_str() , tmp.size(), 0);
+					return ;
+				}
+                if (pass[i] != channels[chanel[i]].getChannelPassword() || pass.empty() || i >= static_cast<int>(pass.size()))
                 {
-                    std::cout << "password wrong" << std::endl;
-                    return;
+					std::string tmp = ":IRCserver 475 " + chanel[i] + " :Cannot join channel (+k)\r\n";
+                    send(clientSocket, tmp.c_str() , tmp.size(), 0);
+                    return ;
                 }
                 else if (pass[i] == channels[chanel[i]].getChannelPassword())
                 {
@@ -115,11 +155,11 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket)
 				
 		}
 	}
-	std::map<std::string, Channels>::iterator it;
-	for (it = channels.begin(); it != channels.end(); ++it) {
-		std::cout << it->first << std::endl;
-		it->second.printChannelClients();
-	}
+	// std::map<std::string, Channels>::iterator it;
+	// for (it = channels.begin(); it != channels.end(); ++it) {
+	// 	std::cout << it->first << std::endl;
+	// 	it->second.printChannelClients();
+	// }
 	std::cout << "im here" << std::endl;
 	return ;
 }
