@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/10 21:31:40 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/13 13:51:48 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	Server::parsePortNumberAndPassword( const std::string& s_port, const std::s
 	std::stringstream	portNumber(s_port);
 
 	portNumber >> port;
-	if (s_port[0] == ' ' || s_port[0] == '-' || !portNumber.eof() || portNumber.fail())
+	if (s_port[0] == ' ' || s_port[0] == '-' || !portNumber.eof() || portNumber.fail() || port < 1024)
 		throw std::invalid_argument(INVALID_PORT_NUMBER "\n  " VALID_PORT_NUMBER);
 	this->port = port;
 	if (password.length() == 0)
@@ -50,13 +50,17 @@ void	Server::sendRegistrationMessages( int clientSocket )
 
 void	Server::setupServerSocket( void )
 {
+	int option_value = 1;
 	this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->serverSocket == -1)
 		throw std::runtime_error(SOCKET_CREATION);
 	// std::cout << BOLD "Socket created\n";
+	if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof(option_value)) < 0)
+		throw std::runtime_error(SETSOCKOPT);
 	setNonBlocking(this->serverSocket);
 
 	sockaddr_in	serverAddress;
+	std::memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_addr.s_addr = INADDR_ANY;
 	serverAddress.sin_port = htons(this->port);
@@ -90,17 +94,17 @@ void	Server::my_send( int clientSocket, int num
 
 void Server::send_message(const std::string& msge, int clientSocket)
 {
-	std::cout << msge << std::endl;
+	// std::cout << msge << std::endl;
 	std::string channel = removeMsgCommand(msge);
 	if (channel.length() == 0)
 		return ;
-	std::cout << "channel: " << channel << std::endl;
-	std::string message = msge.substr(msge.find(channel) + channel.length() + 1);
+	// std::cout << "channel: " << channel << std::endl;
+	std::string message = msge.substr(msge.find(channel) + channel.length() + 1); // + 1
 	if (message.length() == 0)
 		return ;
 	for (size_t i = 0; i < this->fds.size(); i++)
 	{
-		std::cout << "client name: " << this->clientStates[this->fds[i].fd].nickname << std::endl;
+		// std::cout << "client name: " << this->clientStates[this->fds[i].fd].nickname << std::endl;
 		if (this->clientStates[this->fds[i].fd].nickname == channel)
 		{
 			std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel + " :" + message + "\r\n";
@@ -108,7 +112,9 @@ void Server::send_message(const std::string& msge, int clientSocket)
 			return ;
 		}
 	}
-	sendwrongUserMessage(clientSocket, channel);
+	std::string wrongCommandMsg = ":IRCServer 401 " + this->clientStates[clientSocket].nickname + " " + channel + " :No such nick/channel\r\n";
+	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
+	// sendwrongUserMessage(clientSocket, channel);
 	return ;
 }
 
@@ -197,6 +203,7 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket)
 
 void Server::handleClientCommunication(size_t clientIndex)
 {
+	int		commands;
 	size_t 	end;
 	char	buffer[BUFFER_SIZE];
 	int		recvBytes = recv(this->fds[clientIndex].fd, buffer, sizeof(buffer), 0);
@@ -214,9 +221,28 @@ void Server::handleClientCommunication(size_t clientIndex)
 		return ;
 	}
 	this->clientBuffers[this->fds[clientIndex].fd].append(buffer, recvBytes);
-	if ((end = this->clientBuffers[this->fds[clientIndex].fd].find('\n')) != std::string::npos)
+	if ((commands = std::count(this->clientBuffers[this->fds[clientIndex].fd].begin()
+		, this->clientBuffers[this->fds[clientIndex].fd].end(), '\n')) > 1)
+	{
+		std::stringstream	buf(this->clientBuffers[this->fds[clientIndex].fd]);
+		std::string			input;
+		getline(buf, input, '\n');
+		if (input.substr(0, 4) == "PASS")
+			handlePassCommand(this->fds[clientIndex].fd, "PASS", input.substr(5, input.length() - 5));
+		getline(buf, input, '\n');
+		if (input.substr(0, 4) == "NICK")
+			handleNickCommand(this->fds[clientIndex].fd, "NICK", input.substr(5, input.length() - 5));
+		getline(buf, input, '\n');
+		if (input.substr(0, 4) == "USER")
+			handleUserCommand(this->fds[clientIndex].fd, "USER", input.substr(5, input.length() - 5));
+		if (isClientFullyAuthenticated(this->fds[clientIndex].fd))
+		sendRegistrationMessages(this->fds[clientIndex].fd);
+		this->clientBuffers[this->fds[clientIndex].fd].clear();
+	}
+	else if ((end = this->clientBuffers[this->fds[clientIndex].fd].find('\n')) != std::string::npos)
 	{
 		std::string	completeMessage = this->clientBuffers[this->fds[clientIndex].fd].substr(0, end);
+		// fprintf(stderr, "|buffer: %s|\n", this->clientBuffers[this->fds[clientIndex].fd].c_str());
 		if (completeMessage[0] == '\n')
 			return ;
 		std::string	command = getCommand(this->fds[clientIndex].fd, completeMessage);

@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/10 22:01:06 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/13 12:01:53 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,9 @@ class Server
 		void	parsePortNumberAndPassword( const std::string& s_port, const std::string& serverPassword );
 
 		bool	isNicknameAvailable( const std::string& nickname );
-		bool	handlePassCommand( int clientSocket, std::string& command, const std::string& parameters );
-		bool	handleNickCommand( int clientSocket, std::string& command, const std::string& parameters );
-		bool	handleUserCommand( int clientSocket, std::string& command, const std::string& parameters );
+		bool	handlePassCommand( int clientSocket, std::string command, const std::string parameters );
+		bool	handleNickCommand( int clientSocket, std::string command, const std::string parameters );
+		bool	handleUserCommand( int clientSocket, std::string command, const std::string parameters );
 		void	authenticateClient( int clientSocket, std::string& command, const std::string& parameters );
 
 		void	sendRegistrationMessages( int clientSocket );

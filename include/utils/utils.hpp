@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:33:47 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 20:38:31 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/13 12:01:39 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # define VALID_INPUT			"Try ./ft_irc + \"Port number\" + \"Password\""
 
 # define INVALID_PORT_NUMBER	BOLD FG_RED "Error: " FG_WHITE "invalid port number."
-# define VALID_PORT_NUMBER		"The port number must be between 0 and 65535"
+# define VALID_PORT_NUMBER		"The port number must be between 1024 and 65535"
 
 # define SOCKET_CREATION		BOLD FG_RED "Error: creating socket"
 
@@ -31,6 +31,8 @@
 
 # define POLL_FAILURE			BOLD FG_RED "Error: poll() failed"
 
+# define SETSOCKOPT				BOLD FG_RED "Error: setsockopt() failed"
+
 void	setNonBlocking(int fd);
 bool	validCommands( const std::string& command );
 bool	validNickname( int clientSocket, const std::string& nickname );
@@ -39,7 +41,7 @@ std::string	getParameters( int clientSocket, const std::string& command, const s
 // dyawli maytems7och fl merg =====================================================================
 void sendwrongCommandMessage(int clientSocket);
 std::string removeMsgCommand(const std::string& fullMessage);
-void sendwrongUserMessage(int clientSocket, std::string& nickname);
+// void sendwrongUserMessage(int clientSocket, std::string& nickname);
 //=================================================================================================
 
 #endif

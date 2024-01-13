@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 10:24:51 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/07 16:34:22 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/13 10:46:11 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,14 @@ bool Server::isNicknameAvailable( const std::string& newNickname )
 	return true;
 }
 
-bool Server::isClientFullyAuthenticated(int clientSocket) {
+bool Server::isClientFullyAuthenticated(int clientSocket)
+{
 	return clientStates[clientSocket].isAuthenticated &&
 			clientStates[clientSocket].hasNick &&
 			clientStates[clientSocket].hasUser;
 }
 
-bool Server::handlePassCommand( int clientSocket, std::string& command, const std::string& parameters )
+bool Server::handlePassCommand( int clientSocket, std::string command, const std::string parameters )
 {
 	if (this->clientStates[clientSocket].isAuthenticated == true)
 		return true;
@@ -52,7 +53,7 @@ bool Server::handlePassCommand( int clientSocket, std::string& command, const st
 	return true;
 }
 
-bool Server::handleNickCommand( int clientSocket, std::string& command, const std::string& parameters )
+bool Server::handleNickCommand( int clientSocket, std::string command, const std::string parameters )
 {
 	if (this->clientStates[clientSocket].hasNick == true)
 		return true;
@@ -74,7 +75,7 @@ bool Server::handleNickCommand( int clientSocket, std::string& command, const st
 	return true;
 }
 
-bool Server::handleUserCommand( int clientSocket, std::string& command, const std::string& parameters )
+bool Server::handleUserCommand( int clientSocket, std::string command, const std::string parameters )
 {
 	if (this->clientStates[clientSocket].hasUser == true)
 		return true;

@@ -6,14 +6,16 @@
 #    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/10 22:00:46 by moudrib          ###   ########.fr        #
+#    Updated: 2024/01/13 14:48:02 by moudrib          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	ircserv
+BOT		=	emet
 CC		=	c++
 FLAGS	=	-Wall -Wextra -Werror -g -std=c++98 -fsanitize=address
 OBJDIR	=	Object_files/
+B_OBJDIR	=	B_Object_files/
 
 SRC		=	src/main.cpp \
 			src/utils/utils.cpp \
@@ -25,6 +27,9 @@ SRC		=	src/main.cpp \
 			src/Commands/commands.cpp \
 			src/Commands/authentication.cpp 
 
+B_SRC	=	bot/main.cpp \
+			bot/Bot.cpp \
+
 HEADERS =	include/utils/utils.hpp \
 			include/utils/colors.hpp \
 			include/irc_server/server.hpp \
@@ -34,20 +39,33 @@ W		= \x1B[0m
 
 OBJ		= $(addprefix $(OBJDIR), $(SRC:.cpp=.o))
 
+B_OBJ	= $(addprefix $(B_OBJDIR), $(B_SRC:.cpp=.o))
+
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	@$(CC) $(FLAGS) $(OBJ) -o $(NAME)
+
 
 $(OBJDIR)%.o: %.cpp $(HEADERS)
 	@mkdir -p $(@D)
 	@$(CC) $(FLAGS) -c $< -o $@
 	@echo "$(G)Compiling: $(W)$<"
 
+bonus: $(BOT)
+
+$(BOT): $(B_OBJ)
+	@$(CC) $(FLAGS) $(B_OBJ) -o $(BOT)
+
+$(B_OBJDIR)%.o: %.cpp bot/Bot.hpp
+	@mkdir -p $(@D)
+	@$(CC) $(FLAGS) -c $< -o $@
+	@echo "$(G)Compiling: $(W)$<"
+
 clean:
-	@rm -rf $(OBJDIR)
+	@rm -rf $(OBJDIR) $(B_OBJDIR)
 
 fclean: clean
-	@rm -rf $(NAME) $(OBJDIR)
+	@rm -rf $(NAME) $(BOT) $(OBJDIR) $(B_OBJDIR)
 
 re: fclean all
