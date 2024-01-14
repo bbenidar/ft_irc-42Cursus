@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 12:02:32 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/13 12:57:21 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/14 12:29:34 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ private:
 	unsigned short	port;
 	bool			isAuthenticated;
 	std::string		server;
+	std::string		sender;
+	std::string		command;
+	std::string		receiver;
 	std::string		nickname;
 	std::string		serverPassword;
 

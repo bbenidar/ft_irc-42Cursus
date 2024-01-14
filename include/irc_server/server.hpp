@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/13 12:01:53 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/14 14:27:18 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ class Server
 		void	setupServerSocket( void );
 		void	initializePollStructure( int fd );
 		bool	isClientFullyAuthenticated( int clientSocket );
-		void	handleClientCommunication( size_t clientIndex );
+		bool	handleClientCommunication( size_t clientIndex );
 		void	parsePortNumberAndPassword( const std::string& s_port, const std::string& serverPassword );
 
 		bool	isNicknameAvailable( const std::string& nickname );
@@ -112,6 +112,7 @@ class Server
 		void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
 
 		void	notice( int clientSocket, const std::string& parameter );
+		void	botRegistration(size_t clientIndex);
 };
 
 
