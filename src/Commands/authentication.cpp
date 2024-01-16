@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 10:24:51 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/13 10:46:11 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/16 13:00:20 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,35 +81,38 @@ bool Server::handleUserCommand( int clientSocket, std::string command, const std
 		return true;
 	if (command != "USER")
 		return false;
-	size_t	i = 1, pos = 3;
+	size_t	i = 0, pos = 3;
 	std::string	word;
 	std::stringstream	input(parameters);
 
-	while (getline(input, word, ' '))
+	while (!input.eof())
 	{
-		if (i == 1)
-			this->clientStates[clientSocket].username = word;
-		if (i == 2)
-			this->clientStates[clientSocket].hostname = word;
-		if (i == 3)
+		getline(input, word, ' ');
+		if (word.length() > 0)
 		{
-			this->clientStates[clientSocket].servername = word;
-			pos += word.length();
-			break ;
+			i++;
+			if (word[0] == ':')
+			{
+				pos = parameters.find(word) + 1;
+				this->clientStates[clientSocket].realname = parameters.substr(pos, parameters.length() - pos);
+				break ;
+			}
+			else if (i == 1)
+				this->clientStates[clientSocket].username = word;
+			else if (i == 2)
+				this->clientStates[clientSocket].hostname = word;
+			else if (i == 3)
+				this->clientStates[clientSocket].servername = word;
+			else if (i == 4)
+				this->clientStates[clientSocket].realname = word;
 		}
-		i++;
-		pos += word.length();
-	}
-	if (parameters.find(":", pos) == pos)
-	{
-		this->clientStates[clientSocket].realname = parameters.substr(pos + 1, parameters.length() - pos - 2);
-		this->clientStates[clientSocket].hasUser = true;
-		return true;
 	}
 	if (i != 4)
 	{
-		std::string	notEnoughMsg = ":IRCServer 461 " + command + " :Not enough parameters\r\n";
+		std::string    notEnoughMsg = ":IRCServer 461 " + command + " :Not enough parameters\r\n";
 		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
+		return false;
 	}
-	return false;
+	this->clientStates[clientSocket].hasUser = true;
+	return true;
 }

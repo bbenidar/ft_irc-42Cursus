@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/14 14:35:26 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/16 12:28:28 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,22 +60,16 @@ void	Server::setupServerSocket( void )
 	setNonBlocking(this->serverSocket);
 
 	sockaddr_in	serverAddress;
-	std::memset(&serverAddress, 0, sizeof(serverAddress));
+	// std::memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_addr.s_addr = INADDR_ANY;
 	serverAddress.sin_port = htons(this->port);
 	
 	if (bind(this->serverSocket, reinterpret_cast<sockaddr *>(&serverAddress), sizeof(serverAddress)) == -1)
-	{
-		close(this->serverSocket);
 		throw std::runtime_error(SOCKET_BINDING);
-	}
 	// std::cout << BOLD "successfully binding the socket\n";
-	if (listen(this->serverSocket, 1) == -1)
-	{
-		close(this->serverSocket);
+	if (listen(this->serverSocket, 10) == -1)
 		throw std::runtime_error(LISTENING_ERROR);
-	}
 }
 void	Server::my_send( int clientSocket, int num
 	, const std::string& part1, const std::string& part2 )
@@ -130,6 +124,7 @@ size_t countChanels(const std::string& channels)
 		chanelnum++;
 	return chanelnum;
 }
+
 std::vector<std::string> split(std::string s, char del)
 {
 	std::vector<std::string> res;
@@ -201,65 +196,53 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket)
 	return ;
 }
 
-void Server::botRegistration(size_t clientIndex)
+void Server::botRegistration()
 {
-	std::cerr << "|length: " << this->clientBuffers[this->fds[clientIndex].fd].length() << "|\n";
-	std::stringstream	buf(this->clientBuffers[this->fds[clientIndex].fd]);
+	std::stringstream	buf(this->clientBuffers[this->fd]);
 	std::string			input;
 	getline(buf, input, '\n');
 	if (input.substr(0, 4) == "PASS")
-		handlePassCommand(this->fds[clientIndex].fd, "PASS", input.substr(5, input.length() - 5));
+		handlePassCommand(this->fd, "PASS", input.substr(5, input.length() - 5));
 	getline(buf, input, '\n');
 	if (input.substr(0, 4) == "NICK")
-		handleNickCommand(this->fds[clientIndex].fd, "NICK", input.substr(5, input.length() - 5));
+		handleNickCommand(this->fd, "NICK", input.substr(5, input.length() - 5));
 	getline(buf, input, '\n');
 	if (input.substr(0, 4) == "USER")
-		handleUserCommand(this->fds[clientIndex].fd, "USER", input.substr(5, input.length() - 5));
-	if (isClientFullyAuthenticated(this->fds[clientIndex].fd))
-	sendRegistrationMessages(this->fds[clientIndex].fd);
+		handleUserCommand(this->fd, "USER", input.substr(5, input.length() - 5));
+	if (isClientFullyAuthenticated(this->fd))
+	sendRegistrationMessages(this->fd);
 }
 
 bool Server::handleClientCommunication(size_t clientIndex)
 {
-	int		commands;
-	size_t 	end;
+	size_t 	end, commands;
 	char	buffer[BUFFER_SIZE];
-	int		recvBytes = recv(this->fds[clientIndex].fd, buffer, sizeof(buffer), 0);
+	int		recvBytes = recv(this->fd, buffer, sizeof(buffer), 0);
 
 	if (recvBytes <= 0)
 	{
-		this->clientStates.erase(this->fds[clientIndex].fd); // erase client from the map
-		this->clientBuffers.erase(this->fds[clientIndex].fd);
-		close(this->fds[clientIndex].fd);
+		this->clientStates.erase(this->fd);
+		this->clientBuffers.erase(this->fd);
+		close(this->fd);
 		this->fds.erase(this->fds.begin() + clientIndex);
 		std::cout << BOLD FG_RED "➖ Client disconnected\n" FG_DEFAULT;
 		return false;
 	}
-	this->clientBuffers[this->fds[clientIndex].fd].append(buffer, recvBytes);
-	if ((commands = std::count(this->clientBuffers[this->fds[clientIndex].fd].begin()
-		, this->clientBuffers[this->fds[clientIndex].fd].end(), '\n')) > 1)
+	this->clientBuffers[this->fd].append(buffer, recvBytes);
+	if ((commands = std::count(this->clientBuffers[this->fd].begin()
+		, this->clientBuffers[this->fd].end(), '\n')) > 1)
+		return (botRegistration(), true);
+	else if ((end = this->clientBuffers[this->fd].find('\n')) != std::string::npos)
 	{
-		botRegistration(clientIndex);
-		return true;
-	}
-	else if ((end = this->clientBuffers[this->fds[clientIndex].fd].find('\n')) != std::string::npos)
-	{
-		std::string	completeMessage = this->clientBuffers[this->fds[clientIndex].fd].substr(0, end);
-		// fprintf(stderr, "|buffer: %s|\n", this->clientBuffers[this->fds[clientIndex].fd].c_str());
-		if (completeMessage.empty())
-			return true;
-		std::string	command = getCommand(this->fds[clientIndex].fd, completeMessage);
-		// fprintf(stderr, "|command: %s|\n", command.c_str());
-		if (command.empty())
-			return true;
-		std::string parameters = getParameters(this->fds[clientIndex].fd, command, completeMessage);
-		// fprintf(stderr, "|parameter: %s|\n", parameters.c_str());
+		std::string	completeMessage = this->clientBuffers[this->fd].substr(0, end);
+		std::string	command = getCommand(this->fd, completeMessage);
+		std::string parameters = getParameters(this->fd, command, completeMessage);
 		if (parameters.empty())
 			return true;
-		if (!isClientFullyAuthenticated(this->fds[clientIndex].fd))
-			authenticateClient(this->fds[clientIndex].fd, command, parameters);
+		if (!isClientFullyAuthenticated(this->fd))
+			authenticateClient(this->fd, command, parameters);
 		else
-			processAuthenticatedClientCommand(this->fds[clientIndex].fd, command, parameters);
+			processAuthenticatedClientCommand(this->fd, command, parameters);
 		return true;
 	}
 	return false;

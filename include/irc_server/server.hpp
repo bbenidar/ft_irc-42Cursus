@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/14 14:27:18 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/14 18:19:57 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ class Server
 {
 
 	private:
+		int				fd;
 		int				serverSocket;
 		std::string		serverPassword;
 		unsigned short	port;
@@ -112,7 +113,7 @@ class Server
 		void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
 
 		void	notice( int clientSocket, const std::string& parameter );
-		void	botRegistration(size_t clientIndex);
+		void	botRegistration();
 };
 
 

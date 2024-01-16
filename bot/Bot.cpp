@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 12:03:17 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/14 13:03:04 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/14 18:39:04 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	Bot::handleCommands( const std::string& message )
 	if ((pos = message.find("!")) == std::string::npos)
 		return ;
 	this->sender = message.substr(1, pos - 1);
-	std::cerr << "|sender: " << this->sender << "|\n";
+	// std::cerr << "|sender: " << this->sender << "|\n";
 	if ((pos = message.find("PRIVMSG")) == std::string::npos)
 		return ;
 	if ((pos = message.find(":", pos)) == std::string::npos)
@@ -81,15 +81,27 @@ void	Bot::handleCommands( const std::string& message )
 	getline(parameters, this->receiver, ' ');
 	if (this->receiver.length() == 0)
 		return ;
-	std::cerr << "|receiver: " << this->receiver << "|\n";
+	// std::cerr << "|receiver: " << this->receiver << "|\n";
 	pos += this->receiver.length() + 1;
-	if (message.length() <= pos )
+	if (message.length() <= pos)
 		return ;
 	this->command = message.substr(pos, message.length() - pos - flag);
-	std::cerr << "|command: " << this->command << "|\n";
-	std::string	toSend = "PRIVMSG " + this->receiver + " " + this->command + "\r\n";
-	send(this->botSocket, toSend.c_str(), toSend.length(), 0);
-	std::cerr << "toSend: |" << toSend << "|\n";
+	// std::cerr << "|command: " << this->command << "|\n";
+	if (this->command == "usmell")
+	{
+		std::string	usmell = "PRIVMSG " + this->receiver + " You have been pinged. Take a shower you stink\r\n";
+		send(this->botSocket, usmell.c_str(), usmell.length(), 0);
+	}
+	else if (this->command == "stoptalking")
+	{
+		std::string	usmell = "PRIVMSG " + this->receiver + " You have been pinged. You are too noisy\r\n";
+		send(this->botSocket, usmell.c_str(), usmell.length(), 0);
+	}
+	else
+	{
+		std::string	toSend = "PRIVMSG " + this->sender + " Try \"usmell\" or \"stoptalking\"\r\n";
+		send(this->botSocket, toSend.c_str(), toSend.length(), 0);
+	}
 }
 
 void Bot::respondToMessages()

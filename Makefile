@@ -6,14 +6,14 @@
 #    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/13 14:48:02 by moudrib          ###   ########.fr        #
+#    Updated: 2024/01/14 19:27:40 by moudrib          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	ircserv
 BOT		=	emet
 CC		=	c++
-FLAGS	=	-Wall -Wextra -Werror -g -std=c++98 -fsanitize=address
+FLAGS	=	-Wall -Wextra -Werror -std=c++98
 OBJDIR	=	Object_files/
 B_OBJDIR	=	B_Object_files/
 

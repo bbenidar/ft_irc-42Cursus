@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 21:23:25 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/14 14:27:40 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/15 19:47:22 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,10 @@ void	Server::runServerLoop()
 					acceptNewClient();
 				else
 				{
+					this->fd = this->fds[clientIndex].fd;
 					if (handleClientCommunication(clientIndex))
-						if (this->clientBuffers.find(this->fds[clientIndex].fd) != this->clientBuffers.end())
-							this->clientBuffers[this->fds[clientIndex].fd].clear();
+						if (this->clientBuffers.find(this->fd) != this->clientBuffers.end())
+							this->clientBuffers[this->fd].clear();
 				}
 			}
 		}
