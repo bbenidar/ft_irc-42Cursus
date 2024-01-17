@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 12:03:17 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/14 18:39:04 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 09:31:33 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	Bot::botAuthentication()
 	send(this->botSocket, passCommand.c_str(), passCommand.length(), 0);
 	std::string	nickCommand = "NICK " + this->nickname + "\n";
 	send(this->botSocket, nickCommand.c_str(), nickCommand.length(), 0);
-	std::string	userCommand = "USER IRCBot 0 * :IRCBot\n";
+	std::string	userCommand = "USER IRCBot 0 * IRCBot\n";
 	send(this->botSocket, userCommand.c_str(), userCommand.length(), 0);
 }
 
@@ -61,7 +61,7 @@ void	Bot::failedAuthenticationCheck( std::string& message )
 		exit(EXIT_FAILURE);
 	}
 	this->isAuthenticated = true;
-	std::cout << BOLD "Try:   \"PRIVMSG <bot> <someone> <message>\"\n";
+	std::cout << BOLD "Try:   \"PRIVMSG <bot> <someone> <message>\"\n" FG_DEFAULT;
 }
 
 void	Bot::handleCommands( const std::string& message )

@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 10:24:51 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/16 13:00:20 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/16 13:57:14 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,20 +91,18 @@ bool Server::handleUserCommand( int clientSocket, std::string command, const std
 		if (word.length() > 0)
 		{
 			i++;
-			if (word[0] == ':')
-			{
-				pos = parameters.find(word) + 1;
-				this->clientStates[clientSocket].realname = parameters.substr(pos, parameters.length() - pos);
-				break ;
-			}
-			else if (i == 1)
+			if (i == 1)
 				this->clientStates[clientSocket].username = word;
 			else if (i == 2)
 				this->clientStates[clientSocket].hostname = word;
 			else if (i == 3)
 				this->clientStates[clientSocket].servername = word;
 			else if (i == 4)
-				this->clientStates[clientSocket].realname = word;
+			{
+				pos = parameters.find(word) + 1;
+				this->clientStates[clientSocket].realname = (word[0] == ':') ? parameters.substr(pos, parameters.length() - pos) : word;
+				break ;
+			}
 		}
 	}
 	if (i != 4)

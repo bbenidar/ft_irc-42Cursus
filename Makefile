@@ -6,7 +6,7 @@
 #    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/14 19:27:40 by moudrib          ###   ########.fr        #
+#    Updated: 2024/01/16 14:27:34 by moudrib          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ SRC		=	src/main.cpp \
 			src/irc_server/multiplexing.cpp \
 			src/Commands/Pass.cpp \
 			src/Commands/Nick.cpp \
+			src/Commands/Notice.cpp \
 			src/Commands/commands.cpp \
 			src/Commands/authentication.cpp 
 

@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/16 12:28:28 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 11:24:34 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ void	Server::setupServerSocket( void )
 	// std::cout << BOLD "Socket created\n";
 	if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof(option_value)) < 0)
 		throw std::runtime_error(SETSOCKOPT);
-	setNonBlocking(this->serverSocket);
-
+	if (!setNonBlocking(this->serverSocket))
+		return ;
 	sockaddr_in	serverAddress;
 	// std::memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
@@ -74,13 +74,13 @@ void	Server::setupServerSocket( void )
 void	Server::my_send( int clientSocket, int num
 	, const std::string& part1, const std::string& part2 )
 {
-	std::string	hostname = ":IRCserver";
+	std::string	hostname = ":IRCserver ";
 	std::string	nickname = this->clientStates[clientSocket].nickname;
-	std::string	numeric =	(num == 1) ? " 001 " + nickname + part1 + nickname + part2:
-							(num == 2) ? " 002 " + nickname + part1 + hostname.substr(1, 10) + part2:
-							(num == 3) ? " 003 " + nickname + part1 + part2:
-							(num == 4) ? " 004 " + nickname + " " + hostname + part1:
-							(num == 5) ? " 005 " + nickname + part1: "";
+	std::string	numeric =	(num == 1) ? "001 " + nickname + part1 + nickname + part2 :
+							(num == 2) ? "002 " + nickname + part1 + hostname.substr(1, 10) + part2 :
+							(num == 3) ? "003 " + nickname + part1 + part2 :
+							(num == 4) ? "004 " + nickname + " " + hostname + part1 :
+							(num == 5) ? "005 " + nickname + part1 : "";
 	std::string	endPart = "\r\n";
 	std::string	fullMessage = hostname + numeric + endPart;
 	send(clientSocket, fullMessage.c_str(), fullMessage.length(), 0);
@@ -229,22 +229,25 @@ bool Server::handleClientCommunication(size_t clientIndex)
 		return false;
 	}
 	this->clientBuffers[this->fd].append(buffer, recvBytes);
-	if ((commands = std::count(this->clientBuffers[this->fd].begin()
-		, this->clientBuffers[this->fd].end(), '\n')) > 1)
-		return (botRegistration(), true);
-	else if ((end = this->clientBuffers[this->fd].find('\n')) != std::string::npos)
-	{
-		std::string	completeMessage = this->clientBuffers[this->fd].substr(0, end);
-		std::string	command = getCommand(this->fd, completeMessage);
-		std::string parameters = getParameters(this->fd, command, completeMessage);
-		if (parameters.empty())
-			return true;
-		if (!isClientFullyAuthenticated(this->fd))
-			authenticateClient(this->fd, command, parameters);
-		else
-			processAuthenticatedClientCommand(this->fd, command, parameters);
-		return true;
-	}
+	std::cerr << "|message: " << this->clientBuffers[this->fd] << "|\n";
+	
+	// if ((commands = std::count(this->clientBuffers[this->fd].begin()
+	// 	, this->clientBuffers[this->fd].end(), '\n')) > 1)
+	// 	return (botRegistration(), true);
+	// else if ((end = this->clientBuffers[this->fd].find('\n')) != std::string::npos)
+	// {
+	// 	std::string	completeMessage = this->clientBuffers[this->fd].substr(0, end);
+	// 	std::string	command = getCommand(this->fd, completeMessage);
+	// 	std::string parameters = getParameters(this->fd, command, completeMessage);
+	// 	if (parameters.empty())
+	// 		return true;
+	// 	if (!isClientFullyAuthenticated(this->fd))
+	// 		authenticateClient(this->fd, command, parameters);
+	// 	else
+	// 		processAuthenticatedClientCommand(this->fd, command, parameters);
+	// 	return true;
+	// }
+	
 	return false;
 }
 

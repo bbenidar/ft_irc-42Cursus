@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:33:47 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/13 12:01:39 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/16 14:21:46 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 # define SETSOCKOPT				BOLD FG_RED "Error: setsockopt() failed"
 
-void	setNonBlocking(int fd);
+bool	setNonBlocking(int fd);
 bool	validCommands( const std::string& command );
 bool	validNickname( int clientSocket, const std::string& nickname );
 std::string	getCommand( int clientSocket, const std::string& message );

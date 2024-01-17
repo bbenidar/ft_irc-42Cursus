@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/14 16:47:30 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/16 14:25:38 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,11 @@
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
 
-void setNonBlocking(int fd)
+bool setNonBlocking(int fd)
 {
 	if (fcntl(fd, F_SETFL, O_NONBLOCK) == -1)
-	{
-		perror("Error setting non-blocking mode for socket");
-	}
+		return false;
+	return true;
 }
 
 bool	validCommands( const std::string& command )
