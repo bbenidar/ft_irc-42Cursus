@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/17 11:24:34 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 12:41:14 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,26 +196,9 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket)
 	return ;
 }
 
-void Server::botRegistration()
-{
-	std::stringstream	buf(this->clientBuffers[this->fd]);
-	std::string			input;
-	getline(buf, input, '\n');
-	if (input.substr(0, 4) == "PASS")
-		handlePassCommand(this->fd, "PASS", input.substr(5, input.length() - 5));
-	getline(buf, input, '\n');
-	if (input.substr(0, 4) == "NICK")
-		handleNickCommand(this->fd, "NICK", input.substr(5, input.length() - 5));
-	getline(buf, input, '\n');
-	if (input.substr(0, 4) == "USER")
-		handleUserCommand(this->fd, "USER", input.substr(5, input.length() - 5));
-	if (isClientFullyAuthenticated(this->fd))
-	sendRegistrationMessages(this->fd);
-}
-
 bool Server::handleClientCommunication(size_t clientIndex)
 {
-	size_t 	end, commands;
+	size_t 	end = std::string::npos;//, commands;
 	char	buffer[BUFFER_SIZE];
 	int		recvBytes = recv(this->fd, buffer, sizeof(buffer), 0);
 
@@ -229,25 +212,28 @@ bool Server::handleClientCommunication(size_t clientIndex)
 		return false;
 	}
 	this->clientBuffers[this->fd].append(buffer, recvBytes);
-	std::cerr << "|message: " << this->clientBuffers[this->fd] << "|\n";
-	
-	// if ((commands = std::count(this->clientBuffers[this->fd].begin()
-	// 	, this->clientBuffers[this->fd].end(), '\n')) > 1)
-	// 	return (botRegistration(), true);
-	// else if ((end = this->clientBuffers[this->fd].find('\n')) != std::string::npos)
-	// {
-	// 	std::string	completeMessage = this->clientBuffers[this->fd].substr(0, end);
-	// 	std::string	command = getCommand(this->fd, completeMessage);
-	// 	std::string parameters = getParameters(this->fd, command, completeMessage);
-	// 	if (parameters.empty())
-	// 		return true;
-	// 	if (!isClientFullyAuthenticated(this->fd))
-	// 		authenticateClient(this->fd, command, parameters);
-	// 	else
-	// 		processAuthenticatedClientCommand(this->fd, command, parameters);
-	// 	return true;
-	// }
-	
+	// std::cerr << "|message: " << this->clientBuffers[this->fd] << "|\n";
+	if ((end = this->clientBuffers[this->fd].find('\n')) != std::string::npos)
+	{
+		std::string			line;
+		std::stringstream	input(this->clientBuffers[this->fd]);
+		while (!input.eof())
+		{
+			getline(input, line, '\n');
+			if (line.empty())
+				break ;
+			line = line.find('\r') != std::string::npos ? line.substr(0, line.length() - 1) : line;
+			std::string	command = getCommand(this->fd, line);
+			std::string parameters = getParameters(this->fd, command, line);
+			if (parameters.empty())
+				return true;
+			if (!isClientFullyAuthenticated(this->fd))
+				authenticateClient(this->fd, command, parameters);
+			else
+				processAuthenticatedClientCommand(this->fd, command, parameters);
+		}
+		return true;
+	}
 	return false;
 }
 
