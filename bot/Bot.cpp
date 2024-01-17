@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 12:03:17 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/17 09:31:33 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 12:51:24 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	Bot::failedAuthenticationCheck( std::string& message )
 		exit(EXIT_FAILURE);
 	}
 	this->isAuthenticated = true;
-	std::cout << BOLD "Try:   \"PRIVMSG <bot> <someone> <message>\"\n" FG_DEFAULT;
+	std::cout << BOLD "Try:   \"PRIVMSG <bot> <someone> <command>\"\n" FG_DEFAULT;
 }
 
 void	Bot::handleCommands( const std::string& message )

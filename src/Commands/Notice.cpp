@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 14:27:07 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/16 14:55:39 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 13:03:14 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <arpa/inet.h>
 #include "../../include/irc_server/server.hpp"
 
-void	Server::notice( int clientSocket, const std::string& parameter )
+void	Server::handleNoticeCommand( int clientSocket, const std::string& parameter )
 {
 	std::string			nickname;
 	std::stringstream	parameters(parameter);

@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/14 18:19:57 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 14:11:02 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,8 @@ class Server
 		unsigned short	port;
 		std::vector<struct pollfd>	fds;
 		std::map<int, ClientState>	clientStates;	
-		std::map<std::string, Channels>	channels;
 		std::map<int, std::string>	clientBuffers;
+		std::map<std::string, Channels>	channels;
 
 	public:
 
@@ -108,12 +108,11 @@ class Server
 
 		void	sendRegistrationMessages( int clientSocket );
 		void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
-		void	connectionRegistration( int clientSocket, const std::string& command );		void 	send_message(const std::string& msge, int clientSocket);
+		void 	send_message(const std::string& msge, int clientSocket);
 		void	handelJoinchannel(const std::string& msge, int clientSocket);
 		void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
 
-		void	notice( int clientSocket, const std::string& parameter );
-		void	botRegistration();
+		void	handleNoticeCommand( int clientSocket, const std::string& parameter );
 };
 
 

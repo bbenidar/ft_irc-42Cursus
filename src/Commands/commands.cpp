@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:28:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/16 14:27:53 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 13:03:19 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 			send_message(command + " " + parameters, clientSocket);
 			break;
 		case 5:
-			notice(clientSocket, parameters);
+			handleNoticeCommand(clientSocket, parameters);
 			break;
 		default:
 			break;

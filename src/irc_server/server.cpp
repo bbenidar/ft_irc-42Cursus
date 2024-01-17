@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/17 12:41:14 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 14:09:27 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ void	Server::setupServerSocket( void )
 	if (listen(this->serverSocket, 10) == -1)
 		throw std::runtime_error(LISTENING_ERROR);
 }
+
 void	Server::my_send( int clientSocket, int num
 	, const std::string& part1, const std::string& part2 )
 {
@@ -198,7 +199,7 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket)
 
 bool Server::handleClientCommunication(size_t clientIndex)
 {
-	size_t 	end = std::string::npos;//, commands;
+	size_t 	end = std::string::npos;
 	char	buffer[BUFFER_SIZE];
 	int		recvBytes = recv(this->fd, buffer, sizeof(buffer), 0);
 
@@ -237,24 +238,20 @@ bool Server::handleClientCommunication(size_t clientIndex)
 	return false;
 }
 
-void	Server::connectionRegistration( int clientSocket, const std::string& command )
-{
-	std::string	registrationMsg = ":IRCServer 462 " + command + " :You have not registered\r\n";
-	if ((command == "NICK" && !this->clientStates[clientSocket].isAuthenticated)
-		|| (command != "PASS" && command != "NICK" && command != "USER"
-		&& !isClientFullyAuthenticated(clientSocket)))
-		send(clientSocket, registrationMsg.c_str(), registrationMsg.length(), 0);
-}
-
-
 void	Server::authenticateClient( int clientSocket, std::string& command, const std::string& parameters  )
 {
 	ClientState	state;
+	bool		isAuthenticated = this->clientStates[clientSocket].isAuthenticated;
 
-	if (command.length() != 0)
-		connectionRegistration(clientSocket, command);
+	std::string	registrationMsg = ":IRCServer 462 " + command + " :You have not registered\r\n";
+	if ((command == "NICK" && !isAuthenticated) || (command == "USER" && !isAuthenticated)
+		|| (command != "PASS" && command != "NICK" && command != "USER"
+		&& !isClientFullyAuthenticated(clientSocket)))
+	{
+		send(clientSocket, registrationMsg.c_str(), registrationMsg.length(), 0);
+		return ;
+	}
 	this->clientStates.insert(std::pair<int, ClientState>(clientSocket, state));
-	this->clientBuffers.insert(std::pair<int, std::string>(clientSocket, ""));
 	if (!this->clientStates[clientSocket].isAuthenticated)
 		handlePassCommand(clientSocket, command, parameters);
 	if (!this->clientStates[clientSocket].hasNick)
