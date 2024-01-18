@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:14:07 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/11 21:53:29 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:23:58 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,4 +129,9 @@ void Channels::printChannelClients() const
             std::cout << "client servername: " << it2->servername << std::endl;
         }
     }
+}
+
+std::map<int, std::vector<ClientState> > Channels::getChannelClients() const
+{
+    return this->channelClients;
 }

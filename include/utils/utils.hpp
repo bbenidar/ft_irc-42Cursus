@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:33:47 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 20:38:31 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 14:41:42 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ std::string	getParameters( int clientSocket, const std::string& command, const s
 void sendwrongCommandMessage(int clientSocket);
 std::string removeMsgCommand(const std::string& fullMessage);
 void sendwrongUserMessage(int clientSocket, std::string& nickname);
+std::vector<std::string> split(std::string s, char del);
+void noMessageToSend(int clientSocket);
 //=================================================================================================
-
 #endif

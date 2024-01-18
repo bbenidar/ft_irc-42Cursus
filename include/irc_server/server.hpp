@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/11 21:40:08 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:23:54 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ struct ClientState {
 	bool isAuthenticated;
 	bool hasNick;
 	bool hasUser;
+	int clientSocket;
 	std::string nickname;
 	std::string username;
 	std::string realname;
@@ -69,7 +70,7 @@ class Channels
 		int getChannelClientsSize() const;
 		void printChannelClients() const;
 		bool getPassMode() const;
-		std::vector<ClientState>	getChannelClients() const;
+		std::map<int, std::vector<ClientState> >	getChannelClients() const;
 
 };
 

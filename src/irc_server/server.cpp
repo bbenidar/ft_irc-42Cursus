@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/09 18:26:21 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:24:54 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,24 +91,62 @@ void	Server::my_send( int clientSocket, int num
 void Server::send_message(const std::string& msge, int clientSocket)
 {
 	std::cout << msge << std::endl;
-	std::string channel = removeMsgCommand(msge);
-	if (channel.length() == 0)
+	std::string channels = removeMsgCommand(msge);
+	if (channels.length() == 0)
 		return ;
-	std::cout << "channel: " << channel << std::endl;
-	std::string message = msge.substr(msge.find(channel) + channel.length() + 1);
+	std::string message = msge.substr(msge.find(channels) + channels.length() + 1);
 	if (message.length() == 0)
-		return ;
-	for (size_t i = 0; i < this->fds.size(); i++)
 	{
-		std::cout << "client name: " << this->clientStates[this->fds[i].fd].nickname << std::endl;
-		if (this->clientStates[this->fds[i].fd].nickname == channel)
-		{
-			std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel + " :" + message + "\r\n";
-			send(this->fds[i].fd, msg.c_str(), msg.length(), 0);
-			return ;
-		}
+		noMessageToSend(clientSocket);
+		return ;
 	}
-	sendwrongUserMessage(clientSocket, channel);
+	std::vector<std::string> channel;
+	channel = split(channels, ',');
+	std::cout << "channel size : " << channel.size() << std::endl;
+	for (size_t i = 0; i < channel.size(); i++)
+	{	
+		if (channel[i].at(0) == '#')
+			{
+				channel[i].erase(0, 1);
+				std::cout<< "channel[i] hna: " << channel[i] << std::endl;
+				std::map<std::string, Channels>::iterator it;
+				for (it = this->channels.begin(); it != this->channels.end(); it++)
+				{
+					// if (it->first == channel[i])
+					// {
+					// 	std::cout << "channel found" << std::endl;
+					// 	std::map<int, std::vector<ClientState> > tmp = it->getChannelClients();
+					// 	for (size_t j = 0; j < tmp.size(); j++)
+					// 	{
+					// 		if (tmp[j].nickname == this->clientStates[clientSocket].nickname)
+					// 			continue ;
+					// 		std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel[i] + " :" + message + "\r\n";
+					// 		send(tmp[j].clientSocket, msg.c_str(), msg.length(), 0);
+					// 	}
+					// 	return ;
+					// }
+				}
+			}
+			else
+			{
+				for (size_t j = 0; j < this->fds.size(); j++)
+				{
+					if (this->clientStates[this->fds[j].fd].nickname == channel[i])
+					{
+						std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel[i] + " :" + message + "\r\n";
+						send(this->fds[j].fd, msg.c_str(), msg.length(), 0);
+						return ;
+					}
+					if (this->clientStates[this->fds[j].fd].nickname == channel[i])
+					{
+						std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel[i] + " :" + message + "\r\n";
+						send(this->fds[j].fd, msg.c_str(), msg.length(), 0);
+						return ;
+					}
+				}
+			}
+		sendwrongUserMessage(clientSocket, channel[i]);
+	}
 	return ;
 }
 

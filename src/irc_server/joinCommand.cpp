@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/11 21:53:57 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 11:46:52 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket, const 
 		pass = split(passwords, ',');
 	for (int i = 0; i < (int)chanel.size(); i++)
 	{
+		if (chanel[i].at(0) == '#')
+			chanel[i].erase(0, 1);
 		std::cout<<"- " << chanel[i] << std::endl;
 		if (!this->channels.count(chanel[i])) {
             std::vector<ClientState> user;
@@ -114,7 +116,7 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket, const 
 				send(clientSocket, tmp.c_str() , tmp.size(), 0);
 				return ;
 			}
-			if (channels[chanel[i]].getChannelClientsSize() <= channels[chanel[i]].getChannelUserLimit())
+			if (channels[chanel[i]].getChannelClientsSize() >= channels[chanel[i]].getChannelUserLimit())
 			{
 				std::string tmp = ":IRCserver 471 " + chanel[i] + " :Cannot join channel (+l)\r\n";
 				send(clientSocket, tmp.c_str() , tmp.size(), 0);

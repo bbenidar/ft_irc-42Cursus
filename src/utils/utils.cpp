@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/08 21:12:10 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:25:28 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,13 @@ void sendwrongCommandMessage(int clientSocket)
 
 void sendwrongUserMessage(int clientSocket, std::string& nickname)
 {
-	std::string wrongCommandMsg = FG_RED "   no user with this nickname : " FG_DEFAULT + nickname + "\n";
+	std::string wrongCommandMsg = ":IRCServer 401 " + nickname + " :No such nick/channel\r\n";
+	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
+}
+
+void noMessageToSend(int clientSocket)
+{
+	std::string wrongCommandMsg = ":IRCServer 412 :No text to send\r\n";
 	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
 }
 

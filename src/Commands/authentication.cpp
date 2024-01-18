@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   authentication.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 10:24:51 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/07 16:34:22 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/18 12:03:56 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ bool Server::handleUserCommand( int clientSocket, std::string& command, const st
 	size_t	i = 1, pos = 3;
 	std::string	word;
 	std::stringstream	input(parameters);
-
+	this->clientStates[clientSocket].clientSocket = clientSocket;
 	while (getline(input, word, ' '))
 	{
 		if (i == 1)
