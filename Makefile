@@ -27,7 +27,8 @@ SRC		=	src/main.cpp \
 			src/Commands/Nick.cpp \
 			src/Commands/Notice.cpp \
 			src/Commands/commands.cpp \
-			src/Commands/authentication.cpp 
+			src/Commands/authentication.cpp \
+			src/irc_server/joinCommand.cpp  
 
 B_SRC	=	bot/main.cpp \
 			bot/Bot.cpp \

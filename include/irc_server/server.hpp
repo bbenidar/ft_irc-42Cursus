@@ -42,8 +42,10 @@ class Channels
 		std::string		channelTopic;
 		std::string		channelMode;
 		int		channelUserLimit;
-		std::map<int, std::vector<ClientState> >	channelClients;
 		std::map<int, std::vector<ClientState> >	channelModerators;
+		std::map<int, std::vector<ClientState> >	channelClients;
+		std::map<int, std::vector<ClientState> >	channelBannedClients;
+		std::map<int, std::vector<ClientState> >	channelInvitedClients;
 		bool 	channelIsPrivate;
 		
 	public:
@@ -62,6 +64,10 @@ class Channels
 		std::string	getChannelTopic() const;
 		std::string	getChannelMode() const;
 		std::string	getChannelPrivMode() const;
+		bool	getifClientIsBanned(int clientSocket) const;
+		int		getChannelUserLimit() const;
+		int getChannelClientsSize() const;
+		void printChannelClients() const;
 		bool getPassMode() const;
 		std::vector<ClientState>	getChannelClients() const;
 

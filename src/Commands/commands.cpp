@@ -28,7 +28,7 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 			changeClientNickname(clientSocket, parameters);
 			break;
 		case 3:
-			handelJoinchannel(command + " " + parameters, clientSocket);
+			handelJoinchannel(command + " " + parameters, clientSocket, command);
 			break;
 		case 4:
 			send_message(command + " " + parameters, clientSocket);

@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 23:14:07 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/08 16:57:49 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:53:29 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,3 +82,51 @@ bool Channels::getPassMode() const
     return this->channelIsPrivate;
 }
 
+std::string	Channels::getChannelPassword() const
+{
+    return this->channelPassword;
+}
+
+int Channels::getChannelUserLimit() const
+{
+    return this->channelUserLimit;
+}
+
+int Channels::getChannelClientsSize() const
+{
+    return this->channelClients.size();
+}
+
+bool Channels::getifClientIsBanned(int clientSocket) const
+{
+    if (this->channelBannedClients.count(clientSocket))
+        return true;
+    return false;
+}
+
+std::string Channels::getChannelMode() const
+{
+    return this->channelMode;
+}
+
+void Channels::printChannelClients() const
+{
+    std::cout << "channel name: " << this->channelName << std::endl;
+    std::cout << "channel topic: " << this->channelTopic << std::endl;
+    std::cout << "channel password: " << this->channelPassword << std::endl;
+    std::cout << "channel mode: " << this->channelMode << std::endl;
+    std::cout << "channel user limit: " << this->channelUserLimit << std::endl;
+    std::cout << "channel clients: " << std::endl;
+    for (std::map<int, std::vector<ClientState> >::const_iterator it = this->channelClients.begin(); it != this->channelClients.end(); ++it)
+    {
+        std::cout << "client socket: " << it->first << std::endl;
+        for (std::vector<ClientState>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+        {
+            std::cout << "client nickname: " << it2->nickname << std::endl;
+            std::cout << "client username: " << it2->username << std::endl;
+            std::cout << "client realname: " << it2->realname << std::endl;
+            std::cout << "client hostname: " << it2->hostname << std::endl;
+            std::cout << "client servername: " << it2->servername << std::endl;
+        }
+    }
+}
