@@ -6,13 +6,24 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:29:20 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/10 12:44:41 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 15:40:58 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <arpa/inet.h>
 #include "../../include/utils/utils.hpp"
 #include "../../include/irc_server/server.hpp"
+
+bool Server::isNicknameAvailable( const std::string& newNickname )
+{
+	std::map<int, ClientState>::iterator	it;
+	for (it = this->clientStates.begin(); it != this->clientStates.end(); it++)
+	{
+		if (it->second.nickname == newNickname)
+			return false;
+	}
+	return true;
+}
 
 void	Server::changeClientNickname( int clientSocket, const std::string& nickname )
 {

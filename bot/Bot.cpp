@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 12:03:17 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/17 12:51:24 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 14:17:08 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	Bot::connectToServer( void )
 		throw std::runtime_error(SOCKET_CREATION);
 
 	sockaddr_in	socketAddress;
-	std::memset(&socketAddress, 0, sizeof(socketAddress));
 	socketAddress.sin_family = AF_INET;
 	socketAddress.sin_port = htons(this->port);
 

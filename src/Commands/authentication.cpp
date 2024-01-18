@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 10:24:51 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/16 13:57:14 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/17 15:40:49 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,6 @@
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
 #include "../../include/irc_server/server.hpp"
-
-bool Server::isNicknameAvailable( const std::string& newNickname )
-{
-	std::map<int, ClientState>::iterator	it;
-	for (it = this->clientStates.begin(); it != this->clientStates.end(); it++)
-	{
-		if (it->second.nickname == newNickname)
-			return false;
-	}
-	return true;
-}
 
 bool Server::isClientFullyAuthenticated(int clientSocket)
 {

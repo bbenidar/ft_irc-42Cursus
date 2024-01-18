@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/16 14:25:38 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/18 09:37:40 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ bool	validNickname( int clientSocket, const std::string& nickname )
 	{
 		if (!isalnum(nickname[i]) && nickname[i] != '_' && nickname[i] != '\n')
 		{
-			std::string	noNicknameMsg = ":IRCServer 431 NICK :Erroneus nickname\r\n";
+			std::string	noNicknameMsg = ":IRCServer 432 NICK :Erroneus nickname\r\n";
 			send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);
 			return false;
 		}
