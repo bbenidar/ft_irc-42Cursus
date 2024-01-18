@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:33:47 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/18 14:41:42 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:44:48 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # define VALID_INPUT			"Try ./ft_irc + \"Port number\" + \"Password\""
 
 # define INVALID_PORT_NUMBER	BOLD FG_RED "Error: " FG_WHITE "invalid port number."
-# define VALID_PORT_NUMBER		"The port number must be between 0 and 65535"
+# define VALID_PORT_NUMBER		"The port number must be between 1024 and 65535"
 
 # define SOCKET_CREATION		BOLD FG_RED "Error: creating socket"
 
@@ -31,7 +31,9 @@
 
 # define POLL_FAILURE			BOLD FG_RED "Error: poll() failed"
 
-void	setNonBlocking(int fd);
+# define SETSOCKOPT				BOLD FG_RED "Error: setsockopt() failed"
+
+bool	setNonBlocking(int fd);
 bool	validCommands( const std::string& command );
 bool	validNickname( int clientSocket, const std::string& nickname );
 std::string	getCommand( int clientSocket, const std::string& message );

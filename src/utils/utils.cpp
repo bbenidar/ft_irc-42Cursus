@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/18 15:25:28 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:46:47 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,25 @@
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
 
-void setNonBlocking(int fd)
+bool setNonBlocking(int fd)
 {
 	if (fcntl(fd, F_SETFL, O_NONBLOCK) == -1)
-	{
-		perror("Error setting non-blocking mode for socket");
-	}
+		return false;
+	return true;
 }
 
 bool	validCommands( const std::string& command )
 {
-	std::string	commands[7] = { "PASS",
+	std::string	commands[8] = { "PASS",
 								"NICK",
 								"USER",
 								"JOIN",
 								"PRIVMSG",
 								"PONG",
+								"NOTICE",
 								"QUIT"};
 
-	for (int i = 0; i < 7; i++)	
+	for (int i = 0; i < 8; i++)	
 		if (commands[i] == command)
 			return true;
 	return false;
@@ -46,6 +46,8 @@ std::string	getCommand( int clientSocket, const std::string& message )
 	std::string	command;
 	std::stringstream	input(message);
 
+	if (message.empty())
+			return "";
 	getline(input, command, ' ');
 	int lastChar = command.length() - 1;
 	command = (command[lastChar] == '\n') ? command.substr(0, lastChar) : command;
@@ -53,7 +55,7 @@ std::string	getCommand( int clientSocket, const std::string& message )
 		command[i] = std::toupper(command[i]);
 	if (!validCommands(command) || message[0] == ' ')
 	{
-		std::string	unkonwn = ":IRCServer 421 " + command + " :\r\n";
+		std::string	unkonwn = ":IRCServer 421 " + command + " :Unknown command\r\n";
 		send(clientSocket, unkonwn.c_str(), unkonwn.length(), 0);
 		return "";
 	}
@@ -62,10 +64,14 @@ std::string	getCommand( int clientSocket, const std::string& message )
 
 std::string	getParameters( int clientSocket, const std::string& command, const std::string& message )
 {
+	if (command.empty())
+		return "";
 	int start = command.length() + 1;
-	int flag = (message.find('\r', 0) != std::string::npos) ? 2 : 1;
-	std::string	parameters = message.substr(start, message.length() - start - flag);
-	if ((message[start - 1] != ' ' || parameters.length() == 0))
+	int flag = (message.find('\r', 0) != std::string::npos) ? 1 : 0;
+	std::string	parameters;
+	if (message[start])
+		parameters = message.substr(start, message.length() - start - flag);
+	if ((message[start - 1] != ' ' || parameters.length() == 0) && command != "NOTICE")
 	{
 		std::string	notEnoughMsg = ":IRCServer 461 " + command + " :Not enough parameters\r\n";
 		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
@@ -128,7 +134,7 @@ bool	validNickname( int clientSocket, const std::string& nickname )
 	{
 		if (!isalnum(nickname[i]) && nickname[i] != '_' && nickname[i] != '\n')
 		{
-			std::string	noNicknameMsg = ":IRCServer 431 NICK :Erroneus nickname\r\n";
+			std::string	noNicknameMsg = ":IRCServer 432 NICK :Erroneus nickname\r\n";
 			send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);
 			return false;
 		}

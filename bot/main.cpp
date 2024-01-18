@@ -5,30 +5,29 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/18 16:09:14 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/14 19:23:50 by moudrib          ###   ########.fr       */
+/*   Created: 2024/01/11 12:01:54 by moudrib           #+#    #+#             */
+/*   Updated: 2024/01/14 13:02:58 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
 #include <sstream>
+#include <iostream>
 #include <unistd.h>
-#include "../include/utils/utils.hpp"
-#include "../include/utils/colors.hpp"
-#include "../include/irc_server/server.hpp"
+#include <arpa/inet.h>
+#include "Bot.hpp"
 
 int main( int argc, char **argv )
 {
-	Server	server;
+	Bot	bot;
 	try
 	{
-		if (argc != 3)
+		if (argc != 4)
 			throw std::invalid_argument(INVALID_ARGUMENTS "\n   " VALID_INPUT);
-		std::string	portNumber = argv[1];
-		std::string	serverPassword = argv[2];
-		server.parsePortNumberAndPassword(portNumber, serverPassword);
-		server.setupServerSocket();
-		server.runServerLoop();
+		bot.parseArguments(argv[1], argv[2], argv[3]);
+		bot.connectToServer();
+		bot.botAuthentication();
+		bot.respondToMessages();
+
 	}
 	catch (const std::exception& e)
 	{

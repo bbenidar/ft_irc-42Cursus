@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   joinCommand.cpp                                    :+:      :+:    :+:   */
+/*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/18 11:46:52 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:01:29 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
 #include "../../include/irc_server/server.hpp"
+#include "../../include/Channels/channels.hpp"
 
 
 
