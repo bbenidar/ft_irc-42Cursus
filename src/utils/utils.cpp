@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/18 15:46:47 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/19 11:59:59 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ std::string	getParameters( int clientSocket, const std::string& command, const s
 	std::string	parameters;
 	if (message[start])
 		parameters = message.substr(start, message.length() - start - flag);
-	if ((message[start - 1] != ' ' || parameters.length() == 0) && command != "NOTICE")
+	if (((message[start - 1] != ' ' || parameters.length() == 0) && command != "NOTICE"))
 	{
 		std::string	notEnoughMsg = ":IRCServer 461 " + command + " :Not enough parameters\r\n";
 		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
