@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/18 16:01:29 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 22:07:17 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ bool checkNumberOfParams(const std::string& msge, int clientSocket, const std::s
 	std::vector<std::string> check = split(modifiedMsg, ' ');
 	if (check.size() < 2)
 	{
-		std::string tmp = ":IRCserver 461 " + command +" :Not enough parameters\r\n";
+		std::string tmp = ":Webserv 461 " + command +" :Not enough parameters\r\n";
 		send(clientSocket, tmp.c_str(), strlen(tmp.c_str()), 0);
 		return false;
 	}
@@ -113,13 +113,13 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket, const 
 		{
 			if(channels[chanel[i]].getifClientIsBanned(clientSocket))
 			{
-				std::string tmp = ":IRCserver 474 " + chanel[i] + " :Cannot join channel (+b)\r\n";
+				std::string tmp = ":Webserv 474 " + chanel[i] + " :Cannot join channel (+b)\r\n";
 				send(clientSocket, tmp.c_str() , tmp.size(), 0);
 				return ;
 			}
 			if (channels[chanel[i]].getChannelClientsSize() >= channels[chanel[i]].getChannelUserLimit())
 			{
-				std::string tmp = ":IRCserver 471 " + chanel[i] + " :Cannot join channel (+l)\r\n";
+				std::string tmp = ":Webserv 471 " + chanel[i] + " :Cannot join channel (+l)\r\n";
 				send(clientSocket, tmp.c_str() , tmp.size(), 0);
 				return ;
 			}
@@ -128,13 +128,13 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket, const 
 			{
 				if (channels[chanel[i]].getChannelMode() == "i")
 				{
-					std::string tmp = ":IRCserver 473 " + chanel[i] + " :Cannot join channel (+i)\r\n";
+					std::string tmp = ":Webserv 473 " + chanel[i] + " :Cannot join channel (+i)\r\n";
 					send(clientSocket, tmp.c_str() , tmp.size(), 0);
 					return ;
 				}
                 if (pass[i] != channels[chanel[i]].getChannelPassword() || pass.empty() || i >= static_cast<int>(pass.size()))
                 {
-					std::string tmp = ":IRCserver 475 " + chanel[i] + " :Cannot join channel (+k)\r\n";
+					std::string tmp = ":Webserv 475 " + chanel[i] + " :Cannot join channel (+k)\r\n";
                     send(clientSocket, tmp.c_str() , tmp.size(), 0);
                     return ;
                 }

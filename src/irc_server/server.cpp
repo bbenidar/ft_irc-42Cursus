@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/18 16:16:59 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 22:07:17 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	Server::sendRegistrationMessages( int clientSocket )
 	char* date_time = ctime(&now);
 	std::string	date(date_time, strlen(date_time) - 1);
 
-	my_send(clientSocket, 1, " :Welcome ", " to the IRCServer !");
+	my_send(clientSocket, 1, " :Welcome ", " to the Webserv !");
 	my_send(clientSocket, 2, " :Your host is ", ", running version 1.0 !");
 	my_send(clientSocket, 3, " :This server was created ", date);
 	my_send(clientSocket, 4, " version 1.0", "");
@@ -74,7 +74,7 @@ void	Server::setupServerSocket( void )
 void	Server::my_send( int clientSocket, int num
 	, const std::string& part1, const std::string& part2 )
 {
-	std::string	hostname = ":IRCserver ";
+	std::string	hostname = ":Webserv ";
 	std::string	nickname = this->clientStates[clientSocket].nickname;
 	std::string	numeric =	(num == 1) ? "001 " + nickname + part1 + nickname + part2 :
 							(num == 2) ? "002 " + nickname + part1 + hostname.substr(1, 10) + part2 :
@@ -132,7 +132,7 @@ void	Server::authenticateClient( int clientSocket, std::string& command, const s
 	ClientState	state;
 	bool		isAuthenticated = this->clientStates[clientSocket].isAuthenticated;
 
-	std::string	registrationMsg = ":IRCServer 462 " + command + " :You have not registered\r\n";
+	std::string	registrationMsg = ":Webserv 462 " + command + " :You have not registered\r\n";
 	if ((command == "NICK" && !isAuthenticated) || (command == "USER" && !isAuthenticated)
 		|| (command != "PASS" && command != "NICK" && command != "USER"
 		&& !isClientFullyAuthenticated(clientSocket)))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   authentication.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 10:24:51 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/18 15:45:29 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/18 22:07:17 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ bool Server::handlePassCommand( int clientSocket, std::string command, const std
 		password = parameters.substr(1, parameters.length() - 1);
 	if (password != this->serverPassword)
 	{
-		std::string passwordMsg = ":IRCServer 464 PASS :Password incorrect\r\n";
+		std::string passwordMsg = ":Webserv 464 PASS :Password incorrect\r\n";
 		send(clientSocket, passwordMsg.c_str(), passwordMsg.length(), 0);
 		return false;
 	}
@@ -55,7 +55,7 @@ bool Server::handleNickCommand( int clientSocket, std::string command, const std
 		return false;
 	if (!isNicknameAvailable(nickname))
 	{
-		std::string	alreadyinuseMsg = ":IRCServer 433 " + nickname + " :Nickname is already in use\r\n";
+		std::string	alreadyinuseMsg = ":Webserv 433 " + nickname + " :Nickname is already in use\r\n";
 		send(clientSocket, alreadyinuseMsg.c_str(), alreadyinuseMsg.length(), 0);
 		return false;
 	}
@@ -96,7 +96,7 @@ bool Server::handleUserCommand( int clientSocket, std::string command, const std
 	}
 	if (i != 4)
 	{
-		std::string    notEnoughMsg = ":IRCServer 461 " + command + " :Not enough parameters\r\n";
+		std::string    notEnoughMsg = ":Webserv 461 " + command + " :Not enough parameters\r\n";
 		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
 		return false;
 	}
