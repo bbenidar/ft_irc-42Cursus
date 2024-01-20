@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:00:18 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/20 13:53:24 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/20 21:35:25 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ class Channels
 		int getChannelClientsSize() const;
 		void printChannelClients() const;
 		bool getPassMode() const;
+		void KickClient(int clientSocket);
 		std::map<int, std::vector<ClientState> >	getChannelClients() const;
 
 };

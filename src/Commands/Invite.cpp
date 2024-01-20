@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 19:38:30 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/20 14:12:05 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/20 19:51:08 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,8 @@
 #include "../../include/Channels/channels.hpp"
 
 
-void Server::handleInvitechannel(const std::string& msge, int clientSocket, const std::string& command)
+void Server::handleInvitechannel(const std::string& msge, int clientSocket)
 {
-    (void)command;
-    (void)clientSocket;
    	std::cout << msge << std::endl;
 	std::string clientName = removeMsgCommand(msge);
 	if (clientName.size() == 0)

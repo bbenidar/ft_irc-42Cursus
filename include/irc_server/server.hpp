@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/19 19:40:45 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/20 19:51:39 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ class Server
 		void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
 		void 	send_message(const std::string& msge, int clientSocket);
 		void	handleJoinchannel(const std::string& msge, int clientSocket, const std::string& command);
-		void 	handleInvitechannel(const std::string& msge, int clientSocket, const std::string& command);
+		void 	handleInvitechannel(const std::string& msge, int clientSocket);
+		void 	handkleKickCommand(const std::string& msge, int clientSocket);
 		void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
 
 		void	handleNoticeCommand( int clientSocket, const std::string& parameter );

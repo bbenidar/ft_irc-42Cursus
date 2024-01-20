@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 15:58:24 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/20 13:53:30 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/20 21:35:37 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,4 +163,9 @@ void Channels::setChannelBannedClients(int clientSocket, const std::vector<Clien
 void Channels::setChannelInvitedClients(int clientSocket, ClientState& user)
 {
     this->channelInvitedClients[clientSocket].push_back(user);
+}
+
+void Channels::KickClient(int clientSocket)
+{
+    this->channelClients.erase(clientSocket);
 }
