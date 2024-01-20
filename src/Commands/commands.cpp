@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:28:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/18 15:48:45 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/19 21:01:27 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 				command == "NICK" ? 2 :
 				command == "JOIN" ? 3 :
 				command == "PRIVMSG" ? 4 :
-				command == "NOTICE" ? 5 : 6;
+				command == "NOTICE" ? 5 :
+				command == "INVITE" ? 6 : 7;
 	switch (cmd)
 	{
 		case 1:
@@ -28,7 +29,7 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 			changeClientNickname(clientSocket, parameters);
 			break;
 		case 3:
-			handelJoinchannel(command + " " + parameters, clientSocket, command);
+			handleJoinchannel(command + " " + parameters, clientSocket, command);
 			break;
 		case 4:
 			send_message(command + " " + parameters, clientSocket);
@@ -36,6 +37,9 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 		case 5:
 			handleNoticeCommand(clientSocket, parameters);
 			break;
+		case 6:
+			handleInvitechannel(command + " " + parameters, clientSocket, command);
+			break ;
 		default:
 			break;
 	}

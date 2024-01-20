@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 15:58:24 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/19 12:02:59 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/20 13:53:30 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,4 +134,33 @@ void Channels::printChannelClients() const
 std::map<int, std::vector<ClientState> > Channels::getChannelClients() const
 {
     return this->channelClients;
+}
+
+bool Channels::getifClientIsInvited(int clientSocket) const
+{
+    if (this->channelInvitedClients.count(clientSocket))
+        return true;
+    return false;
+}
+
+bool Channels::getifClientIsModerator(int clientSocket) const
+{
+    if (this->channelModerators.count(clientSocket))
+        return true;
+    return false;
+}
+
+std::string Channels::getChannelName() const
+{
+    return this->channelName;
+}
+
+void Channels::setChannelBannedClients(int clientSocket, const std::vector<ClientState>& user)
+{
+    this->channelBannedClients[clientSocket] = user;
+}
+
+void Channels::setChannelInvitedClients(int clientSocket, ClientState& user)
+{
+    this->channelInvitedClients[clientSocket].push_back(user);
 }

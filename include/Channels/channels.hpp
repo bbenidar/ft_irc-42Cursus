@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:00:18 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/18 16:08:14 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/20 13:53:24 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,16 @@ class Channels
 		void	setChannelUserLimit(int limit);
 		void	setChannelClients(int clientSocket, const std::vector<ClientState>& user);
 		void	setChannelModerators(int clientSocket, const std::vector<ClientState>& user);
+		void	setChannelBannedClients(int clientSocket, const std::vector<ClientState>& user);
+		void	setChannelInvitedClients(int clientSocket, ClientState& user);
 		std::string	getChannelName() const;
 		std::string	getChannelPassword() const;
 		std::string	getChannelTopic() const;
 		std::string	getChannelMode() const;
 		std::string	getChannelPrivMode() const;
 		bool	getifClientIsBanned(int clientSocket) const;
+		bool	getifClientIsInvited(int clientSocket) const;
+		bool	getifClientIsModerator(int clientSocket) const;
 		int		getChannelUserLimit() const;
 		int getChannelClientsSize() const;
 		void printChannelClients() const;

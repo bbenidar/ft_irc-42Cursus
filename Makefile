@@ -6,7 +6,7 @@
 #    By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/18 16:14:35 by bbenidar         ###   ########.fr        #
+#    Updated: 2024/01/19 20:51:07 by bbenidar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ SRC		=	src/main.cpp \
 			src/Commands/Nick.cpp \
 			src/Commands/Join.cpp \
 			src/Commands/Notice.cpp \
+			src/Commands/Invite.cpp \
 			src/Commands/Privmsg.cpp \
 			src/Commands/commands.cpp \
 			src/Commands/authentication.cpp 

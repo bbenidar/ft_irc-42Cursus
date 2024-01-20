@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:13:28 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/19 12:35:26 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/19 15:31:56 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void Server::send_message(const std::string& msge, int clientSocket)
 	{
 		std::string	notEnoughMsg = ":IRCServer 461 PRIVMSG :Not enough parameters\r\n";
 		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
+		return ;
 	}
 	std::string message = msge.substr(msge.find(channels) + channels.length());
 	size_t	begin = message.find_first_not_of(" \n\r", 0);

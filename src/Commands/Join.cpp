@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/18 16:01:29 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/19 19:36:22 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ bool checkNumberOfParams(const std::string& msge, int clientSocket, const std::s
 	 if (modifiedMsg.size() > command.size() + 1 && modifiedMsg[command.size() + 1] == '#') {
         modifiedMsg.erase(command.size() + 1, 1);
     }
-	std::cout << "modifiedMsg: " << modifiedMsg << std::endl;
 	std::vector<std::string> check = split(modifiedMsg, ' ');
 	if (check.size() < 2)
 	{
@@ -72,7 +71,7 @@ bool checkNumberOfParams(const std::string& msge, int clientSocket, const std::s
 
 
 
-void Server::handelJoinchannel(const std::string& msge, int clientSocket, const std::string& command)
+void Server::handleJoinchannel(const std::string& msge, int clientSocket, const std::string& command)
 {
 	if (!checkNumberOfParams(msge, clientSocket, command))
 		return ;
@@ -81,8 +80,11 @@ void Server::handelJoinchannel(const std::string& msge, int clientSocket, const 
 	// (void)clientSocket;
 	std::string channelsstr = removeMsgCommand(msge);
 	if (channelsstr.length() == 0)
+	{
+		std::string	notEnoughMsg = ":IRCServer 461 PRIVMSG :Not enough parameters\r\n";
+		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
 		return ;
-
+	}
 	std::string passwords = returnpassonyl(msge);
 	std::cout << "passwords: " << passwords << std::endl;
 	std::vector<std::string> chanel;
