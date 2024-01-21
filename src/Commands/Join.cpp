@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/19 19:36:22 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/21 14:33:07 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,11 +103,11 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 
             if (!pass.empty() && i < static_cast<int>(pass.size())) {
                 std::cout << "new channel: " << chanel[i] << " with pass " << pass[i] << std::endl;
-                Channels newChannel(ADMIN, clientSocket, chanel[i], "", pass[i], "", 1e9, user);
+                Channels newChannel(ADMIN, clientSocket, chanel[i], "", pass[i], 1e9, user);
                 this->channels.insert(std::pair<std::string, Channels>(chanel[i], newChannel));
             } else {
                 std::cout << "new channel no pass " << std::endl;
-                Channels newchanel(ADMIN, clientSocket, chanel[i], "", "", "", 1e9, user);
+                Channels newchanel(ADMIN, clientSocket, chanel[i], "", "", 1e9, user);
                 this->channels.insert(std::pair<std::string, Channels>(chanel[i], newchanel));
             }
         }
@@ -128,7 +128,7 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 			
 			if (channels[chanel[i]].getPassMode())
 			{
-				if (channels[chanel[i]].getChannelMode() == "i")
+				if (channels[chanel[i]].getifChannelIsPrivate() == true)
 				{
 					std::string tmp = ":IRCserver 473 " + chanel[i] + " :Cannot join channel (+i)\r\n";
 					send(clientSocket, tmp.c_str() , tmp.size(), 0);

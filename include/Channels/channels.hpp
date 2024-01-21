@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:00:18 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/20 21:35:25 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/21 14:32:43 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ class Channels
 		std::string		channelName;
 		std::string		channelPassword;
 		std::string		channelTopic;
-		std::string		channelMode;
 		int		channelUserLimit;
 		std::map<int, std::vector<ClientState> >	channelModerators;
 		std::map<int, std::vector<ClientState> >	channelClients;
@@ -41,13 +40,13 @@ class Channels
 		
 	public:
 		Channels(){};
-		Channels(int usermode,int clientSocket,std::string name, std::string topic, std::string password, std::string mode, int limit, std::vector<ClientState> user);
+		Channels(int usermode,int clientSocket,std::string name, std::string topic, std::string password, int limit, std::vector<ClientState> user);
 		~Channels();
 		void	setChannelName(const std::string& name);
 		void	setChannelPassword(const std::string& password);
 		void	setChannelTopic(const std::string& topic);
-		void	setChannelMode(const std::string& mode0);
 		void	setChannelUserLimit(int limit);
+		void    setChannelprivateMode(bool mode);
 		void	setChannelClients(int clientSocket, const std::vector<ClientState>& user);
 		void	setChannelModerators(int clientSocket, const std::vector<ClientState>& user);
 		void	setChannelBannedClients(int clientSocket, const std::vector<ClientState>& user);
@@ -55,11 +54,12 @@ class Channels
 		std::string	getChannelName() const;
 		std::string	getChannelPassword() const;
 		std::string	getChannelTopic() const;
-		std::string	getChannelMode() const;
+		// std::string	getChannelMode() const;
 		std::string	getChannelPrivMode() const;
 		bool	getifClientIsBanned(int clientSocket) const;
 		bool	getifClientIsInvited(int clientSocket) const;
 		bool	getifClientIsModerator(int clientSocket) const;
+		bool	getifChannelIsPrivate() const;
 		int		getChannelUserLimit() const;
 		int getChannelClientsSize() const;
 		void printChannelClients() const;

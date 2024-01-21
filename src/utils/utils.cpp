@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/20 20:00:01 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/21 12:23:21 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool setNonBlocking(int fd)
 
 bool	validCommands( const std::string& command )
 {
-	std::string	commands[10] = { "PASS",
+	std::string	commands[11] = { "PASS",
 								"NICK",
 								"USER",
 								"JOIN",
@@ -35,9 +35,10 @@ bool	validCommands( const std::string& command )
 								"KICK",
 								"INVITE",
 								"NOTICE",
+								"MODE",
 								"QUIT"};
 
-	for (int i = 0; i < 10; i++)	
+	for (int i = 0; i < 11; i++)	
 		if (commands[i] == command)
 			return true;
 	return false;

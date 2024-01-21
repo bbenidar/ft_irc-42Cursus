@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:28:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/20 20:00:56 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/21 12:18:55 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 				command == "PRIVMSG" ? 4 :
 				command == "NOTICE" ? 5 :
 				command == "INVITE" ? 6 :
-				command == "KICK" ? 7 : 8;
+				command == "KICK" ? 7 :
+				command == "MODE" ? 8 : 9;
 	switch (cmd)
 	{
 		case 1:
@@ -43,6 +44,9 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 			break ;
 		case 7:
 			handkleKickCommand(command + " " + parameters, clientSocket);
+			break ;
+		case 8:
+			handleChannelMode(command + " " + parameters, clientSocket);
 			break ;
 		default:
 			break;
