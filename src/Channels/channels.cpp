@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 15:58:24 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/21 14:32:53 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/25 15:29:01 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ Channels::Channels(int usermode,int clientSocket,std::string name, std::string t
 	this->channelClients[clientSocket] = user;
 	if (usermode == ADMIN)
 		this->channelModerators[clientSocket] = user;
-	if (password.length() != 0)
-		this->channelIsPrivate = true;
 }
 
 Channels::~Channels()
@@ -56,7 +54,6 @@ void Channels::setChannelPassword(const std::string& password)
 	this->channelPassword = password;
 }
 
-
 void Channels::setChannelUserLimit(int limit)
 {
 	this->channelUserLimit = limit;
@@ -70,11 +67,21 @@ void Channels::setChannelClients(int clientSocket, const std::vector<ClientState
 void Channels::setChannelModerators(int clientSocket, const std::vector<ClientState>& user)
 {
 	this->channelModerators[clientSocket] = user;
+	
 }
 
 bool Channels::getPassMode() const
 {
-	return this->channelIsPrivate;
+	if (this->channelPassword.length() != 0)
+		return true;
+	return false;
+}
+
+bool Channels::getClientisInChannel(int clientSocket) const
+{
+	if (this->channelClients.count(clientSocket))
+		return true;
+	return false;
 }
 
 std::string	Channels::getChannelPassword() const
@@ -102,22 +109,14 @@ bool Channels::getifClientIsBanned(int clientSocket) const
 
 void Channels::printChannelClients() const
 {
-	std::cout << "channel name: " << this->channelName << std::endl;
-	std::cout << "channel topic: " << this->channelTopic << std::endl;
-	std::cout << "channel password: " << this->channelPassword << std::endl;
-	std::cout << "channel user limit: " << this->channelUserLimit << std::endl;
-	std::cout << "channel clients: " << std::endl;
-	for (std::map<int, std::vector<ClientState> >::const_iterator it = this->channelClients.begin(); it != this->channelClients.end(); ++it)
+	//print chanell moderator
+	std::cout << "channel moderator : " << std::endl;
+	std::map<int, std::vector<ClientState> >::const_iterator it = this->channelModerators.begin();
+	while (it != this->channelModerators.end())
 	{
-		std::cout << "client socket: " << it->first << std::endl;
-		for (std::vector<ClientState>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-		{
-			std::cout << "client nickname: " << it2->nickname << std::endl;
-			std::cout << "client username: " << it2->username << std::endl;
-			std::cout << "client realname: " << it2->realname << std::endl;
-			std::cout << "client hostname: " << it2->hostname << std::endl;
-			std::cout << "client servername: " << it2->servername << std::endl;
-		}
+		std::cout << "client socket : " << it->first << std::endl;
+		std::cout << "client nickname : " << it->second[0].nickname << std::endl;
+		it++;
 	}
 }
 
@@ -128,9 +127,8 @@ std::map<int, std::vector<ClientState> > Channels::getChannelClients() const
 
 bool Channels::getifClientIsInvited(int clientSocket) const
 {
-	if (this->channelInvitedClients.count(clientSocket))
-		return true;
-	return false;
+	std::map<int, std::vector<ClientState> >::const_iterator it = this->channelInvitedClients.find(clientSocket);
+    return it != this->channelInvitedClients.end();
 }
 
 bool Channels::getifClientIsModerator(int clientSocket) const
@@ -167,4 +165,14 @@ void Channels::setChannelprivateMode(bool mode)
 bool Channels::getifChannelIsPrivate() const
 {
 	return this->channelIsPrivate;
+}
+
+std::string Channels::getChannelTopic() const
+{
+	return this->channelTopic;
+}
+
+void Channels::removeModerator(int clientSocket)
+{
+	this->channelModerators.erase(clientSocket);
 }

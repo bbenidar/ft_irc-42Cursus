@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/21 14:33:07 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/24 18:49:13 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,12 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
         }
 		else
 		{
+			if (channels[chanel[i]].getClientisInChannel(clientSocket))
+			{
+				std::string tmp = ":IRCserver 443 " + chanel[i] + " :is already on channel\r\n";
+				send(clientSocket, tmp.c_str() , tmp.size(), 0);
+				return ;
+			}
 			if(channels[chanel[i]].getifClientIsBanned(clientSocket))
 			{
 				std::string tmp = ":IRCserver 474 " + chanel[i] + " :Cannot join channel (+b)\r\n";
@@ -125,37 +131,59 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 				send(clientSocket, tmp.c_str() , tmp.size(), 0);
 				return ;
 			}
-			
-			if (channels[chanel[i]].getPassMode())
+			if (channels[chanel[i]].getifChannelIsPrivate() == true)
 			{
-				if (channels[chanel[i]].getifChannelIsPrivate() == true)
+				std::cout << "channel is private" << std::endl;
+				if(channels[chanel[i]].getifClientIsInvited(clientSocket) == false)
 				{
 					std::string tmp = ":IRCserver 473 " + chanel[i] + " :Cannot join channel (+i)\r\n";
 					send(clientSocket, tmp.c_str() , tmp.size(), 0);
 					return ;
 				}
-                if (pass[i] != channels[chanel[i]].getChannelPassword() || pass.empty() || i >= static_cast<int>(pass.size()))
+			}
+			if (channels[chanel[i]].getPassMode())
+			{
+				std::cout << "channssel is not private" << std::endl;
+                if ((i < (int)pass.size() && pass[i] != channels[chanel[i]].getChannelPassword()) || pass.empty() || i >= static_cast<int>(pass.size()))
                 {
 					std::string tmp = ":IRCserver 475 " + chanel[i] + " :Cannot join channel (+k)\r\n";
                     send(clientSocket, tmp.c_str() , tmp.size(), 0);
                     return ;
                 }
-                else if (pass[i] == channels[chanel[i]].getChannelPassword())
+                else if (i < (int)pass.size() && pass[i] == channels[chanel[i]].getChannelPassword())
                 {
                     std::cout << "password correct" << std::endl;
                     std::vector<ClientState> user;
                     user.push_back(this->clientStates[clientSocket]);
                     this->channels[chanel[i]].setChannelClients(clientSocket, user);
+					if(channels[chanel[i]].getChannelTopic() != "")
+					{
+						std::string tmp = ":IRCserver 332 " + chanel[i] + " :" + channels[chanel[i]].getChannelTopic() + "\r\n";
+						send(clientSocket, tmp.c_str() , tmp.size(), 0);
+					}
+					else
+					{
+						std::string tmp = ":IRCserver 332 " + chanel[i] + " :No topic is set\r\n";
+						send(clientSocket, tmp.c_str() , tmp.size(), 0);
+					}
                 }
-                else
-                    std::cout << "password need" << std::endl;
 				std::cout << "password need" << std::endl;
 			}
 			else{
 				std::cout << "no password need" << std::endl;
 				std::vector<ClientState> user;
 				user.push_back(this->clientStates[clientSocket]);
-				this->channels[chanel[i]].setChannelClients(clientSocket, user);	
+				this->channels[chanel[i]].setChannelClients(clientSocket, user);
+				if (channels[chanel[i]].getChannelTopic() != "")
+				{
+					std::string tmp = ":IRCserver 332 " + chanel[i] + " :" + channels[chanel[i]].getChannelTopic() + "\r\n";
+					send(clientSocket, tmp.c_str() , tmp.size(), 0);
+				}
+				else
+				{
+					std::string tmp = ":IRCserver 332 " + chanel[i] + " :No topic is set\r\n";
+					send(clientSocket, tmp.c_str() , tmp.size(), 0);
+				}
 			}
 				
 		}
