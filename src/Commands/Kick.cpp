@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 19:48:36 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/21 12:07:00 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 21:21:58 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,9 @@
 #include "../../include/irc_server/server.hpp"
 #include "../../include/Channels/channels.hpp"
 
-void Server::handkleKickCommand(const std::string& msge, int clientSocket)
+void Server::handleKickCommand(const std::string& msge, int clientSocket)
 {
 	(void)clientSocket;
-	std::cout << msge << std::endl;
 	std::string chanName = removeMsgCommand(msge);
 	if (chanName.size() == 0)
 	{
@@ -34,23 +33,24 @@ void Server::handkleKickCommand(const std::string& msge, int clientSocket)
 	}
 	std::string Nickname = msge.substr(msge.find(chanName) + chanName.length());
 	size_t	begin = Nickname.find_first_not_of(" \n\r", 0);
-	size_t	end = Nickname.find_last_not_of(" \n\r", Nickname.length() - 1);
+	size_t	end = Nickname.find_first_of(" \n\r", begin);
 	if (begin == std::string::npos || end == std::string::npos)
 	{
 		std::string	notEnoughMsg = ":IRCServer 461 PRIVMSG :Not enough parameters\r\n";
 		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
 		return ;
 	}
-	if (Nickname[begin] == '#')
-		begin++;
-	Nickname =  Nickname.substr(begin, end - begin + 1);
-	std::cout << "NIckname " << Nickname << " chanName : " << chanName << std::endl;
+	Nickname =  Nickname.substr(begin, end - begin);
 	std::vector<std::string> Nams = split(Nickname, ',');
 	std::vector<std::string> Chans = split(chanName, ',');
+	
 	for (int i = 0; i < (int)Chans.size(); i++)
 	{
+		if (Chans[i].length() > 0 && Chans[i][0] == '#')
+			Chans[i].erase(0, 1);
 		for (int j = 0; j < (int)Nams.size(); j++)
 		{
+			
 			std::map<int, ClientState>::iterator	it;
 			for (it = this->clientStates.begin(); it != this->clientStates.end(); it++)
 				if (it->second.nickname == Nams[j])

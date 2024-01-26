@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:29:20 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/17 15:40:58 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/26 19:08:19 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,26 @@ void	Server::changeClientNickname( int clientSocket, const std::string& nickname
 		+ " NICK " + nickname + "\r\n";
 	this->clientStates[clientSocket].nickname = nickname;
 	send(clientSocket, nicknameChanged.c_str(), nicknameChanged.length(), 0);
+}
+
+bool Server::handleNickCommand( int clientSocket, std::string command, const std::string parameters )
+{
+	if (this->clientStates[clientSocket].hasNick == true)
+		return true;
+	if (command != "NICK")
+		return false;
+	std::string	nickname = parameters;
+	if (nickname[0] == ':')
+		nickname = parameters.substr(1, parameters.length() - 1);
+	if (!validNickname(clientSocket, nickname))
+		return false;
+	if (!isNicknameAvailable(nickname))
+	{
+		std::string	alreadyinuseMsg = ":IRCServer 433 " + nickname + " :Nickname is already in use\r\n";
+		send(clientSocket, alreadyinuseMsg.c_str(), alreadyinuseMsg.length(), 0);
+		return false;
+	}
+	this->clientStates[clientSocket].hasNick = true;
+	this->clientStates[clientSocket].nickname = nickname;
+	return true;
 }

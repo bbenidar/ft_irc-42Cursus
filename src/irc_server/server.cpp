@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/25 11:55:41 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 19:10:01 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,12 @@ void	Server::parsePortNumberAndPassword( const std::string& s_port, const std::s
 	this->serverPassword = password;
 }
 
+bool Server::isClientFullyAuthenticated(int clientSocket)
+{
+	return clientStates[clientSocket].isAuthenticated &&
+			clientStates[clientSocket].hasNick &&
+			clientStates[clientSocket].hasUser;
+}
 
 void	Server::sendRegistrationMessages( int clientSocket )
 {

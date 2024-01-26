@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 10:54:18 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/26 11:28:50 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 21:22:22 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 void Server::handleTopicCommand(const std::string& msge, int clientSocket)
 {
     (void)clientSocket;
-	std::cout << msge << std::endl;
 	std::string chanName = removeMsgCommand(msge);
     
 	if (chanName.size() == 0)

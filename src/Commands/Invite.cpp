@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 19:38:30 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/26 11:07:54 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 20:35:44 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 
 void Server::handleInvitechannel(const std::string& msge, int clientSocket)
 {
-   	std::cout << msge << std::endl;
 	std::string clientName = removeMsgCommand(msge);
 	if (clientName.size() == 0)
 	{
@@ -44,8 +43,6 @@ void Server::handleInvitechannel(const std::string& msge, int clientSocket)
     if (channel[begin] == '#')
         begin++;
 	channel =  channel.substr(begin, end - begin + 1);
-	std::cout << "channel " << channel << " clientName : " << clientName << std::endl;
-
     std::map<int, ClientState>::iterator	it;
     for (it = this->clientStates.begin(); it != this->clientStates.end(); it++)
         if (it->second.nickname == clientName)
@@ -92,6 +89,6 @@ void Server::handleInvitechannel(const std::string& msge, int clientSocket)
         return ;
     }
     it2->second.setChannelInvitedClients(it->first, it->second);
-    std::string	inviteMsg = ":IRCServer 341 " + channel + " " + clientName + "\r\n";
+    std::string	inviteMsg = ":IRCServer 341 " + channel + " " + clientName + " " + channel + "\r\n";
     send(clientSocket, inviteMsg.c_str(), inviteMsg.length(), 0);
 }

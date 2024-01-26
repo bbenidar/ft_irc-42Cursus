@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 12:07:16 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/26 10:23:37 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 21:21:49 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,9 @@ const int FLAG_REMOVE = 2;
 void Server::handleChannelMode(const std::string& msge, int clientSocket)
 {
     int flag = 0;
-	std::cout << msge << std::endl;
 	std::string chanName = removeMsgCommand(msge);
+    if (chanName.size() >0 && chanName.at(0) == '#')
+        chanName.erase(0,1);
 	if (chanName.size() == 0)
 	{
 		std::string	notEnoughMsg = ":IRCServer 461 PRIVMSG :Not enough parameters\r\n";
@@ -77,7 +78,6 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
         send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
         return ;
     }
-    std::cout << "Modetype |" << Modetype << "| chanName : |" << chanName << "| modeparam : |"<< modeParam << "|" <<std::endl;
     if (Modetype.find_first_not_of("itkol\n\r", 0) != std::string::npos)
     {
         std::string	notEnoughMsg = ":IRCServer 472 " + chanName + " :is unknown mode char to me\r\n";
@@ -152,8 +152,6 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
             it2->second.removeModerator(it->first);
         else if (flag == FLAG_ADD)
         {
-            
-            std::cout << "soc sender "<< clientSocket << "soc resever" << it->first << std::endl;
             std::vector<ClientState> tmp2 = tmp[it->first];
             it2->second.setChannelModerators(it->first, tmp2);
             it2->second.printChannelClients();

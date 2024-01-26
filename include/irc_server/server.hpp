@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/26 11:00:25 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 19:18:00 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ struct ClientState {
 	std::string servername;
 
 	ClientState() : isAuthenticated(false), hasNick(false), hasUser(false) {}
-	
 };
 
 class Server
@@ -54,6 +53,7 @@ class Server
 	public:
 
 		void	passCommand( int clientSocket );
+		void	userCommand( int clientSocket ); 
 		void	changeClientNickname( int clientSocket, const std::string& parameters );
 
 		void	runServerLoop( void );
@@ -71,16 +71,16 @@ class Server
 		void	authenticateClient( int clientSocket, std::string& command, const std::string& parameters );
 
 		void	sendRegistrationMessages( int clientSocket );
-		void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
 		void 	send_message(const std::string& msge, int clientSocket);
-		void	handleJoinchannel(const std::string& msge, int clientSocket, const std::string& command);
-		void	handleInvitechannel(const std::string& msge, int clientSocket);
-		void	handkleKickCommand(const std::string& msge, int clientSocket);
+		void	handleKickCommand(const std::string& msge, int clientSocket);
 		void	handleChannelMode(const std::string& msge, int clientSocket);
-		void handleTopicCommand(const std::string& msge, int clientSocket);
+		void	handleTopicCommand(const std::string& msge, int clientSocket);
+		void	handleInvitechannel(const std::string& msge, int clientSocket);
+		void	handleNoticeCommand( int clientSocket, const std::string& parameter );
+		void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
+		void	handleJoinchannel(const std::string& msge, int clientSocket, const std::string& command);
 		void	processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& );
 
-		void	handleNoticeCommand( int clientSocket, const std::string& parameter );
 };
 
 

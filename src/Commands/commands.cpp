@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:28:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/26 11:05:57 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 19:23:56 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,16 @@
 
 void	Server::processAuthenticatedClientCommand(int clientSocket, const std::string& command, const std::string& parameters )
 {
-	int cmd	=	command == "PASS" ? 1 :
-				command == "NICK" ? 2 :
-				command == "JOIN" ? 3 :
-				command == "PRIVMSG" ? 4 :
-				command == "NOTICE" ? 5 :
-				command == "INVITE" ? 6 :
-				command == "KICK" ? 7 :
-				command == "MODE" ? 8 :
-				command == "TOPIC" ? 9 : 10;
+	int cmd	=	command == "PASS"		? 1 :
+				command == "NICK"		? 2 :
+				command == "USER"		? 3 :
+				command == "JOIN"		? 4 :
+				command == "KICK"		? 5 :
+				command == "MODE"		? 6 :
+				command == "TOPIC"		? 7 :
+				command == "NOTICE"		? 8 :
+				command == "INVITE"		? 9 :
+				command == "PRIVMSG"	? 10 : 11;
 	switch (cmd)
 	{
 		case 1:
@@ -32,26 +33,29 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 			changeClientNickname(clientSocket, parameters);
 			break;
 		case 3:
-			handleJoinchannel(command + " " + parameters, clientSocket, command);
+			userCommand(clientSocket);
 			break;
 		case 4:
-			send_message(command + " " + parameters, clientSocket);
+			handleJoinchannel(command + " " + parameters, clientSocket, command);
 			break;
 		case 5:
-			handleNoticeCommand(clientSocket, parameters);
-			break;
+			handleKickCommand(command + " " + parameters, clientSocket);
+			break ;
 		case 6:
-			handleInvitechannel(command + " " + parameters, clientSocket);
-			break ;
-		case 7:
-			handkleKickCommand(command + " " + parameters, clientSocket);
-			break ;
-		case 8:
 			handleChannelMode(command + " " + parameters, clientSocket);
 			break ;
-		case 9:
+		case 7:
 			handleTopicCommand(command + " " + parameters, clientSocket);
 			break ;
+		case 8:
+			handleNoticeCommand(clientSocket, parameters);
+			break;
+		case 9:
+			handleInvitechannel(command + " " + parameters, clientSocket);
+			break ;
+		case 10:
+			send_message(command + " " + parameters, clientSocket);
+			break;
 		default:
 			break;
 	}

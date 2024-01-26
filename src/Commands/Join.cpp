@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/24 18:49:13 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 20:36:46 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,6 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 {
 	if (!checkNumberOfParams(msge, clientSocket, command))
 		return ;
-
-   
-	// (void)clientSocket;
 	std::string channelsstr = removeMsgCommand(msge);
 	if (channelsstr.length() == 0)
 	{
@@ -86,7 +83,6 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 		return ;
 	}
 	std::string passwords = returnpassonyl(msge);
-	std::cout << "passwords: " << passwords << std::endl;
 	std::vector<std::string> chanel;
 	std::vector<std::string> pass;
 	chanel = split(channelsstr, ',');
@@ -102,11 +98,9 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
             user.push_back(this->clientStates[clientSocket]);
 
             if (!pass.empty() && i < static_cast<int>(pass.size())) {
-                std::cout << "new channel: " << chanel[i] << " with pass " << pass[i] << std::endl;
                 Channels newChannel(ADMIN, clientSocket, chanel[i], "", pass[i], 1e9, user);
                 this->channels.insert(std::pair<std::string, Channels>(chanel[i], newChannel));
             } else {
-                std::cout << "new channel no pass " << std::endl;
                 Channels newchanel(ADMIN, clientSocket, chanel[i], "", "", 1e9, user);
                 this->channels.insert(std::pair<std::string, Channels>(chanel[i], newchanel));
             }
@@ -133,7 +127,6 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 			}
 			if (channels[chanel[i]].getifChannelIsPrivate() == true)
 			{
-				std::cout << "channel is private" << std::endl;
 				if(channels[chanel[i]].getifClientIsInvited(clientSocket) == false)
 				{
 					std::string tmp = ":IRCserver 473 " + chanel[i] + " :Cannot join channel (+i)\r\n";
@@ -143,7 +136,6 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 			}
 			if (channels[chanel[i]].getPassMode())
 			{
-				std::cout << "channssel is not private" << std::endl;
                 if ((i < (int)pass.size() && pass[i] != channels[chanel[i]].getChannelPassword()) || pass.empty() || i >= static_cast<int>(pass.size()))
                 {
 					std::string tmp = ":IRCserver 475 " + chanel[i] + " :Cannot join channel (+k)\r\n";
@@ -152,7 +144,6 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
                 }
                 else if (i < (int)pass.size() && pass[i] == channels[chanel[i]].getChannelPassword())
                 {
-                    std::cout << "password correct" << std::endl;
                     std::vector<ClientState> user;
                     user.push_back(this->clientStates[clientSocket]);
                     this->channels[chanel[i]].setChannelClients(clientSocket, user);
@@ -167,10 +158,8 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 						send(clientSocket, tmp.c_str() , tmp.size(), 0);
 					}
                 }
-				std::cout << "password need" << std::endl;
 			}
 			else{
-				std::cout << "no password need" << std::endl;
 				std::vector<ClientState> user;
 				user.push_back(this->clientStates[clientSocket]);
 				this->channels[chanel[i]].setChannelClients(clientSocket, user);
@@ -188,11 +177,5 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 				
 		}
 	}
-	// std::map<std::string, Channels>::iterator it;
-	// for (it = channels.begin(); it != channels.end(); ++it) {
-	// 	std::cout << it->first << std::endl;
-	// 	it->second.printChannelClients();
-	// }
-	std::cout << "im here" << std::endl;
 	return ;
 }

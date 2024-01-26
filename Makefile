@@ -6,7 +6,7 @@
 #    By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/26 11:03:18 by bbenidar         ###   ########.fr        #
+#    Updated: 2024/01/26 19:14:33 by bbenidar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,21 +20,20 @@ ADDED_FILES	=	.vscode
 
 SRC		=	src/main.cpp \
 			src/utils/utils.cpp \
-			src/irc_server/server.cpp \
-			src/Channels/channels.cpp \
-			src/irc_server/multiplexing.cpp \
 			src/Commands/Pass.cpp \
 			src/Commands/Nick.cpp \
+			src/Commands/User.cpp \
 			src/Commands/Join.cpp \
+			src/Commands/Kick.cpp \
+			src/Commands/Mode.cpp \
+			src/Commands/Topic.cpp \
 			src/Commands/Notice.cpp \
 			src/Commands/Invite.cpp \
 			src/Commands/Privmsg.cpp \
 			src/Commands/commands.cpp \
-			src/Commands/Kick.cpp \
-			src/Commands/Mode.cpp \
-			src/Commands/Topic.cpp \
-			src/Commands/authentication.cpp 
-			
+			src/Channels/channels.cpp \
+			src/irc_server/server.cpp \
+			src/irc_server/multiplexing.cpp
 
 B_SRC	=	bot/main.cpp \
 			bot/Bot.cpp \

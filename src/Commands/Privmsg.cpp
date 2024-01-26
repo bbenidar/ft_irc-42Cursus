@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:13:28 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/19 15:31:56 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 21:22:17 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,22 +32,9 @@ std::vector<std::string> removeDpicates(std::vector<std::string> channel)
 	return (tmp);
 }
 
-// bool atTheendofMsg(const std::string& msge, int beg)
-// {
-	// while(msge[beg])
-	// {
-		
-	// 	if (msge[beg] != ' ' && msge[beg] != '\r' && msge[beg] != '\n')
-	// 		return (false);
-	// 	beg++;
-	// }
-	// return (true);
-// }
-
 
 void Server::send_message(const std::string& msge, int clientSocket)
 {
-	std::cout << msge << std::endl;
 	std::string channels = removeMsgCommand(msge);
 	if (channels.size() == 0)
 	{
@@ -64,23 +51,19 @@ void Server::send_message(const std::string& msge, int clientSocket)
 		return ;
 	}
 	message =  message.substr(begin, end - begin + 1) + "\r\n";
-	std::cout << "message : " << message << std::endl;
 	std::vector<std::string> channel;
 	channel = split(channels, ',');
 	channel = removeDpicates(channel);
-	std::cout << "channel size : " << channel.size() << std::endl;
 	for (size_t i = 0; i < channel.size(); i++)
 	{
 		    if (channel[i].at(0) == '#')
 			{
 				channel[i].erase(0, 1);
-				std::cout<< "channel[i] hna: " << channel[i] << std::endl;
 				std::map<std::string, Channels>::iterator it;
 				for (it = this->channels.begin(); it != this->channels.end(); it++)
 				{
 					if (it->first == channel[i])
 					{
-						std::cout << "channel found" << std::endl;
 						std::map<int, std::vector<ClientState> > tmp = it->second.getChannelClients();
 						std::map<int, std::vector<ClientState> >::iterator iter;
 						for(iter = tmp.begin(); iter != tmp.end(); iter++)
@@ -97,7 +80,6 @@ void Server::send_message(const std::string& msge, int clientSocket)
 			}
 			else
 			{
-		        std::cout << "chan : " << channel[i] << std::endl;
 				for (size_t j = 0; j < this->fds.size(); j++)
 				{
 					if (this->clientStates[this->fds[j].fd].nickname == channel[i])
