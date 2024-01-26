@@ -21,7 +21,7 @@ void	Server::initializePollStructure( int fd )
 {
 	struct pollfd	newSocket;
 
-	setNonBlocking(fd);
+	// setNonBlocking(fd); // ----
 	newSocket.fd = fd;
 	newSocket.events = POLLIN;
 	this->fds.push_back(newSocket);

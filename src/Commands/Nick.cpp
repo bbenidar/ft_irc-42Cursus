@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:29:20 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/18 22:07:17 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/20 20:50:02 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	Server::changeClientNickname( int clientSocket, const std::string& nickname
 		return ;
 	if (!isNicknameAvailable(nickname))
 	{
-		std::string	alreadyinuseMsg = ":Webserv 433 " + nickname + " :Nickname is already in use\r\n";
+		std::string	alreadyinuseMsg = ":IRCServer 433 " + nickname + " :Nickname is already in use\r\n";
 		send(clientSocket, alreadyinuseMsg.c_str(), alreadyinuseMsg.length(), 0);
 		return ;
 	}

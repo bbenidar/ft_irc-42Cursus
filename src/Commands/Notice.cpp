@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 14:27:07 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/17 13:03:14 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/26 13:17:11 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,28 +16,41 @@
 
 void	Server::handleNoticeCommand( int clientSocket, const std::string& parameter )
 {
-	std::string			nickname;
+	std::string			nickname,nicknames;
 	std::stringstream	parameters(parameter);
-	getline(parameters, nickname, ' ');
-	while (nickname.length() == 0)
+	getline(parameters, nicknames, ' ');
+	while (nicknames.length() == 0)
 	{
-		getline(parameters, nickname, ' ');		
+		getline(parameters, nicknames, ' ');		
 		if (parameters.eof())
 			break ;
 	}
-	size_t	nickLength = nickname.length();
+	std::stringstream	ss(nicknames);
+	std::map<std::string, std::string>	nicknamesMap;
+
+	while (!ss.eof())
+	{
+		getline(ss, nickname, ',');
+		if (nickname.length() > 0)
+			nicknamesMap.insert(std::pair<std::string, std::string>(nickname, ""));
+	}
+	size_t	nickLength = nicknames.length();
 	if (!parameter[nickLength] || !parameter[nickLength + 1])
 		return ;
-	std::string	noticeMsg = ":" + this->clientStates[clientSocket].nickname + " NOTICE " + parameter.substr(0, nickLength) + " ";
-	std::string msg = parameter.substr(nickLength + 1, parameter.length() - nickLength - 1);
-	if (msg.find(':') == std::string::npos)
-		noticeMsg += ":";
-	noticeMsg += msg + "\r\n";
-	std::map<int, ClientState>::iterator	it;
-	if (msg.find_first_not_of(' ') != std::string::npos)
-	{	
-		for (it = this->clientStates.begin(); it != this->clientStates.end(); it++)
-			if (it->second.nickname == nickname)
-				send(it->first, noticeMsg.c_str(), noticeMsg.length(), 0);
+	std::map<std::string, std::string>::iterator	it;
+	for (it = nicknamesMap.begin(); it != nicknamesMap.end(); it++)
+	{
+		std::string	noticeMsg = ":" + this->clientStates[clientSocket].nickname + " NOTICE " + it->first + " ";
+		std::string msg = parameter.substr(nickLength + 1, parameter.length() - nickLength - 1);
+		if (msg.find(':') == std::string::npos)
+			noticeMsg += ":";
+		noticeMsg += msg + "\r\n";
+		std::map<int, ClientState>::iterator	ite;
+		if (msg.find_first_not_of(' ') != std::string::npos)
+		{	
+			for (ite = this->clientStates.begin(); ite != this->clientStates.end(); ite++)
+				if (ite->second.nickname == it->first)
+					send(ite->first, noticeMsg.c_str(), noticeMsg.length(), 0);
+		}
 	}
 }

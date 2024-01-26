@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/18 22:07:17 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/24 21:19:43 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ std::string	getCommand( int clientSocket, const std::string& message )
 		command[i] = std::toupper(command[i]);
 	if (!validCommands(command) || message[0] == ' ')
 	{
-		std::string	unkonwn = ":Webserv 421 " + command + " :Unknown command\r\n";
+		std::string	unkonwn = ":IRCServer 421 " + command + " :Unknown command\r\n";
 		send(clientSocket, unkonwn.c_str(), unkonwn.length(), 0);
 		return "";
 	}
@@ -73,7 +73,7 @@ std::string	getParameters( int clientSocket, const std::string& command, const s
 		parameters = message.substr(start, message.length() - start - flag);
 	if ((message[start - 1] != ' ' || parameters.length() == 0) && command != "NOTICE")
 	{
-		std::string	notEnoughMsg = ":Webserv 461 " + command + " :Not enough parameters\r\n";
+		std::string	notEnoughMsg = ":IRCServer 461 " + command + " :Not enough parameters\r\n";
 		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
 		return "";
 	}
@@ -88,13 +88,13 @@ void sendwrongCommandMessage(int clientSocket)
 
 void sendwrongUserMessage(int clientSocket, std::string& nickname)
 {
-	std::string wrongCommandMsg = ":Webserv 401 " + nickname + " :No such nick/channel\r\n";
+	std::string wrongCommandMsg = ":IRCServer 401 " + nickname + " :No such nick/channel\r\n";
 	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
 }
 
 void noMessageToSend(int clientSocket)
 {
-	std::string wrongCommandMsg = ":Webserv 412 :No text to send\r\n";
+	std::string wrongCommandMsg = ":IRCServer 412 :No text to send\r\n";
 	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
 }
 
@@ -126,15 +126,16 @@ bool	validNickname( int clientSocket, const std::string& nickname )
 	while (++i < length && nickname[i] == ' ');
 	if (i == length)
 	{
-		std::string	noNicknameMsg = ":Webserv 431 NICK :No nickname given\r\n";
+		std::string	noNicknameMsg = ":IRCServer 431 NICK :No nickname given\r\n";
 		send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);
 		return false;
 	}
+	int	flag = isdigit(nickname[0]) ? 1 : 0;
 	for (i = 0; i < nickname.length(); i++)
 	{
-		if (!isalnum(nickname[i]) && nickname[i] != '_' && nickname[i] != '\n')
+		if ((!isalnum(nickname[i]) && nickname[i] != '_' && nickname[i] != '\n') || flag)
 		{
-			std::string	noNicknameMsg = ":Webserv 432 NICK :Erroneus nickname\r\n";
+			std::string	noNicknameMsg = ":IRCServer 432 NICK :Erroneus nickname\r\n";
 			send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);
 			return false;
 		}
