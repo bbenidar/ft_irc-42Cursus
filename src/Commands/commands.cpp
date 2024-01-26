@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:28:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/21 12:18:55 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 11:05:57 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 				command == "NOTICE" ? 5 :
 				command == "INVITE" ? 6 :
 				command == "KICK" ? 7 :
-				command == "MODE" ? 8 : 9;
+				command == "MODE" ? 8 :
+				command == "TOPIC" ? 9 : 10;
 	switch (cmd)
 	{
 		case 1:
@@ -47,6 +48,9 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 			break ;
 		case 8:
 			handleChannelMode(command + " " + parameters, clientSocket);
+			break ;
+		case 9:
+			handleTopicCommand(command + " " + parameters, clientSocket);
 			break ;
 		default:
 			break;

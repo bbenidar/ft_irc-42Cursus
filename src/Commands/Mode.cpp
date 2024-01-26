@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 12:07:16 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/25 20:44:50 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 10:23:37 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 #include "../../include/utils/colors.hpp"
 #include "../../include/irc_server/server.hpp"
 #include "../../include/Channels/channels.hpp"
+
+const int FLAG_ADD    = 1;
+const int FLAG_REMOVE = 2;
 
 
 void Server::handleChannelMode(const std::string& msge, int clientSocket)
@@ -54,12 +57,12 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
         modeParam = modeParam.substr(begin, end - begin);
     if (Modetype.at(0) == '+')
     {
-        flag = 1;
+        flag = FLAG_ADD;
         Modetype.erase(Modetype.begin());
     }
     else if (Modetype.at(0) == '-')
     {
-        flag = 2;
+        flag = FLAG_REMOVE;
         Modetype.erase(Modetype.begin());
     }
     else
@@ -99,9 +102,9 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
             send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
             return ;
         }
-        if (flag == 2)
+        if (flag == FLAG_REMOVE)
             it2->second.setChannelprivateMode(false);
-        else if (flag == 1)
+        else if (flag == FLAG_ADD)
             it2->second.setChannelprivateMode(true);
     }
     if (Modetype.find('o') != std::string::npos)
@@ -145,9 +148,9 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
             send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
             return ;
         }
-        if (flag == 2)
+        if (flag == FLAG_REMOVE)
             it2->second.removeModerator(it->first);
-        else if (flag == 1)
+        else if (flag == FLAG_ADD)
         {
             
             std::cout << "soc sender "<< clientSocket << "soc resever" << it->first << std::endl;
@@ -180,9 +183,9 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
             send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
             return ;
         }
-        if (flag == 2)
+        if (flag == FLAG_REMOVE)
             it2->second.setChannelPassword("");
-        else if (flag == 1)
+        else if (flag == FLAG_ADD)
             it2->second.setChannelPassword(modeParam);
     }
     if (Modetype.find('l') != std::string::npos)
@@ -209,15 +212,38 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
             send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
             return ;
         }
-        if (flag == 2)
+        if (flag == FLAG_REMOVE)
             it2->second.setChannelUserLimit(0);
-        else if (flag == 1)
+        else if (flag == FLAG_ADD)
         {
             std::stringstream geek(modeParam);
             int x = 0;
             geek >> x;
             it2->second.setChannelUserLimit(x);
         }
+    }
+    if (Modetype.find('t') != std::string::npos)
+    {
+         std::map<std::string, Channels>::iterator	it2;
+        for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
+            if (it2->first == chanName)
+                break ;
+        if (it2 == this->channels.end())
+        {
+            std::string	notEnoughMsg = ":IRCServer 403 " + chanName + " :No such channel\r\n";
+            send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
+            return ;
+        }
+        if (it2->second.getifClientIsModerator(clientSocket) == false)
+        {
+            std::string	notEnoughMsg = ":IRCServer 482 " + chanName + " :You're not channel operator\r\n";
+            send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
+            return ;
+        }
+        if (flag == FLAG_REMOVE)
+            it2->second.setChannelTopicModeratorOnly(false);
+        else if (flag == FLAG_ADD)
+            it2->second.setChannelTopicModeratorOnly(true);
     }
 	
 }

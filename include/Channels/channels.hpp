@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:00:18 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/25 15:26:59 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 11:10:53 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class Channels
 		std::map<int, std::vector<ClientState> >	channelBannedClients;
 		std::map<int, std::vector<ClientState> >	channelInvitedClients;
 		bool 	channelIsPrivate;
+		bool	channelTopicModeratorOnly;
 		
 	public:
 		Channels(){};
@@ -67,6 +68,8 @@ class Channels
 		void printChannelClients() const;
 		bool getPassMode() const;
 		void KickClient(int clientSocket);
+		void setChannelTopicModeratorOnly(bool mode);
+		bool getChannelTopicModeratorOnly() const;
 		std::map<int, std::vector<ClientState> >	getChannelClients() const;
 
 };

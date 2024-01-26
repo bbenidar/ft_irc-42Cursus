@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 15:58:24 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/25 15:29:01 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 11:20:10 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 Channels::Channels(int usermode,int clientSocket,std::string name, std::string topic, std::string password, int limit, std::vector<ClientState> user)
 {
 	this->channelIsPrivate = false;
+	this->channelTopicModeratorOnly = false;
 	this->channelName = name;
 	this->channelTopic = topic;
 	this->channelPassword = password;
@@ -175,4 +176,14 @@ std::string Channels::getChannelTopic() const
 void Channels::removeModerator(int clientSocket)
 {
 	this->channelModerators.erase(clientSocket);
+}
+
+void Channels::setChannelTopicModeratorOnly(bool mode)
+{
+	this->channelTopicModeratorOnly = mode;
+}
+
+bool Channels::getChannelTopicModeratorOnly() const
+{
+	return this->channelTopicModeratorOnly;
 }
