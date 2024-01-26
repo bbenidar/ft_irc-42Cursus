@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/26 19:37:38 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 22:19:01 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,9 +134,10 @@ bool	validNickname( int clientSocket, const std::string& nickname )
 		send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);
 		return false;
 	}
+	int	flag = isdigit(nickname[0]) ? 1 : 0;
 	for (i = 0; i < nickname.length(); i++)
 	{
-		if (!isalnum(nickname[i]) && nickname[i] != '_' && nickname[i] != '\n')
+		if ((!isalnum(nickname[i]) && nickname[i] != '_' && nickname[i] != '\n') || flag)
 		{
 			std::string	noNicknameMsg = ":IRCServer 432 NICK :Erroneus nickname\r\n";
 			send(clientSocket, noNicknameMsg.c_str(), noNicknameMsg.length(), 0);

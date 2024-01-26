@@ -6,12 +6,13 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/26 19:10:01 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/26 22:18:50 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <poll.h>
+#include <cstring>
 #include <sstream>
 #include <iostream>
 #include <unistd.h>
@@ -80,7 +81,7 @@ void	Server::setupServerSocket( void )
 void	Server::my_send( int clientSocket, int num
 	, const std::string& part1, const std::string& part2 )
 {
-	std::string	hostname = ":IRCserver ";
+	std::string	hostname = ":IRCServer ";
 	std::string	nickname = this->clientStates[clientSocket].nickname;
 	std::string	numeric =	(num == 1) ? "001 " + nickname + part1 + nickname + part2 :
 							(num == 2) ? "002 " + nickname + part1 + hostname.substr(1, 10) + part2 :

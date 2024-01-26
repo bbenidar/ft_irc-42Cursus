@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Bot.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 12:02:32 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/18 16:10:21 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/19 10:57:30 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 # define SOCKET_BINDING			BOLD FG_RED "Error: binding socket"
 
 # define CONNECTION_FAILED		BOLD FG_RED "Error: Failed to connect to server"
+
+# define INVALID_IP				BOLD FG_RED "Error: Invalid IP address"
 
 class Bot
 {
