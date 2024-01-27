@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:13:28 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/26 21:22:17 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/27 11:57:48 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <sstream>
 #include <arpa/inet.h>
+#include "../../include/utils/replies.hpp"
 #include "../../include/irc_server/server.hpp"
 
 std::vector<std::string> removeDpicates(std::vector<std::string> channel)
@@ -37,11 +38,7 @@ void Server::send_message(const std::string& msge, int clientSocket)
 {
 	std::string channels = removeMsgCommand(msge);
 	if (channels.size() == 0)
-	{
-		std::string	notEnoughMsg = ":IRCServer 461 PRIVMSG :Not enough parameters\r\n";
-		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
-		return ;
-	}
+		return notEnoughParametersReply(clientSocket, "PRIVMSG");
 	std::string message = msge.substr(msge.find(channels) + channels.length());
 	size_t	begin = message.find_first_not_of(" \n\r", 0);
 	size_t	end = message.find_last_not_of(" \n\r", message.length() - 1);
@@ -90,7 +87,7 @@ void Server::send_message(const std::string& msge, int clientSocket)
 					}
                     else if (j == this->fds.size() - 1)
                     {
-                        sendwrongUserMessage(clientSocket, channel[i]);
+						noSuchNickChannelReply(clientSocket, channel[i]);
                         break ;
                     }
 				}

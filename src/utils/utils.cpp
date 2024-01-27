@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/26 22:19:01 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/27 11:57:24 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
+#include "../../include/utils/replies.hpp"
 
 bool setNonBlocking(int fd)
 {
@@ -76,23 +77,13 @@ std::string	getParameters( int clientSocket, const std::string& command, const s
 	if (message[start])
 		parameters = message.substr(start, message.length() - start - flag);
 	if (((message[start - 1] != ' ' || parameters.length() == 0) && command != "NOTICE"))
-	{
-		std::string	notEnoughMsg = ":IRCServer 461 " + command + " :Not enough parameters\r\n";
-		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
-		return "";
-	}
+		return (notEnoughParametersReply(clientSocket, command), "");
 	return parameters;
 }
 // dyawli matemse7hoch fl merge
 void sendwrongCommandMessage(int clientSocket)
 {
 	std::string wrongCommandMsg = FG_RED "   Wrong command\n" FG_DEFAULT;
-	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
-}
-
-void sendwrongUserMessage(int clientSocket, std::string& nickname)
-{
-	std::string wrongCommandMsg = ":IRCServer 401 " + nickname + " :No such nick/channel\r\n";
 	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
 }
 

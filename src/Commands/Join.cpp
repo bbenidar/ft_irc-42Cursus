@@ -3,26 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/26 22:17:08 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/27 13:02:03 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <poll.h>
 #include <cstring>
-#include <sstream>
-#include <fcntl.h>
-#include <unistd.h>
 #include <arpa/inet.h>
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
+#include "../../include/utils/replies.hpp"
 #include "../../include/irc_server/server.hpp"
 #include "../../include/Channels/channels.hpp"
-
-
 
 std::vector<std::string> split(std::string s, char del)
 {
@@ -61,11 +55,7 @@ bool checkNumberOfParams(const std::string& msge, int clientSocket, const std::s
     }
 	std::vector<std::string> check = split(modifiedMsg, ' ');
 	if (check.size() < 2)
-	{
-		std::string tmp = ":IRCServer 461 " + command +" :Not enough parameters\r\n";
-		send(clientSocket, tmp.c_str(), strlen(tmp.c_str()), 0);
-		return false;
-	}
+		return (notEnoughParametersReply(clientSocket, "JOIN"), false);
 	return true;
 
 }
@@ -78,105 +68,66 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 		return ;
 	std::string channelsstr = removeMsgCommand(msge);
 	if (channelsstr.length() == 0)
-	{
-		std::string	notEnoughMsg = ":IRCServer 461 PRIVMSG :Not enough parameters\r\n";
-		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
-		return ;
-	}
+		return notEnoughParametersReply(clientSocket, "PRIVMSG");
 	std::string passwords = returnpassonyl(msge);
-	std::vector<std::string> chanel;
+	std::vector<std::string> channel;
 	std::vector<std::string> pass;
-	chanel = split(channelsstr, ',');
-	if (chanel.size() != 0)
+	channel = split(channelsstr, ',');
+	if (channel.size() != 0)
 		pass = split(passwords, ',');
-	for (int i = 0; i < (int)chanel.size(); i++)
+	for (int i = 0; i < (int)channel.size(); i++)
 	{
-		if (chanel[i].at(0) == '#')
-			chanel[i].erase(0, 1);
-		std::cout<<"- " << chanel[i] << std::endl;
-		if (!this->channels.count(chanel[i])) {
+		if (channel[i].at(0) == '#')
+			channel[i].erase(0, 1);
+		std::cout<<"- " << channel[i] << std::endl;
+		if (!this->channels.count(channel[i])) {
             std::vector<ClientState> user;
             user.push_back(this->clientStates[clientSocket]);
 
             if (!pass.empty() && i < static_cast<int>(pass.size())) {
-                Channels newChannel(ADMIN, clientSocket, chanel[i], "", pass[i], 1e9, user);
-                this->channels.insert(std::pair<std::string, Channels>(chanel[i], newChannel));
+                Channels newChannel(ADMIN, clientSocket, channel[i], "", pass[i], 1e9, user);
+                this->channels.insert(std::pair<std::string, Channels>(channel[i], newChannel));
             } else {
-                Channels newchanel(ADMIN, clientSocket, chanel[i], "", "", 1e9, user);
-                this->channels.insert(std::pair<std::string, Channels>(chanel[i], newchanel));
+                Channels newchannel(ADMIN, clientSocket, channel[i], "", "", 1e9, user);
+                this->channels.insert(std::pair<std::string, Channels>(channel[i], newchannel));
             }
         }
 		else
 		{
-			if (channels[chanel[i]].getClientisInChannel(clientSocket))
+			if (channels[channel[i]].getClientisInChannel(clientSocket))
+				return alreadyOnChannel(clientSocket, channel[i], "");
+			if (channels[channel[i]].getifClientIsBanned(clientSocket))
+				return cannotJoinChannel(clientSocket, "474", channel[i], "(+b)");
+			if (channels[channel[i]].getChannelClientsSize() >= channels[channel[i]].getChannelUserLimit())
+				return cannotJoinChannel(clientSocket, "471", channel[i], "(+l)");
+			if (channels[channel[i]].getifChannelIsPrivate() == true)
+				if(channels[channel[i]].getifClientIsInvited(clientSocket) == false)
+					return cannotJoinChannel(clientSocket, "473", channel[i], "(+i)");
+			if (channels[channel[i]].getPassMode())
 			{
-				std::string tmp = ":IRCserver 443 " + chanel[i] + " :is already on channel\r\n";
-				send(clientSocket, tmp.c_str() , tmp.size(), 0);
-				return ;
-			}
-			if(channels[chanel[i]].getifClientIsBanned(clientSocket))
-			{
-				std::string tmp = ":IRCServer 474 " + chanel[i] + " :Cannot join channel (+b)\r\n";
-				send(clientSocket, tmp.c_str() , tmp.size(), 0);
-				return ;
-			}
-			if (channels[chanel[i]].getChannelClientsSize() >= channels[chanel[i]].getChannelUserLimit())
-			{
-				std::string tmp = ":IRCServer 471 " + chanel[i] + " :Cannot join channel (+l)\r\n";
-				send(clientSocket, tmp.c_str() , tmp.size(), 0);
-				return ;
-			}
-			if (channels[chanel[i]].getifChannelIsPrivate() == true)
-			{
-				if(channels[chanel[i]].getifClientIsInvited(clientSocket) == false)
-				{
-					std::string tmp = ":IRCServer 473 " + chanel[i] + " :Cannot join channel (+i)\r\n";
-					send(clientSocket, tmp.c_str() , tmp.size(), 0);
-					return ;
-				}
-			}
-			if (channels[chanel[i]].getPassMode())
-			{
-                if ((i < (int)pass.size() && pass[i] != channels[chanel[i]].getChannelPassword()) || pass.empty() || i >= static_cast<int>(pass.size()))
-                {
-					std::string tmp = ":IRCServer 475 " + chanel[i] + " :Cannot join channel (+k)\r\n";
-                    send(clientSocket, tmp.c_str() , tmp.size(), 0);
-                    return ;
-                }
-                else if (i < (int)pass.size() && pass[i] == channels[chanel[i]].getChannelPassword())
+                if ((i < (int)pass.size() && pass[i] != channels[channel[i]].getChannelPassword()) || pass.empty() || i >= static_cast<int>(pass.size()))
+					return cannotJoinChannel(clientSocket, "475", channel[i], "(+k)");
+                else if (i < (int)pass.size() && pass[i] == channels[channel[i]].getChannelPassword())
                 {
                     std::vector<ClientState> user;
                     user.push_back(this->clientStates[clientSocket]);
-                    this->channels[chanel[i]].setChannelClients(clientSocket, user);
-					if(channels[chanel[i]].getChannelTopic() != "")
-					{
-						std::string tmp = ":IRCserver 332 " + chanel[i] + " :" + channels[chanel[i]].getChannelTopic() + "\r\n";
-						send(clientSocket, tmp.c_str() , tmp.size(), 0);
-					}
+                    this->channels[channel[i]].setChannelClients(clientSocket, user);
+					if(channels[channel[i]].getChannelTopic() != "")
+						channelTopic(clientSocket, channel[i], channels[channel[i]].getChannelTopic());
 					else
-					{
-						std::string tmp = ":IRCserver 332 " + chanel[i] + " :No topic is set\r\n";
-						send(clientSocket, tmp.c_str() , tmp.size(), 0);
-					}
+						noTopicIsSet(clientSocket, "332", channel[i]);
                 }
 			}
-			else{
+			else
+			{
 				std::vector<ClientState> user;
 				user.push_back(this->clientStates[clientSocket]);
-				this->channels[chanel[i]].setChannelClients(clientSocket, user);
-				if (channels[chanel[i]].getChannelTopic() != "")
-				{
-					std::string tmp = ":IRCserver 332 " + chanel[i] + " :" + channels[chanel[i]].getChannelTopic() + "\r\n";
-					send(clientSocket, tmp.c_str() , tmp.size(), 0);
-				}
+				this->channels[channel[i]].setChannelClients(clientSocket, user);
+				if (channels[channel[i]].getChannelTopic() != "")
+					channelTopic(clientSocket, channel[i], channels[channel[i]].getChannelTopic());
 				else
-				{
-					std::string tmp = ":IRCserver 332 " + chanel[i] + " :No topic is set\r\n";
-					send(clientSocket, tmp.c_str() , tmp.size(), 0);
-				}
+					noTopicIsSet(clientSocket, "332", channel[i]);
 			}
-				
 		}
 	}
-	return ;
 }

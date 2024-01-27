@@ -3,24 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   Pass.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:03:11 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/26 22:18:16 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/27 12:16:38 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
 #include <arpa/inet.h>
+#include "../../include/utils/replies.hpp"
 #include "../../include/irc_server/server.hpp"
 
 void	Server::passCommand( int clientSocket )
 {
 	if (isClientFullyAuthenticated(clientSocket))
-	{
-		std::string mayNotRegisterMsg = ":IRCServer 462 PASS :You may not reregister\r\n";
-		send(clientSocket, mayNotRegisterMsg.c_str(), mayNotRegisterMsg.length(), 0);
-		return ;
-	}
+		notRegisteredReply(clientSocket, "PASS");
 }
 
 bool Server::handlePassCommand( int clientSocket, std::string command, const std::string parameters )

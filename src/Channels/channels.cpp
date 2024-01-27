@@ -3,25 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   channels.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 15:58:24 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/26 11:20:10 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/27 12:23:34 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <poll.h>
 #include <sstream>
-#include <fcntl.h>
-#include <unistd.h>
 #include <arpa/inet.h>
 #include "../../include/utils/utils.hpp"
 #include "../../include/utils/colors.hpp"
 #include "../../include/irc_server/server.hpp"
-
-
-
 
 Channels::Channels(int usermode,int clientSocket,std::string name, std::string topic, std::string password, int limit, std::vector<ClientState> user)
 {
@@ -36,9 +29,7 @@ Channels::Channels(int usermode,int clientSocket,std::string name, std::string t
 		this->channelModerators[clientSocket] = user;
 }
 
-Channels::~Channels()
-{
-}
+Channels::~Channels() {}
 
 void Channels::setChannelName(const std::string& name)
 {
@@ -68,7 +59,6 @@ void Channels::setChannelClients(int clientSocket, const std::vector<ClientState
 void Channels::setChannelModerators(int clientSocket, const std::vector<ClientState>& user)
 {
 	this->channelModerators[clientSocket] = user;
-	
 }
 
 bool Channels::getPassMode() const
@@ -107,10 +97,9 @@ bool Channels::getifClientIsBanned(int clientSocket) const
 	return false;
 }
 
-
 void Channels::printChannelClients() const
 {
-	//print chanell moderator
+	//print channell moderator
 	std::cout << "channel moderator : " << std::endl;
 	std::map<int, std::vector<ClientState> >::const_iterator it = this->channelModerators.begin();
 	while (it != this->channelModerators.end())

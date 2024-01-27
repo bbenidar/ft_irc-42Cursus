@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:33:47 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/23 12:17:37 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/27 11:58:38 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,16 +34,14 @@
 
 # define SETSOCKOPT				BOLD FG_RED "Error: setsockopt() failed"
 
-bool	setNonBlocking(int fd);
-bool	validCommands( const std::string& command );
-bool	validNickname( int clientSocket, const std::string& nickname );
+bool		setNonBlocking(int fd);
+bool		validCommands( const std::string& command );
+bool		validNickname( int clientSocket, const std::string& nickname );
 std::string	getCommand( int clientSocket, const std::string& message );
 std::string	getParameters( int clientSocket, const std::string& command, const std::string& message );
-// dyawli maytems7och fl merg =====================================================================
-void sendwrongCommandMessage(int clientSocket);
-std::string removeMsgCommand(const std::string& fullMessage);
-void sendwrongUserMessage(int clientSocket, std::string& nickname);
+void		sendwrongCommandMessage(int clientSocket);
+std::string	removeMsgCommand(const std::string& fullMessage);
 std::vector<std::string> split(std::string s, char del);
-void noMessageToSend(int clientSocket);
+void		noMessageToSend(int clientSocket);
 //=================================================================================================
 #endif

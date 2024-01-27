@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+         #
+#    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/26 19:14:33 by bbenidar         ###   ########.fr        #
+#    Updated: 2024/01/27 11:01:27 by moudrib          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ ADDED_FILES	=	.vscode
 
 SRC		=	src/main.cpp \
 			src/utils/utils.cpp \
+			src/utils/replies.cpp \
 			src/Commands/Pass.cpp \
 			src/Commands/Nick.cpp \
 			src/Commands/User.cpp \

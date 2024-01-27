@@ -1,15 +1,12 @@
 #include <sstream>
 #include <arpa/inet.h>
+#include "../../include/utils/replies.hpp"
 #include "../../include/irc_server/server.hpp"
 
 void	Server::userCommand( int clientSocket )
 {
 	if (isClientFullyAuthenticated(clientSocket))
-	{
-		std::string mayNotRegisterMsg = ":IRCServer 462 USER :You may not reregister\r\n";
-		send(clientSocket, mayNotRegisterMsg.c_str(), mayNotRegisterMsg.length(), 0);
-		return ;
-	}
+		notRegisteredReply(clientSocket, "USER");
 }
 
 bool Server::handleUserCommand( int clientSocket, std::string command, const std::string parameters )
@@ -45,11 +42,7 @@ bool Server::handleUserCommand( int clientSocket, std::string command, const std
 		}
 	}
 	if (i != 4)
-	{
-		std::string    notEnoughMsg = ":IRCServer 461 " + command + " :Not enough parameters\r\n";
-		send(clientSocket, notEnoughMsg.c_str(), notEnoughMsg.length(), 0);
-		return false;
-	}
+		return (notEnoughParametersReply(clientSocket, "USER"), false);
 	this->clientStates[clientSocket].hasUser = true;
 	return true;
 }
