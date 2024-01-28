@@ -4,6 +4,6 @@ reply topic need edite:                                                         
 kick => make the reason optional                                                                              [done ✓]
 remove \n\r from msg                                                                                          [done ✓]
 mode grafic                                                                                                   [done ✓]
-add part command 
-if no user in channel delet channel                                                                           [done ✓] need to add in part command too
-if operator kick the channel the seond user in chanel is the moderstor                                        [done ✓] need to add in part command too
+add part command                                                                                              [done ✓]
+if no user in channel delet channel                                                                           [done ✓]
+if operator kick the channel the seond user in chanel is the moderstor                                        [done ✓]

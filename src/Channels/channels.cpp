@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 15:58:24 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/28 14:47:05 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/28 20:54:13 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,4 +196,6 @@ std::string Channels::getTopicTime() const
 {
 	return this->topicTimeSetting;
 }
+
+
 

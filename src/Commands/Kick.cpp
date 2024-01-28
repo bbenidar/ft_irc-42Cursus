@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 19:48:36 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/28 14:48:04 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/28 20:55:24 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void Server::handleKickCommand(const std::string& msge, int clientSocket)
 			}
 			if (this->channels[Chans[i]].getifClientIsModerator(it->first))
 			{
+				this->channels[Chans[i]].removeModerator(it->first);
 				std::map<int, std::vector<ClientState> > tmp = this->channels.begin()->second.getChannelClients();
 				this->channels[Chans[i]].setChannelModerators(tmp.begin()->first, tmp.begin()->second);
 			}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Part.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/28 17:16:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/28 17:41:28 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 20:54:33 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	Server::handlePartCommand( int clientSocket, const std::string& parameter )
 				}
 				if (this->channels[it->first].getifClientIsModerator(clientSocket))
 				{
+					this->channels[it->first].removeModerator(clientSocket);
 					std::map<int, std::vector<ClientState> > tmp = this->channels.begin()->second.getChannelClients();
 					this->channels[it->first].setChannelModerators(tmp.begin()->first, tmp.begin()->second);
 				}

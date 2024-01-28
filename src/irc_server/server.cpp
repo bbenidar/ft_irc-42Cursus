@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/28 18:05:46 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 20:56:44 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,12 @@ bool Server::handleClientCommunication(size_t clientIndex)
 				{
 					if (this->channels[it->first].getChannelClients().size() != 0)
 					{
+						this->channels[it->first].removeModerator(this->fd);
 						std::map<int, std::vector<ClientState> > tmp = this->channels.begin()->second.getChannelClients();
 						this->channels[it->first].setChannelModerators(tmp.begin()->first, tmp.begin()->second);
+						this->channels[it->first].sendBroadcastMessage(":" + clientStates[this->fd].nickname + "!~" + this->clientStates[this->fd].username + "@" + this->clientStates[this->fd].hostname + " PART " + it->first  + "\r\n", this->fd);
+						std::string mode = "MODE " + it->first + " +o " + clientStates[tmp.begin()->first].nickname + "\r\n";
+						send(tmp.begin()->first, mode.c_str(), mode.length(), 0);
 					}
 				}
 			}
