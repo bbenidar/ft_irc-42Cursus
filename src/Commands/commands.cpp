@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:28:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/26 19:23:56 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/28 12:11:51 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,25 +36,25 @@ void	Server::processAuthenticatedClientCommand(int clientSocket, const std::stri
 			userCommand(clientSocket);
 			break;
 		case 4:
-			handleJoinchannel(command + " " + parameters, clientSocket, command);
+			handleJoinchannel(parameters, clientSocket, command);
 			break;
 		case 5:
-			handleKickCommand(command + " " + parameters, clientSocket);
+			handleKickCommand(parameters, clientSocket);
 			break ;
 		case 6:
-			handleChannelMode(command + " " + parameters, clientSocket);
+			handleChannelMode(parameters, clientSocket);
 			break ;
 		case 7:
-			handleTopicCommand(command + " " + parameters, clientSocket);
+			handleTopicCommand(parameters, clientSocket);
 			break ;
 		case 8:
 			handleNoticeCommand(clientSocket, parameters);
 			break;
 		case 9:
-			handleInvitechannel(command + " " + parameters, clientSocket);
+			handleInvitechannel(parameters, clientSocket);
 			break ;
 		case 10:
-			send_message(command + " " + parameters, clientSocket);
+			send_message(parameters, clientSocket);
 			break;
 		default:
 			break;

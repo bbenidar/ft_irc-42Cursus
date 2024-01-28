@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 19:48:36 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/27 12:46:20 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 14:48:04 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,9 @@ void Server::handleKickCommand(const std::string& msge, int clientSocket)
 	Nickname =  Nickname.substr(begin, end - begin);
 	std::vector<std::string> Nams = split(Nickname, ',');
 	std::vector<std::string> Chans = split(chanName, ',');
-	
+	//kick => make the reason optional 
 	for (int i = 0; i < (int)Chans.size(); i++)
 	{
-		if (Chans[i].length() > 0 && Chans[i][0] == '#')
-			Chans[i].erase(0, 1);
 		for (int j = 0; j < (int)Nams.size(); j++)
 		{
 			
@@ -50,13 +48,26 @@ void Server::handleKickCommand(const std::string& msge, int clientSocket)
 				if (it2->first == Chans[i])
 					break ;
 			if (it2 == this->channels.end())
-				return noSuchChannelReply(clientSocket, Chans[i]);
+				return noSuchChannelReply(clientSocket, Chans[i], "KICK " + this->clientStates[clientSocket].nickname + " ");
 			if (it2->second.getifClientIsModerator(clientSocket) == false)
 				return notChannelOperatorReply(clientSocket, Chans[i]);
 			std::map<int, std::vector<ClientState> > tmp = it2->second.getChannelClients();
 			if (tmp.count(it->first) == 0)
 				return theyNotOnThatChannel(clientSocket, Nams[j], Chans[i]);
 			this->channels[Chans[i]].KickClient(it->first);
+			this->channels[Chans[i]].sendBroadcastMessage(":" + clientStates[clientSocket].nickname + " KICK " + Chans[i] + " " + it->second.nickname + "\r\n", clientSocket);
+			if (this->channels[Chans[i]].getChannelClients().size() == 0)
+			{
+				this->channels.erase(Chans[i]);
+				return ;
+			}
+			if (this->channels[Chans[i]].getifClientIsModerator(it->first))
+			{
+				std::map<int, std::vector<ClientState> > tmp = this->channels.begin()->second.getChannelClients();
+				this->channels[Chans[i]].setChannelModerators(tmp.begin()->first, tmp.begin()->second);
+			}
+			
+			
 		}
 	}
 }

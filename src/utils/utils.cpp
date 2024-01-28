@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/27 11:57:24 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 15:18:14 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,15 +93,17 @@ void noMessageToSend(int clientSocket)
 	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
 }
 
-std::string removeMsgCommand(const std::string& fullMessage) {
-    std::istringstream iss(fullMessage);
-    std::string command, channel, message;
-    iss >> command >> channel;
-    std::getline(iss, message);
-
-    message.erase(0, message.find_first_not_of(" \t\n\r\f\v"));
-    message.erase(message.find_first_not_of(" \t\n\r\f\v") + 1);
-        return channel;
+std::string removeMsgCommand(const std::string& fullMessage) 
+{
+	std::string			channel;
+	std::stringstream	parameters(fullMessage);
+	while (channel.length() == 0)
+	{
+		getline(parameters, channel, ' ');		
+		if (parameters.eof())
+			break ;
+	}
+	return channel;
 }
 
 std::string Joinchannelpars(const std::string& msge)
@@ -136,4 +138,17 @@ bool	validNickname( int clientSocket, const std::string& nickname )
 		}
 	}
 	return true;
+}
+
+std::vector<std::string> splitIntoPairs(const std::string& input) 
+{
+    std::vector<std::string> result;
+    std::string pair;
+
+    for (size_t i = 0; i < input.size(); i += 2) {
+        pair = input.substr(i, 2);
+        result.push_back(pair);
+    }
+
+    return result;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   replies.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/27 09:50:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/27 13:03:30 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 12:20:13 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ void	notChannelOperatorReply( int clientSocket, const std::string& channel )
 	send(clientSocket, notOperatorMsg.c_str(), notOperatorMsg.length(), 0);
 }
 
-void	noSuchChannelReply( int clientSocket, const std::string& channel )
+void	noSuchChannelReply( int clientSocket, const std::string& channel, std::string command)
 {
-	std::string	noSuchChannelMsg = ":IRCServer 403 " + channel + " :No such channel\r\n";
+	std::string	noSuchChannelMsg = ":IRCServer 403 " + command + channel + " :No such channel\r\n";
 	send(clientSocket, noSuchChannelMsg.c_str(), noSuchChannelMsg.length(), 0);
 }
 
@@ -81,6 +81,7 @@ void	theyNotOnThatChannel( int clientSocket, const std::string& name, const std:
 
 void	channelTopic( int clientSocket, const std::string& channel, const std::string& topic )
 {
-	std::string reply = ":IRCserver 332 " + channel + " :" + topic + "\r\n";
+	std::string reply =":IRCServer 332 " + channel + ": " + topic + "\r\n";
+
 	send(clientSocket, reply.c_str() , reply.size(), 0);
 }

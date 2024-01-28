@@ -46,7 +46,7 @@ void	Server::runServerLoop()
 
 	while (true)
 	{
-		int pollResult = poll(this->fds.data(), this->fds.size(), 5);
+		int pollResult = poll(this->fds.data(), this->fds.size(), 0);
 		if (pollResult == -1)
 			throw std::runtime_error(POLL_FAILURE);
 		for (size_t clientIndex = 0; clientIndex < this->fds.size(); clientIndex++)

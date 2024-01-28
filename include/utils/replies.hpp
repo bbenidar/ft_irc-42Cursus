@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/27 09:51:53 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/27 12:59:43 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 12:19:14 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 void	notOnThatChannel( int clientSocket, const std::string& channel );
 void	notRegisteredReply( int clientSocket, const std::string& command );
-void	noSuchChannelReply( int clientSocket, const std::string& channel );
+void	noSuchChannelReply(int clientSocket, const std::string& channel, std::string command);
 void	notChannelOperatorReply( int clientSocket, const std::string& channel );
 void	notEnoughParametersReply( int clientSocket, const std::string& command );
 void	noSuchNickChannelReply( int clientSocket, const std::string& clientName );

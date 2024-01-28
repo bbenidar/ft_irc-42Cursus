@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channels.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 15:58:24 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/27 12:23:34 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 14:47:05 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ Channels::Channels(int usermode,int clientSocket,std::string name, std::string t
 	this->channelPassword = password;
 	this->channelUserLimit = limit;
 	this->channelClients[clientSocket] = user;
+	std::time_t currentTime = std::time(0);
+	this->topicTimeSetting = std::ctime(&currentTime);
 	if (usermode == ADMIN)
 		this->channelModerators[clientSocket] = user;
 }
@@ -176,3 +178,22 @@ bool Channels::getChannelTopicModeratorOnly() const
 {
 	return this->channelTopicModeratorOnly;
 }
+
+void Channels::sendBroadcastMessage(const std::string& message, int clientSocket)
+{
+	(void)clientSocket;
+	std::map<int, std::vector<ClientState> >::iterator it;
+	for (it = this->channelClients.begin(); it != this->channelClients.end(); it++)
+			send(it->first, message.c_str(), message.length(), 0);
+}
+
+void Channels::setTopicTime(const std::string& time)
+{
+	this->topicTimeSetting = time;
+}
+
+std::string Channels::getTopicTime() const
+{
+	return this->topicTimeSetting;
+}
+

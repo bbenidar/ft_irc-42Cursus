@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:13:28 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/27 11:57:48 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/27 21:51:05 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void Server::send_message(const std::string& msge, int clientSocket)
 		noMessageToSend(clientSocket);
 		return ;
 	}
-	message =  message.substr(begin, end - begin + 1) + "\r\n";
+	message =  message.substr(begin, end - begin + 1);
 	std::vector<std::string> channel;
 	channel = split(channels, ',');
 	channel = removeDpicates(channel);
@@ -55,7 +55,6 @@ void Server::send_message(const std::string& msge, int clientSocket)
 	{
 		    if (channel[i].at(0) == '#')
 			{
-				channel[i].erase(0, 1);
 				std::map<std::string, Channels>::iterator it;
 				for (it = this->channels.begin(); it != this->channels.end(); it++)
 				{
@@ -63,6 +62,8 @@ void Server::send_message(const std::string& msge, int clientSocket)
 					{
 						std::map<int, std::vector<ClientState> > tmp = it->second.getChannelClients();
 						std::map<int, std::vector<ClientState> >::iterator iter;
+						if (tmp.count(clientSocket) == 0)
+							return notOnThatChannel(clientSocket, channel[i]);
 						for(iter = tmp.begin(); iter != tmp.end(); iter++)
 						{
 							if(iter->first != clientSocket)

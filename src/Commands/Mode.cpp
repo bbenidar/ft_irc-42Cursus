@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 12:07:16 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/27 12:48:08 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 15:41:32 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,12 @@
 const int FLAG_ADD    = 1;
 const int FLAG_REMOVE = 2;
 
+// mode grafic !!
 
 void Server::handleChannelMode(const std::string& msge, int clientSocket)
 {
 	int flag = 0;
 	std::string chanName = removeMsgCommand(msge);
-	if (chanName.size() >0 && chanName.at(0) == '#')
-		chanName.erase(0,1);
 	if (chanName.size() == 0)
 		return notEnoughParametersReply(clientSocket, "PRIVMSG");
 	std::string Modetype = msge.substr(msge.find(chanName) + chanName.length());
@@ -45,123 +44,133 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 		modeParam = "";
 	else
 		modeParam = modeParam.substr(begin, end - begin);
-	if (Modetype.at(0) == '+')
-	{
-		flag = FLAG_ADD;
-		Modetype.erase(Modetype.begin());
-	}
-	else if (Modetype.at(0) == '-')
-	{
-		flag = FLAG_REMOVE;
-		Modetype.erase(Modetype.begin());
-	}
-	else
-		return notEnoughParametersReply(clientSocket, "PRIVMSG");
 	if (Modetype.size() == 0)
-		return notEnoughParametersReply(clientSocket, "PRIVMSG");
-	if (Modetype.find_first_not_of("itkol\n\r", 0) != std::string::npos)
+		return notEnoughParametersReply(clientSocket, "MODE");
+	std::vector<std::string> modes = splitIntoPairs(Modetype);
+	for (int i = 0; i < (int)modes.size(); i++)
 	{
-		std::string	reply = ":IRCServer 472 " + chanName + " :is unknown mode char to me\r\n";
-		send(clientSocket, reply.c_str(), reply.length(), 0);
-		return ;
-	}
-	if (Modetype.find('i') != std::string::npos)
-	{
-		std::map<std::string, Channels>::iterator	it2;
-		for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
-			if (it2->first == chanName)
-				break ;
-		if (it2 == this->channels.end())
-			return noSuchChannelReply(clientSocket, chanName);
-		if (it2->second.getifClientIsModerator(clientSocket) == false)
-			return notChannelOperatorReply(clientSocket, chanName);
-		if (flag == FLAG_REMOVE)
-			it2->second.setChannelprivateMode(false);
-		else if (flag == FLAG_ADD)
-			it2->second.setChannelprivateMode(true);
-	}
-	if (Modetype.find('o') != std::string::npos)
-	{
-		if (modeParam == "")
-			return notEnoughParametersReply(clientSocket, "PRIVMSG");
-		std::map<std::string, Channels>::iterator	it2;
-		for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
-			if (it2->first == chanName)
-				break ;
-		if (it2 == this->channels.end())
-			return noSuchChannelReply(clientSocket, chanName);
-		if (it2->second.getifClientIsModerator(clientSocket) == false)
-			return notChannelOperatorReply(clientSocket, chanName);
-		std::map<int, ClientState>::iterator	it;
-		for (it = this->clientStates.begin(); it != this->clientStates.end(); it++)
-			if (it->second.nickname == modeParam)
-				break ;
-		if (it == this->clientStates.end())
-			return noSuchNickChannelReply(clientSocket, modeParam);
-		std::map<int, std::vector<ClientState> > tmp = it2->second.getChannelClients();
-		if (tmp.count(it->first) == 0)
-			return theyNotOnThatChannel(clientSocket, modeParam, chanName);
-		if (flag == FLAG_REMOVE)
-			it2->second.removeModerator(it->first);
-		else if (flag == FLAG_ADD)
+		if (modes[i].size() != 2)
+			return notEnoughParametersReply(clientSocket, "MODE");
+		if (modes[i].find_first_not_of("+-itkol\n\r", 0) != std::string::npos)
 		{
-			std::vector<ClientState> tmp2 = tmp[it->first];
-			it2->second.setChannelModerators(it->first, tmp2);
-			it2->second.printChannelClients();
+			std::string	reply = ":IRCServer 472 " + chanName + " :is unknown mode char to me\r\n";
+			send(clientSocket, reply.c_str(), reply.length(), 0);
+			return ;
 		}
-	}
-	if (Modetype.find('k') != std::string::npos)
-	{
-		if (modeParam == "")
-			return notEnoughParametersReply(clientSocket, "PRIVMSG");
-		std::map<std::string, Channels>::iterator	it2;
-		for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
-			if (it2->first == chanName)
-				break ;
-		if (it2 == this->channels.end())
-			return noSuchChannelReply(clientSocket, chanName);
-		if (it2->second.getifClientIsModerator(clientSocket) == false)
-			return notChannelOperatorReply(clientSocket, chanName);
-		if (flag == FLAG_REMOVE)
-			it2->second.setChannelPassword("");
-		else if (flag == FLAG_ADD)
-			it2->second.setChannelPassword(modeParam);
-	}
-	if (Modetype.find('l') != std::string::npos)
-	{
-		if (modeParam == "")
-			return notEnoughParametersReply(clientSocket, "PRIVMSG");
-		std::map<std::string, Channels>::iterator	it2;
-		for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
-			if (it2->first == chanName)
-				break ;
-		if (it2 == this->channels.end())
-			return noSuchChannelReply(clientSocket, chanName);
-		if (it2->second.getifClientIsModerator(clientSocket) == false)
-			return notChannelOperatorReply(clientSocket, chanName);
-		if (flag == FLAG_REMOVE)
-			it2->second.setChannelUserLimit(0);
-		else if (flag == FLAG_ADD)
+		if (modes[i][0] != '+' && modes[i][0] != '-')
 		{
-			std::stringstream geek(modeParam);
-			int x = 0;
-			geek >> x;
-			it2->second.setChannelUserLimit(x);
+			std::string	reply = ":IRCServer 472 " + chanName + " :is unknown mode char to me\r\n";
+			send(clientSocket, reply.c_str(), reply.length(), 0);
+			return ;
 		}
-	}
-	if (Modetype.find('t') != std::string::npos)
-	{
+		if (modes[i].at(0) == '+')
+		{
+			flag = FLAG_ADD;
+			modes[i].erase(modes[i].begin());
+		}
+		else if (modes[i].at(0) == '-')
+		{
+			flag = FLAG_REMOVE;
+			modes[i].erase(modes[i].begin());
+		}
+		if (modes[i].find('i') != std::string::npos)
+		{
 			std::map<std::string, Channels>::iterator	it2;
-		for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
-			if (it2->first == chanName)
-				break ;
-		if (it2 == this->channels.end())
-			return noSuchChannelReply(clientSocket, chanName);
-		if (it2->second.getifClientIsModerator(clientSocket) == false)
-			return notChannelOperatorReply(clientSocket, chanName);
-		if (flag == FLAG_REMOVE)
-			it2->second.setChannelTopicModeratorOnly(false);
-		else if (flag == FLAG_ADD)
-			it2->second.setChannelTopicModeratorOnly(true);
+			for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
+				if (it2->first == chanName)
+					break ;
+			if (it2 == this->channels.end())
+				return noSuchChannelReply(clientSocket, chanName, "MODE " + this->clientStates[clientSocket].nickname + " ");
+			if (it2->second.getifClientIsModerator(clientSocket) == false)
+				return notChannelOperatorReply(clientSocket, chanName);
+			if (flag == FLAG_REMOVE)
+				it2->second.setChannelprivateMode(false);
+			else if (flag == FLAG_ADD)
+				it2->second.setChannelprivateMode(true);
+		}
+		else if (modes[i].find('o') != std::string::npos)
+		{
+			std::map<std::string, Channels>::iterator	it2;
+			for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
+				if (it2->first == chanName)
+					break ;
+			if (it2 == this->channels.end())
+				return noSuchChannelReply(clientSocket, chanName, "MODE" + this->clientStates[clientSocket].nickname + " ");
+			if (it2->second.getifClientIsModerator(clientSocket) == false)
+				return notChannelOperatorReply(clientSocket, chanName);
+			std::map<int, ClientState>::iterator	it;
+			for (it = this->clientStates.begin(); it != this->clientStates.end(); it++)
+				if (it->second.nickname == modeParam)
+					break ;
+			if (it == this->clientStates.end())
+				return noSuchNickChannelReply(clientSocket, modeParam);
+			std::map<int, std::vector<ClientState> > tmp = it2->second.getChannelClients();
+			if (tmp.count(it->first) == 0)
+				return theyNotOnThatChannel(clientSocket, modeParam, chanName);
+			if (flag == FLAG_REMOVE)
+				it2->second.removeModerator(it->first);
+			else if (flag == FLAG_ADD)
+			{
+				std::vector<ClientState> tmp2 = tmp[it->first];
+				it2->second.setChannelModerators(it->first, tmp2);
+				it2->second.printChannelClients();
+			}
+		}
+		else if (modes[i].find('k') != std::string::npos)
+		{
+			std::map<std::string, Channels>::iterator	it2;
+			for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
+				if (it2->first == chanName)
+					break ;
+			if (it2 == this->channels.end())
+				return noSuchChannelReply(clientSocket, chanName, "MODE" + this->clientStates[clientSocket].nickname + " ");
+			if (it2->second.getifClientIsModerator(clientSocket) == false)
+				return notChannelOperatorReply(clientSocket, chanName);
+			if (flag == FLAG_REMOVE)
+				it2->second.setChannelPassword("");
+			else if (flag == FLAG_ADD)
+				it2->second.setChannelPassword(modeParam);
+		}
+		else if (modes[i].find('l') != std::string::npos)
+		{
+			std::map<std::string, Channels>::iterator	it2;
+			for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
+				if (it2->first == chanName)
+					break ;
+			if (it2 == this->channels.end())
+				return noSuchChannelReply(clientSocket, chanName, "MODE" + this->clientStates[clientSocket].nickname + " ");
+			if (it2->second.getifClientIsModerator(clientSocket) == false)
+				return notChannelOperatorReply(clientSocket, chanName);
+			if (flag == FLAG_REMOVE)
+				it2->second.setChannelUserLimit(0);
+			else if (flag == FLAG_ADD)
+			{
+				std::stringstream geek(modeParam);
+				int x = 0;
+				geek >> x;
+				it2->second.setChannelUserLimit(x);
+			}
+		}
+		else if (modes[i].find('t') != std::string::npos)
+		{
+				std::map<std::string, Channels>::iterator	it2;
+			for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
+				if (it2->first == chanName)
+					break ;
+			if (it2 == this->channels.end())
+				return noSuchChannelReply(clientSocket, chanName, "MODE" + this->clientStates[clientSocket].nickname + " ");
+			if (it2->second.getifClientIsModerator(clientSocket) == false)
+				return notChannelOperatorReply(clientSocket, chanName);
+			if (flag == FLAG_REMOVE)
+				it2->second.setChannelTopicModeratorOnly(false);
+			else if (flag == FLAG_ADD)
+				it2->second.setChannelTopicModeratorOnly(true);
+		}
 	}
+
+
+
+
+
+	
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Invite.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 19:38:30 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/27 12:42:56 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 15:37:41 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ void Server::handleInvitechannel(const std::string& msge, int clientSocket)
 	size_t	end = channel.find_last_not_of(" \n\r", channel.length() - 1);
 	if (begin == std::string::npos || end == std::string::npos)
 		return notEnoughParametersReply(clientSocket, "PRIVMSG");
-	if (channel[begin] == '#')
-		begin++;
 	channel =  channel.substr(begin, end - begin + 1);
 	std::map<int, ClientState>::iterator	it;
 	for (it = this->clientStates.begin(); it != this->clientStates.end(); it++)
@@ -42,7 +40,7 @@ void Server::handleInvitechannel(const std::string& msge, int clientSocket)
 		if (it2->first == channel)
 			break ;
 	if (it2 == this->channels.end())
-		return noSuchChannelReply(clientSocket, channel);
+		return noSuchChannelReply(clientSocket, channel, "INVITE " + this->clientStates[clientSocket].nickname + " ");
 	if (it2->second.getifClientIsBanned(it->first))
 	{
 		std::string	reply = ":IRCServer 404 " + channel + " " + clientName + " :Cannot send to channel\r\n";

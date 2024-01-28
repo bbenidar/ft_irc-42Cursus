@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:33:47 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/27 11:58:38 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 15:18:30 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,6 @@ void		sendwrongCommandMessage(int clientSocket);
 std::string	removeMsgCommand(const std::string& fullMessage);
 std::vector<std::string> split(std::string s, char del);
 void		noMessageToSend(int clientSocket);
+std::vector<std::string> splitIntoPairs(const std::string& input);
 //=================================================================================================
 #endif

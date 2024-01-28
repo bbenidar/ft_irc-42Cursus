@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:00:18 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/26 11:10:53 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/28 14:47:01 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Channels
 		std::string		channelName;
 		std::string		channelPassword;
 		std::string		channelTopic;
+		std::string		topicTimeSetting;
 		int		channelUserLimit;
 		std::map<int, std::vector<ClientState> >	channelModerators;
 		std::map<int, std::vector<ClientState> >	channelClients;
@@ -52,6 +53,8 @@ class Channels
 		void	setChannelModerators(int clientSocket, const std::vector<ClientState>& user);
 		void	setChannelBannedClients(int clientSocket, const std::vector<ClientState>& user);
 		void	setChannelInvitedClients(int clientSocket, ClientState& user);
+		void	setTopicTime(const std::string& time);
+		std::string	getTopicTime() const;
 		void    removeModerator(int clientSocket);
 		std::string	getChannelName() const;
 		std::string	getChannelPassword() const;
@@ -70,6 +73,7 @@ class Channels
 		void KickClient(int clientSocket);
 		void setChannelTopicModeratorOnly(bool mode);
 		bool getChannelTopicModeratorOnly() const;
+		void sendBroadcastMessage(const std::string& message, int clientSocket);
 		std::map<int, std::vector<ClientState> >	getChannelClients() const;
 
 };

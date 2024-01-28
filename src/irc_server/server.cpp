@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/27 12:13:41 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/27 21:54:20 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	Server::my_send( int clientSocket, int num
 	std::string	hostname = ":IRCServer ";
 	std::string	nickname = this->clientStates[clientSocket].nickname;
 	std::string	numeric =	(num == 1) ? "001 " + nickname + part1 + nickname + part2 :
-							(num == 2) ? "002 " + nickname + part1 + hostname.substr(1, 10) + part2 :
+							(num == 2) ? "002 " + nickname + part1 + "IRCServer" + part2 :
 							(num == 3) ? "003 " + nickname + part1 + part2 :
 							(num == 4) ? "004 " + nickname + " " + hostname + part1 :
 							(num == 5) ? "005 " + nickname + part1 : "";
@@ -109,7 +109,7 @@ bool Server::handleClientCommunication(size_t clientIndex)
 		return false;
 	}
 	this->clientBuffers[this->fd].append(buffer, recvBytes);
-	// std::cerr << "|message: " << this->clientBuffers[this->fd] << "|\n";
+	std::cerr << "|message: " << this->clientBuffers[this->fd] << "|\n";
 	if ((end = this->clientBuffers[this->fd].find('\n')) != std::string::npos)
 	{
 		std::string			line;

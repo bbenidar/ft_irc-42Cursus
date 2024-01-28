@@ -1,0 +1,9 @@
+when user join channel for the first time => send the mode of joining channel (moderator flag in limecaht)    [done ✓]
+when user join channel that exist => send msg brodcast to all user in this channel                            [done ✓]
+reply topic need edite:                                                                                       [done ✓]
+kick => make the reason optional                                                                              [done ✓]
+remove \n\r from msg                                                                                          [done ✓]
+mode grafic                                                                                                   [done ✓]
+add part command 
+if no user in channel delet channel                                                                           [done ✓] need to add in part command too
+if operator kick the channel the seond user in chanel is the moderstor                                        [done ✓] need to add in part command too
