@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/27 21:54:20 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/28 18:05:46 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,9 +98,33 @@ bool Server::handleClientCommunication(size_t clientIndex)
 	size_t 	end = std::string::npos;
 	char	buffer[BUFFER_SIZE];
 	int		recvBytes = recv(this->fd, buffer, sizeof(buffer), 0);
+	std::vector <std::string> shouldErase;
 
 	if (recvBytes <= 0)
 	{
+		for (std::map<std::string, Channels>::iterator it = this->channels.begin(); it != this->channels.end(); it++)
+		{
+			std::map<int, std::vector<ClientState> > tmp = it->second.getChannelClients();
+			if (tmp.count(this->fd) != 0)
+			{
+				it->second.KickClient(this->fd);
+				if (this->channels[it->first].getChannelClients().size() == 0)
+				{
+					shouldErase.push_back(it->first);
+					continue ;
+				}
+				if (this->channels[it->first].getifClientIsModerator(this->fd))
+				{
+					if (this->channels[it->first].getChannelClients().size() != 0)
+					{
+						std::map<int, std::vector<ClientState> > tmp = this->channels.begin()->second.getChannelClients();
+						this->channels[it->first].setChannelModerators(tmp.begin()->first, tmp.begin()->second);
+					}
+				}
+			}
+		}
+		for (size_t i = 0 ; i < shouldErase.size(); i++)
+			this->channels.erase(shouldErase[i]);
 		this->clientStates.erase(this->fd);
 		this->clientBuffers.erase(this->fd);
 		close(this->fd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/26 19:18:00 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/28 17:33:36 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Server
 		std::string		serverPassword;
 		unsigned short	port;
 		std::vector<struct pollfd>	fds;
-		std::map<int, ClientState>	clientStates;	
+		std::map<int, ClientState>	clientStates;
 		std::map<int, std::string>	clientBuffers;
 		std::map<std::string, Channels>	channels;
 
@@ -76,6 +76,7 @@ class Server
 		void	handleChannelMode(const std::string& msge, int clientSocket);
 		void	handleTopicCommand(const std::string& msge, int clientSocket);
 		void	handleInvitechannel(const std::string& msge, int clientSocket);
+		void	handlePartCommand( int clientSocket, const std::string& parameter );
 		void	handleNoticeCommand( int clientSocket, const std::string& parameter );
 		void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
 		void	handleJoinchannel(const std::string& msge, int clientSocket, const std::string& command);

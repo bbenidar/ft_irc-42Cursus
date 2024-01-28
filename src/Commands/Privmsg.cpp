@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:13:28 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/27 21:51:05 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/28 18:10:35 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ void Server::send_message(const std::string& msge, int clientSocket)
 						break ;
 					}
 				}
+				if (it == this->channels.end())
+					return noSuchChannelReply(clientSocket, channel[i], "PRIVMSG ");
 			}
 			else
 			{

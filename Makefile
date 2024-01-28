@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+         #
+#    By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/26 14:23:33 by moudrib           #+#    #+#              #
-#    Updated: 2024/01/27 21:22:41 by bbenidar         ###   ########.fr        #
+#    Updated: 2024/01/28 17:16:04 by moudrib          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ SRC		=	src/main.cpp \
 			src/Commands/Pass.cpp \
 			src/Commands/Nick.cpp \
 			src/Commands/User.cpp \
+			src/Commands/Part.cpp \
 			src/Commands/Join.cpp \
 			src/Commands/Kick.cpp \
 			src/Commands/Mode.cpp \

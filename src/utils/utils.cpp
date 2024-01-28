@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/28 15:18:14 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/28 17:18:09 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,10 @@ bool setNonBlocking(int fd)
 
 bool	validCommands( const std::string& command )
 {
-	std::string	commands[12] = {	"PASS",
+	std::string	commands[13] = {	"PASS",
 									"NICK",
 									"USER",
+									"PART",
 									"JOIN",
 									"PONG",
 									"KICK",
@@ -40,11 +41,12 @@ bool	validCommands( const std::string& command )
 									"NOTICE",
 									"PRIVMSG"};
 
-	for (int i = 0; i < 12; i++)	
+	for (int i = 0; i < 13; i++)	
 		if (commands[i] == command)
 			return true;
 	return false;
 }
+
 
 std::string	getCommand( int clientSocket, const std::string& message )
 {

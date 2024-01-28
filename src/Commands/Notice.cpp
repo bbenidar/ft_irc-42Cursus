@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 14:27:07 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/26 13:17:11 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/28 17:20:28 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	Server::handleNoticeCommand( int clientSocket, const std::string& parameter
 {
 	std::string			nickname,nicknames;
 	std::stringstream	parameters(parameter);
-	getline(parameters, nicknames, ' ');
 	while (nicknames.length() == 0)
 	{
 		getline(parameters, nicknames, ' ');		
