@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:59:22 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/28 20:56:44 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:04:34 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ bool Server::handleClientCommunication(size_t clientIndex)
 		return false;
 	}
 	this->clientBuffers[this->fd].append(buffer, recvBytes);
-	std::cerr << "|message: " << this->clientBuffers[this->fd] << "|\n";
+	// std::cerr << "|message: " << this->clientBuffers[this->fd] << "|\n";
 	if ((end = this->clientBuffers[this->fd].find('\n')) != std::string::npos)
 	{
 		std::string			line;

@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/28 17:18:09 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/29 16:46:57 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,17 +47,13 @@ bool	validCommands( const std::string& command )
 	return false;
 }
 
-
 std::string	getCommand( int clientSocket, const std::string& message )
 {
 	std::string	command;
 	std::stringstream	input(message);
 
-	if (message.empty())
-			return "";
-	getline(input, command, ' ');
-	int lastChar = command.length() - 1;
-	command = (command[lastChar] == '\n') ? command.substr(0, lastChar) : command;
+	if (message[0] != ' ')
+		getline(input, command, ' ');
 	for (size_t i = 0; i < command.length(); i++)
 		command[i] = std::toupper(command[i]);
 	if (!validCommands(command) || message[0] == ' ')
@@ -82,7 +78,7 @@ std::string	getParameters( int clientSocket, const std::string& command, const s
 		return (notEnoughParametersReply(clientSocket, command), "");
 	return parameters;
 }
-// dyawli matemse7hoch fl merge
+
 void sendwrongCommandMessage(int clientSocket)
 {
 	std::string wrongCommandMsg = FG_RED "   Wrong command\n" FG_DEFAULT;

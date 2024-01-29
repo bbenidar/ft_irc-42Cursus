@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 14:27:07 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/28 17:20:28 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/29 16:59:06 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	Server::handleNoticeCommand( int clientSocket, const std::string& parameter
 	std::map<std::string, std::string>::iterator	it;
 	for (it = nicknamesMap.begin(); it != nicknamesMap.end(); it++)
 	{
-		std::string	noticeMsg = ":" + this->clientStates[clientSocket].nickname + " NOTICE " + it->first + " ";
+		std::string	noticeMsg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " NOTICE " + it->first + " ";
 		std::string msg = parameter.substr(nickLength + 1, parameter.length() - nickLength - 1);
 		if (msg.find(':') == std::string::npos)
 			noticeMsg += ":";

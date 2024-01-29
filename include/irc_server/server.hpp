@@ -6,7 +6,7 @@
 /*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 11:57:49 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/28 17:33:36 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/29 16:50:33 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 # include <iostream>
 #include "../Channels/channels.hpp"
 
-# define BUFFER_SIZE 4096
+# define BUFFER_SIZE 1024
 
-// class Channels;
+class Channels;
 
 struct ClientState {
 	bool isAuthenticated;
@@ -76,7 +76,7 @@ class Server
 		void	handleChannelMode(const std::string& msge, int clientSocket);
 		void	handleTopicCommand(const std::string& msge, int clientSocket);
 		void	handleInvitechannel(const std::string& msge, int clientSocket);
-		void	handlePartCommand( int clientSocket, const std::string& parameter );
+		void	handlePartCommand( int clientSocket, std::string parameter );
 		void	handleNoticeCommand( int clientSocket, const std::string& parameter );
 		void	my_send( int clientSocket, int num, const std::string& part1, const std::string& part2 );
 		void	handleJoinchannel(const std::string& msge, int clientSocket, const std::string& command);
