@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Part.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/28 17:16:52 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/29 16:46:22 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/29 17:38:05 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,12 @@ void	Server::handlePartCommand( int clientSocket, std::string parameter )
 					this->channels[channel].KickClient(clientSocket);
 					if (this->channels[channel].getChannelClients().size() == 0)
 						this->channels.erase(channel);
-					// give operator privileges to another user
+					if (this->channels[channel].getifClientIsModerator(clientSocket))
+					{
+						this->channels[channel].removeModerator(clientSocket);
+						std::map<int, std::vector<ClientState> > tmp = this->channels.begin()->second.getChannelClients();
+						this->channels[channel].setChannelModerators(tmp.begin()->first, tmp.begin()->second);
+					}
 				}
 			}
 			else

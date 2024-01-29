@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 15:58:24 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/28 20:54:13 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:51:27 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ void Channels::setChannelClients(int clientSocket, const std::vector<ClientState
 
 void Channels::setChannelModerators(int clientSocket, const std::vector<ClientState>& user)
 {
+	std::string msg = ":" + user[0].nickname + " MODE " + this->channelName + " +o " + user[0].nickname + "\r\n";
+	this->sendBroadcastMessage(msg, clientSocket);
 	this->channelModerators[clientSocket] = user;
 }
 
@@ -148,6 +150,8 @@ void Channels::setChannelInvitedClients(int clientSocket, ClientState& user)
 void Channels::KickClient(int clientSocket)
 {
 	this->channelClients.erase(clientSocket);
+	if (this->channelInvitedClients.count(clientSocket))
+		this->channelInvitedClients.erase(clientSocket);
 }
 void Channels::setChannelprivateMode(bool mode)
 {
@@ -197,5 +201,18 @@ std::string Channels::getTopicTime() const
 	return this->topicTimeSetting;
 }
 
-
+std::string Channels::getChannelClientInOneString() const
+{
+	std::string res;
+	std::map<int, std::vector<ClientState> >::const_iterator it = this->channelClients.begin();
+	while (it != this->channelClients.end())
+	{
+		if (getifClientIsModerator(it->first))
+			res += "@";
+		res += it->second[0].nickname;
+		res += " ";
+		it++;
+	}
+	return res;
+}
 

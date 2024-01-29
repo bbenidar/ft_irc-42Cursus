@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:00:18 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/28 20:54:02 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:50:32 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ class Channels
 		bool	getifClientIsModerator(int clientSocket) const;
 		bool	getifChannelIsPrivate() const;
 		int		getChannelUserLimit() const;
+		std::string getChannelClientInOneString() const;
 		int getChannelClientsSize() const;
 		void printChannelClients() const;
 		bool getPassMode() const;

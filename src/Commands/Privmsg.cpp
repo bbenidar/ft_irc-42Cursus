@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:13:28 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/28 18:10:35 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/01/29 18:06:14 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,28 +55,20 @@ void Server::send_message(const std::string& msge, int clientSocket)
 	{
 		    if (channel[i].at(0) == '#')
 			{
-				std::map<std::string, Channels>::iterator it;
-				for (it = this->channels.begin(); it != this->channels.end(); it++)
+				if (this->channels.count(channel[i]) == 0)
+					return noSuchChannelReply(clientSocket, channel[i], "PRIVMSG ");
+				std::map<int, std::vector<ClientState> > tmp = this->channels[channel[i]].getChannelClients();
+				std::map<int, std::vector<ClientState> >::iterator iter;
+				if (tmp.count(clientSocket) == 0)
+					return notOnThatChannel(clientSocket, channel[i]);
+				for(iter = tmp.begin(); iter != tmp.end(); iter++)
 				{
-					if (it->first == channel[i])
+					if(iter->first != clientSocket)
 					{
-						std::map<int, std::vector<ClientState> > tmp = it->second.getChannelClients();
-						std::map<int, std::vector<ClientState> >::iterator iter;
-						if (tmp.count(clientSocket) == 0)
-							return notOnThatChannel(clientSocket, channel[i]);
-						for(iter = tmp.begin(); iter != tmp.end(); iter++)
-						{
-							if(iter->first != clientSocket)
-							{
-								std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel[i] + " :" + message + "\r\n";
-								send(iter->first, msg.c_str(), msg.length(), 0);
-							}
-						}
-						break ;
+						std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel[i] + " :" + message + "\r\n";
+						send(iter->first, msg.c_str(), msg.length(), 0);
 					}
 				}
-				if (it == this->channels.end())
-					return noSuchChannelReply(clientSocket, channel[i], "PRIVMSG ");
 			}
 			else
 			{
