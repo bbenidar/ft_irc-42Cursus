@@ -60,7 +60,7 @@ void Channels::setChannelClients(int clientSocket, const std::vector<ClientState
 
 void Channels::setChannelModerators(int clientSocket, const std::vector<ClientState>& user)
 {
-	std::string msg = ":" + user[0].nickname + " MODE " + this->channelName + " +o " + user[0].nickname + "\r\n";
+	std::string msg = ":IRCServer MODE " + this->channelName + " +o " + user[0].nickname + "\r\n";
 	this->sendBroadcastMessage(msg, clientSocket);
 	this->channelModerators[clientSocket] = user;
 }

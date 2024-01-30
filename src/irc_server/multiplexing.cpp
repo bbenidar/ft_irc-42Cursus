@@ -37,6 +37,7 @@ void	Server::acceptNewClient()
 	if (newSocket == -1)
 		return ;
 	initializePollStructure(newSocket);
+	this->clientStates[newSocket].hostname = inet_ntoa(clientAddress.sin_addr);
 	std::cout << BOLD FG_GREEN "➕ Client connected\n" FG_DEFAULT;
 }
 
@@ -66,4 +67,3 @@ void	Server::runServerLoop()
 		}
 	}
 }
-

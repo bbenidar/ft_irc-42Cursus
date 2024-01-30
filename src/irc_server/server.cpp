@@ -61,7 +61,6 @@ void	Server::setupServerSocket( void )
 	this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->serverSocket == -1)
 		throw std::runtime_error(SOCKET_CREATION);
-	// std::cout << BOLD "Socket created\n";
 	if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, &option_value, sizeof(option_value)) < 0)
 		throw std::runtime_error(SETSOCKOPT);
 	if (!setNonBlocking(this->serverSocket))
@@ -73,7 +72,6 @@ void	Server::setupServerSocket( void )
 	
 	if (bind(this->serverSocket, reinterpret_cast<sockaddr *>(&serverAddress), sizeof(serverAddress)) == -1)
 		throw std::runtime_error(SOCKET_BINDING);
-	// std::cout << BOLD "successfully binding the socket\n";
 	if (listen(this->serverSocket, 10) == -1)
 		throw std::runtime_error(LISTENING_ERROR);
 }
@@ -137,7 +135,7 @@ bool Server::handleClientCommunication(size_t clientIndex)
 		return false;
 	}
 	this->clientBuffers[this->fd].append(buffer, recvBytes);
-	// std::cerr << "|message: " << this->clientBuffers[this->fd] << "|\n";
+	std::cerr << "|message: " << this->clientBuffers[this->fd] << "|\n";
 	if ((end = this->clientBuffers[this->fd].find('\n')) != std::string::npos)
 	{
 		std::string			line;
