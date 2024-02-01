@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:33:47 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/28 15:18:30 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/02/01 15:31:13 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,14 @@
 #define UTILS_HPP
 
 # include <vector>
+# include <string>
+# include <map>
+#include "../../include/utils/colors.hpp"
+#include "../../include/irc_server/server.hpp"
 # include <iostream>
+
+struct ClientState;
+class Server;
 
 # define INVALID_ARGUMENTS		BOLD FG_RED "Error: " FG_WHITE "invalid arguments."
 # define VALID_INPUT			"Try ./ft_irc + \"Port number\" + \"Password\""
@@ -43,5 +50,6 @@ std::vector<std::string> splitIntoPairs(const std::string& input);
 std::string	getCommand( int clientSocket, const std::string& message );
 bool		validNickname( int clientSocket, const std::string& nickname );
 std::string	getParameters( int clientSocket, const std::string& command, const std::string& message );
+void printChanneljoin(std::map<int, ClientState>& clientStates, std::string Topic , int clientSocket, const std::string& channel ,std::string chanelClient, std::string mode);
 
 #endif

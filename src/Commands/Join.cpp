@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/31 15:06:03 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/02/01 15:32:49 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 		pass = split(passwords, ',');
 	for (int i = 0; i < (int)channel.size(); i++)
 	{
-		std::cerr << "n : " << this->channels.count(channel[i]) << "\n";
 		if (channel[i].at(0) != '#')
 			channel[i] = "#" + channel[i];
 		if (!this->channels.count(channel[i])) {
@@ -86,25 +85,11 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
             if (!pass.empty() && i < static_cast<int>(pass.size())) {
                 Channels newChannel(ADMIN, clientSocket, channel[i], "", pass[i], 100, user);
                 this->channels.insert(std::pair<std::string, Channels>(channel[i], newChannel));
-				std::string reply = ":" +  this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " JOIN " + channel[i] + "\r\n";
-				send(clientSocket, reply.c_str() , reply.size(), 0);
-				std::string topicRep = ":IRCServer 332 " + this->clientStates[clientSocket].nickname + " " + channel[i] + " :No topic is set\r\n" ;
-				send(clientSocket, topicRep.c_str() , topicRep.size(), 0);
-				std::string adminMsg = ":IRCServer 353 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :@" + this->clientStates[clientSocket].nickname +"\r\n" ;
-				send(clientSocket, adminMsg.c_str() , adminMsg.size(), 0);
-				std::string endOfList = ":IRCServer 366 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :End of /NAMES list.\r\n" ;
-				send(clientSocket, endOfList.c_str() , endOfList.size(), 0);
+				printChanneljoin(this->clientStates, " :No topic is set", clientSocket, channel[i], "@" + this->clientStates[clientSocket].nickname, "");
             } else {
                 Channels newchannel(ADMIN, clientSocket, channel[i], "", "", 100, user);
                 this->channels.insert(std::pair<std::string, Channels>(channel[i], newchannel));
-				std::string reply = ":" +  this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " JOIN " + channel[i] + "\r\n";
-				send(clientSocket, reply.c_str() , reply.size(), 0);
-				std::string topicRep = ":IRCServer 332 " + this->clientStates[clientSocket].nickname + " " + channel[i] + " :No topic is set\r\n" ;
-				send(clientSocket, topicRep.c_str() , topicRep.size(), 0);
-				std::string adminMsg = ":IRCServer 353 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :@" + this->clientStates[clientSocket].nickname +"\r\n" ;
-				send(clientSocket, adminMsg.c_str() , adminMsg.size(), 0);
-				std::string endOfList = ":IRCServer 366 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :End of /NAMES list.\r\n" ;
-				send(clientSocket, endOfList.c_str() , endOfList.size(), 0);
+				printChanneljoin(this->clientStates, " :No topic is set", clientSocket, channel[i], "@" + this->clientStates[clientSocket].nickname, "");
             }
         }
 		else
@@ -127,40 +112,6 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
                     std::vector<ClientState> user;
                     user.push_back(this->clientStates[clientSocket]);
                     this->channels[channel[i]].setChannelClients(clientSocket, user);
-					if(channels[channel[i]].getChannelTopic() != "")
-					{
-						std::string brdcstMsg = ":" + this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " JOIN " + channel[i] + "\r\n";
-						this->channels[channel[i]].sendBroadcastMessage(brdcstMsg, clientSocket);
-						if (channels[channel[i]].getChannelMode() != "")
-						{
-							std::string modechan = ":IRCServer 324 " + this->clientStates[clientSocket].nickname + " " + channel[i] + " +" + channels[channel[i]].getChannelMode() + "\r\n" ;
-							send(clientSocket, modechan.c_str() , modechan.size(), 0);
-						}
-						std::string topicRep = ":IRCServer 332 " + this->clientStates[clientSocket].nickname + " " + channel[i] + " " + channels[channel[i]].getChannelTopic() + "\r\n";
-						send(clientSocket, topicRep.c_str() , topicRep.size(), 0);
-						std::string getChannelClients = channels[channel[i]].getChannelClientInOneString();
-						std::string adminMsg = ":IRCServer 353 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :" + getChannelClients +"\r\n" ;
-						send(clientSocket, adminMsg.c_str() , adminMsg.size(), 0);
-						std::string endOfList = ":IRCServer 366 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :End of /NAMES list.\r\n" ;
-						send(clientSocket, endOfList.c_str() , endOfList.size(), 0);
-					}
-					else
-					{
-						std::string brdcstMsg = ":" + this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " JOIN " + channel[i] + "\r\n";
-						this->channels[channel[i]].sendBroadcastMessage(brdcstMsg, clientSocket);
-						if (channels[channel[i]].getChannelMode() != "")
-						{
-							std::string modechan = ":IRCServer 324 " + this->clientStates[clientSocket].nickname + " " + channel[i] + " +" + channels[channel[i]].getChannelMode() + "\r\n" ;
-							send(clientSocket, modechan.c_str() , modechan.size(), 0);
-						}
-						std::string topicRep = ":IRCServer 332 " + this->clientStates[clientSocket].nickname + " " + channel[i] + " :No topic is set\r\n" ;
-						send(clientSocket, topicRep.c_str() , topicRep.size(), 0);
-						std::string getChannelClients = channels[channel[i]].getChannelClientInOneString();
-						std::string adminMsg = ":IRCServer 353 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :" + getChannelClients +"\r\n" ;
-						send(clientSocket, adminMsg.c_str() , adminMsg.size(), 0);
-						std::string endOfList = ":IRCServer 366 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :End of /NAMES list.\r\n" ;
-						send(clientSocket, endOfList.c_str() , endOfList.size(), 0);
-					}
                 }
 			}
 			else
@@ -168,41 +119,11 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 				std::vector<ClientState> user;
 				user.push_back(this->clientStates[clientSocket]);
 				this->channels[channel[i]].setChannelClients(clientSocket, user);
-				if (channels[channel[i]].getChannelTopic() != "")
-				{
-					std::string brdcstMsg = ":" + this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " JOIN " + channel[i] + "\r\n";
-					this->channels[channel[i]].sendBroadcastMessage(brdcstMsg, clientSocket);
-					if (channels[channel[i]].getChannelMode() != "")
-					{
-						std::string modechan = ":IRCServer 324 " + this->clientStates[clientSocket].nickname + " " + channel[i] + " +" + channels[channel[i]].getChannelMode() + "\r\n" ;
-						send(clientSocket, modechan.c_str() , modechan.size(), 0);
-					}
-					std::string topicRep = ":IRCServer 332 " + this->clientStates[clientSocket].nickname + " " + channel[i] + " " + channels[channel[i]].getChannelTopic() + "\r\n";
-					send(clientSocket, topicRep.c_str() , topicRep.size(), 0);
-					std::string getChannelClients = channels[channel[i]].getChannelClientInOneString();
-					std::string adminMsg = ":IRCServer 353 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :" + getChannelClients +"\r\n" ;
-					send(clientSocket, adminMsg.c_str() , adminMsg.size(), 0);
-					std::string endOfList = ":IRCServer 366 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :End of /NAMES list.\r\n" ;
-					send(clientSocket, endOfList.c_str() , endOfList.size(), 0);
-				}
-				else
-				{
-					std::string brdcstMsg = ":" + this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " JOIN " + channel[i] + "\r\n";
-					this->channels[channel[i]].sendBroadcastMessage(brdcstMsg, clientSocket);
-					if (channels[channel[i]].getChannelMode() != "")
-					{
-						std::string modechan = ":IRCServer 324 " + this->clientStates[clientSocket].nickname + " " + channel[i] + " +" + channels[channel[i]].getChannelMode() + "\r\n" ;
-						send(clientSocket, modechan.c_str() , modechan.size(), 0);
-					}
-					std::string topicRep = ":IRCServer 332 " + this->clientStates[clientSocket].nickname + " " + channel[i] + " :No topic is set\r\n" ;
-					send(clientSocket, topicRep.c_str() , topicRep.size(), 0);
-					std::string getChannelClients = channels[channel[i]].getChannelClientInOneString();
-					std::string adminMsg = ":IRCServer 353 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :" + getChannelClients +"\r\n" ;
-					send(clientSocket, adminMsg.c_str() , adminMsg.size(), 0);
-					std::string endOfList = ":IRCServer 366 " + this->clientStates[clientSocket].nickname + " = " + channel[i] + " :End of /NAMES list.\r\n" ;
-					send(clientSocket, endOfList.c_str() , endOfList.size(), 0);
-				}
 			}
+			if(channels[channel[i]].getChannelTopic() != "")
+				printChanneljoin(this->clientStates, channels[channel[i]].getChannelTopic(), clientSocket, channel[i], channels[channel[i]].getChannelClientInOneString(), channels[channel[i]].getChannelMode());
+			else
+				printChanneljoin(this->clientStates, " :No topic is set", clientSocket, channel[i], channels[channel[i]].getChannelClientInOneString(), channels[channel[i]].getChannelMode());
 		}
 	}
 } 

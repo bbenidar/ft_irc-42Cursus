@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 12:07:16 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/31 15:17:57 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/02/01 15:36:48 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@
 
 const int FLAG_ADD    = 1;
 const int FLAG_REMOVE = 2;
-
-// mode grafic !!
 
 void Server::handleChannelMode(const std::string& msge, int clientSocket)
 {

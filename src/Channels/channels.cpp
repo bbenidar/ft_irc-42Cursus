@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 15:58:24 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/02/01 11:31:07 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/02/01 15:33:32 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ void Channels::setChannelUserLimit(int limit)
 
 void Channels::setChannelMode(const std::string& mode, bool add)
 {
-	std::cout << "mode : " << mode << std::endl;
 	if (add)
 		this->chanMode += (this->chanMode.find(mode) != std::string::npos) ? "" : mode;
 	else
@@ -118,19 +117,6 @@ bool Channels::getifClientIsBanned(int clientSocket) const
 	if (this->channelBannedClients.count(clientSocket))
 		return true;
 	return false;
-}
-
-void Channels::printChannelClients() const
-{
-	//print channell moderator
-	std::cout << "channel moderator : " << std::endl;
-	std::map<int, std::vector<ClientState> >::const_iterator it = this->channelModerators.begin();
-	while (it != this->channelModerators.end())
-	{
-		std::cout << "client socket : " << it->first << std::endl;
-		std::cout << "client nickname : " << it->second[0].nickname << std::endl;
-		it++;
-	}
 }
 
 std::map<int, std::vector<ClientState> > Channels::getChannelClients() const

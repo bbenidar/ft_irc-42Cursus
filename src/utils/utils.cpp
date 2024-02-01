@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
+/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 10:32:29 by moudrib           #+#    #+#             */
-/*   Updated: 2024/01/29 16:46:57 by moudrib          ###   ########.fr       */
+/*   Updated: 2024/02/01 15:36:12 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,4 +143,21 @@ std::vector<std::string> splitIntoPairs(const std::string& input)
     }
 
     return result;
+}
+
+void printChanneljoin(std::map<int, ClientState>& clientStates, std::string Topic , int clientSocket, const std::string& channel ,std::string chanelClient, std::string mode)
+{
+	std::string reply = ":" +  clientStates[clientSocket].nickname + "!" + clientStates[clientSocket].username + "@" + clientStates[clientSocket].hostname + " JOIN " + channel+ "\r\n";
+	send(clientSocket, reply.c_str() , reply.size(), 0);
+	if (mode != "")
+	{
+		std::string modechan = ":IRCServer 324 " + clientStates[clientSocket].nickname + " " + channel + " +" + mode + "\r\n" ;
+		send(clientSocket, modechan.c_str() , modechan.size(), 0);
+	}
+	std::string topicRep = ":IRCServer 332 " + clientStates[clientSocket].nickname + " " + channel + " " + Topic +"\r\n" ;
+	send(clientSocket, topicRep.c_str() , topicRep.size(), 0);
+	std::string adminMsg = ":IRCServer 353 " + clientStates[clientSocket].nickname + " = " + channel + " :" + chanelClient +"\r\n" ;
+	send(clientSocket, adminMsg.c_str() , adminMsg.size(), 0);
+	std::string endOfList = ":IRCServer 366 " + clientStates[clientSocket].nickname + " = " + channel + " :End of /NAMES list.\r\n" ;
+	send(clientSocket, endOfList.c_str() , endOfList.size(), 0);
 }

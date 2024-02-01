@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 19:48:36 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/31 18:34:19 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/02/01 15:36:30 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,8 @@ void Server::handleKickCommand(const std::string& msge, int clientSocket)
 	if (end != std::string::npos)
 		reason = Nickname.substr(end);
 	Nickname =  Nickname.substr(begin, end - begin);
-	// std::cout << "end :" << end - 1<< " | " <<  << std::endl;
-	std::cout<<"nick : " << Nickname << " chananme :" << chanName << std::endl;
 	std::vector<std::string> Nams = split(Nickname, ',');
-	std::vector<std::string> Chans = split(chanName, ',');
-	//kick => make the reason optional 
+	std::vector<std::string> Chans = split(chanName, ','); 
 	for (int i = 0; i < (int)Chans.size(); i++)
 	{
 		for (int j = 0; j < (int)Nams.size(); j++)
