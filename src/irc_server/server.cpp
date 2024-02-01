@@ -135,7 +135,6 @@ bool Server::handleClientCommunication(size_t clientIndex)
 		return false;
 	}
 	this->clientBuffers[this->fd].append(buffer, recvBytes);
-	std::cerr << "|message: " << this->clientBuffers[this->fd] << "|\n";
 	if ((end = this->clientBuffers[this->fd].find('\n')) != std::string::npos)
 	{
 		std::string			line;
@@ -173,7 +172,6 @@ void	Server::authenticateClient( int clientSocket, std::string& command, const s
 		send(clientSocket, registrationMsg.c_str(), registrationMsg.length(), 0);
 		return ;
 	}
-	this->clientStates.insert(std::pair<int, ClientState>(clientSocket, state));
 	if (!this->clientStates[clientSocket].isAuthenticated)
 		handlePassCommand(clientSocket, command, parameters);
 	if (!this->clientStates[clientSocket].hasNick)

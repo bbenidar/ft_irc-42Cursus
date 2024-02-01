@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <netdb.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -21,7 +22,6 @@ void	Server::initializePollStructure( int fd )
 {
 	struct pollfd	newSocket;
 
-	// setNonBlocking(fd); // ----
 	newSocket.fd = fd;
 	newSocket.events = POLLIN;
 	this->fds.push_back(newSocket);
