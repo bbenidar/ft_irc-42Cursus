@@ -7,3 +7,155 @@ mode grafic                                                                     
 add part command                                                                                              [done ✓]
 if no user in channel delet channel                                                                           [done ✓]
 if operator kick the channel the seond user in chanel is the moderstor                                        [done ✓]
+
+
+JOIN test:
+```JOIN #CHAN1,#CHAN2,#CHAN3,#CHAN4,#CHAN5 pass1,pass2,pass3,pass4```
+first enter: -------------------------------------
+5 channel Created [✓]
+CHAN5 dont need pass [✓]
+-----------------------------------------------------
+-JOIN #CHAN5
+-You have joined the channel
+-mou has joined (~mouad@0)
+-Topic: No topic is set  
+-------------------------------------------------
+-----------------------------------------------------
+-[1]-JOIN #CHAN4
+Error(475): Cannot join channel (+k)
+
+-[1]-JOIN #CHAN4 wrongpass
+Error(475): Cannot join channel (+k)
+
+-[1]-JOIN #CHAN4 pass4
+You have joined the channel
+mou has joined (~mouad@0)
+Topic: No topic is set  
+-------------------------------------------------
+-----------------------------------------------------
+-[1]-JOIN #CHAN3
+Error(475): Cannot join channel (+k)
+
+-[1]-JOIN #CHAN3 wrongpass
+Error(475): Cannot join channel (+k)
+
+-[1]-JOIN #CHAN3 pass3
+You have joined the channel
+mou has joined (~mouad@0)
+Topic: No topic is set  
+-------------------------------------------------
+CHAN1|CHAN2|CHAN3|CHAN4| need pass [✓]
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PRIVMSG test:
+test command :
+------------------------------------------------
+```PRIVMSG #CHAN1,#CHAN2,#CHAN3,#CHAN4,#CHAN5,mou :Hello! How's everyone doing? 😊```
+msg send to all the channels and also to the mou USER [✓]
+------------------------------------------------
+
+------------------------------------------------
+```PRIVMSG wrongName,mou :Hello! How's everyone doing? 😊```
+--Error(401): No such nick/channel  [✓]
+--msg delevred to mou USER          [✓]
+------------------------------------------------
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+MODE command
+COMMAND:
+    ```-MODE #CHAN1 +l+t```
+        Error(461): Not enough parameters
+    ```-MODE #CHAN1 +l+t 2```
+        join #CHAN1 pass1
+            :IRCServer 471 #CHAN1 :Cannot join channel (+l)
+    ```-MODE #CHAN1 +l+i 30```
+        join #CHAN1 pass1
+        :IRCServer 473 #CHAN1 :Cannot join channel (+i)
+    ```-MODE #CHAN1 +k-i newpass```
+        ```JOIN #CHAN1 newpass```
+        :ana!~l@l JOIN #CHAN1
+        :IRCServer 324 ana #CHAN1 +ltltllkk
+        :IRCServer 332 ana #CHAN1 :No topic is set
+        :IRCServer 353 ana = #CHAN1 :@bben mou adn ana 
+        :IRCServer 366 ana = #CHAN1 :End of /NAMES list.
+    ```-MODE #CHAN1 +o ana```
+        :ana MODE #CHAN1 +o ana
+        limechat: bben has changed mode: +o ana
+    ```bben has changed mode: -o ana```
+        :ana MODE #CHAN1 -o ana
+        limechat: bben has changed mode: -o ana
+    ```MODE #CHAN1 +t```
+        TOPIC #CHAN1 :new TOPIC set
+        :IRCServer 482 #CHAN1 :You're not channel operator
+    ```MODE #CHAN1 -t```
+        TOPIC #CHAN1 :new TOPIC set
+        :ana!~j@jj TOPIC #CHAN1 ::new TOPIC set
+    ```MODE #CHAN1 -k newPASS```
+       -JOIN #CHAN1 wrngPASS
+        Error(475): Cannot join channel (+k)
+       -JOIN #chan1 newPASS
+            Topic: new TOPIC set...
+------------------------------------------------------------------------------------------------------------------------------------------------     
+INVITE COMMAND
+```JOIN #CHAN3```
+```MODE #CHAN3  +i```
+    ```INVITE wrgname1,wrgname2,wrgname2,wrgname2 CHAN3```
+        - Error(401): No such nick/channel
+    ```INVITE mou,adn,ana CHAN3```
+        Inviting adn to #CHAN3
+        Inviting mou to #CHAN3
+        Inviting ana to #CHAN3
+    ```INVITE adn,mou #CHAN1,CHAN3```
+        Reply(403): bben #CHAN1,CHAN3 No such channel
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+KICK
+
+    bben moderator of CHAN1
+
+    mou : ```KICK #CHAN1 adn```
+        Error(482): You're not channel operator
+        ```KICK #WRNGCHAN1 adn     ```
+        Reply(403): mou #WRNGCHAN1 No such channel
+
+    bben : 
+    ```KICK #WRNGCHAN1 adn     ```
+        Reply(403): mou #WRNGCHAN1 No such channel
+    ```KICK #CHAN1 adn,mou    ```
+        bben has kicked adn ()
+        bben has kicked mou ()
+    ```KICK #CHAN1 wrngUSER,mou
+        Error(401): No such nick/channel
+        <#CHAN1> bben has kicked mou ()
+    ```KICK #CHAN1 bben```
+         bben has kicked bben ()
+         channel distroyed:
+           ana: JOIN #CHAN1
+                :ana!~l@l JOIN #CHAN1
+                :IRCServer 332 ana #CHAN1 :No topic is set
+                :IRCServer 353 ana = #CHAN1 :@ana
+                :IRCServer 366 ana = #CHAN1 :End of /NAMES list.
+                CTR+C
+                has changed mode: +o bben
+    ```JOIN #CHAN1,#CHAN2,#CHAN3,#CHAN4,#CHAN5 pass1,pass2,pass3,pass4```
+        ```KICK #CHAN1,#CHAN2,#CHAN3,#CHAN4,#CHAN5 mou,adn```
+            bben has kicked mou () in all channels
+            bben has kicked adn () in all channels
+        ```KICK #CHAN1,#CHAN2,#CHAN3,#CHAN4,#CHAN5 bben```
+            kick his self from all channels and distroy channel
+
+    
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+TOPIC
+

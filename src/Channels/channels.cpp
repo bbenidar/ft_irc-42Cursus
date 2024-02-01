@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 15:58:24 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/29 17:51:27 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/31 15:18:37 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ Channels::Channels(int usermode,int clientSocket,std::string name, std::string t
 	this->channelPassword = password;
 	this->channelUserLimit = limit;
 	this->channelClients[clientSocket] = user;
+	this->chanMode = "";
 	std::time_t currentTime = std::time(0);
 	this->topicTimeSetting = std::ctime(&currentTime);
 	if (usermode == ADMIN)
@@ -53,14 +54,32 @@ void Channels::setChannelUserLimit(int limit)
 	this->channelUserLimit = limit;
 }
 
+void Channels::setChannelMode(const std::string& mode, bool add)
+{
+	std::cout << "mode : " << mode << std::endl;
+	if (add)
+		this->chanMode += mode;
+	else
+	{
+		std::string::size_type i = this->chanMode.find(mode);
+		if (i != std::string::npos)
+			this->chanMode.erase(i, mode.length());
+	}
+}
+
+std::string Channels::getChannelMode() const
+{
+	return this->chanMode;
+}
+
 void Channels::setChannelClients(int clientSocket, const std::vector<ClientState>& user)
 {
 	this->channelClients[clientSocket] = user;
 }
 
-void Channels::setChannelModerators(int clientSocket, const std::vector<ClientState>& user)
+void Channels::setChannelModerators(int clientSocket, const std::vector<ClientState>& user, std::string seter)
 {
-	std::string msg = ":" + user[0].nickname + " MODE " + this->channelName + " +o " + user[0].nickname + "\r\n";
+	std::string msg = ":" + seter + " MODE " + this->channelName + " +o " + user[0].nickname + "\r\n";
 	this->sendBroadcastMessage(msg, clientSocket);
 	this->channelModerators[clientSocket] = user;
 }

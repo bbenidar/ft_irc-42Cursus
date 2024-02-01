@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/18 16:00:18 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/29 17:50:32 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/31 15:18:19 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class Channels
 		std::string		channelPassword;
 		std::string		channelTopic;
 		std::string		topicTimeSetting;
+		std::string		chanMode;
 		int		channelUserLimit;
 		std::map<int, std::vector<ClientState> >	channelModerators;
 		std::map<int, std::vector<ClientState> >	channelClients;
@@ -50,15 +51,17 @@ class Channels
 		void	setChannelUserLimit(int limit);
 		void    setChannelprivateMode(bool mode);
 		void	setChannelClients(int clientSocket, const std::vector<ClientState>& user);
-		void	setChannelModerators(int clientSocket, const std::vector<ClientState>& user);
+		void	setChannelModerators(int clientSocket, const std::vector<ClientState>& user, std::string seter);
 		void	setChannelBannedClients(int clientSocket, const std::vector<ClientState>& user);
 		void	setChannelInvitedClients(int clientSocket, ClientState& user);
+		void setChannelMode(const std::string& mode, bool add);
 		void	setTopicTime(const std::string& time);
 		std::string	getTopicTime() const;
 		void    removeModerator(int clientSocket);
 		std::string	getChannelName() const;
 		std::string	getChannelPassword() const;
 		std::string	getChannelTopic() const;
+		std::string	getChannelMode() const;
 		bool getClientisInChannel(int clientSocket) const;
 		// std::string	getChannelMode() const;
 		std::string	getChannelPrivMode() const;

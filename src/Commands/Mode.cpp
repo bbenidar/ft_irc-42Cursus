@@ -6,7 +6,7 @@
 /*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 12:07:16 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/01/28 15:41:32 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/01/31 15:17:57 by bbenidar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,19 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 			if (it2->second.getifClientIsModerator(clientSocket) == false)
 				return notChannelOperatorReply(clientSocket, chanName);
 			if (flag == FLAG_REMOVE)
+			{
 				it2->second.setChannelprivateMode(false);
+				std::string msg = ":" + this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " MODE " + chanName + " -i" + "\r\n";
+				it2->second.sendBroadcastMessage(msg, clientSocket);
+				it2->second.setChannelMode("i", false);
+			}
 			else if (flag == FLAG_ADD)
+			{
 				it2->second.setChannelprivateMode(true);
+				std::string msg = ":" + this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " MODE " + chanName + " +i" + "\r\n";
+				it2->second.sendBroadcastMessage(msg, clientSocket);
+				it2->second.setChannelMode("i", true);
+			}
 		}
 		else if (modes[i].find('o') != std::string::npos)
 		{
@@ -108,12 +118,16 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 			if (tmp.count(it->first) == 0)
 				return theyNotOnThatChannel(clientSocket, modeParam, chanName);
 			if (flag == FLAG_REMOVE)
+			{
 				it2->second.removeModerator(it->first);
+				std::string msg = ":" + this->clientStates[clientSocket].nickname + " MODE " + chanName + " -o " + modeParam + "\r\n";
+				it2->second.sendBroadcastMessage(msg, clientSocket);
+			}
 			else if (flag == FLAG_ADD)
 			{
 				std::vector<ClientState> tmp2 = tmp[it->first];
-				it2->second.setChannelModerators(it->first, tmp2);
-				it2->second.printChannelClients();
+				it2->second.setChannelModerators(it->first, tmp2, this->clientStates[clientSocket].nickname);
+				it2->second.printChannelClients();////need remove
 			}
 		}
 		else if (modes[i].find('k') != std::string::npos)
@@ -127,9 +141,15 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 			if (it2->second.getifClientIsModerator(clientSocket) == false)
 				return notChannelOperatorReply(clientSocket, chanName);
 			if (flag == FLAG_REMOVE)
+			{
 				it2->second.setChannelPassword("");
+				it2->second.setChannelMode("k", false);
+			}
 			else if (flag == FLAG_ADD)
+			{
 				it2->second.setChannelPassword(modeParam);
+				it2->second.setChannelMode("k", true);
+			}
 		}
 		else if (modes[i].find('l') != std::string::npos)
 		{
@@ -142,18 +162,28 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 			if (it2->second.getifClientIsModerator(clientSocket) == false)
 				return notChannelOperatorReply(clientSocket, chanName);
 			if (flag == FLAG_REMOVE)
-				it2->second.setChannelUserLimit(0);
+			{
+				it2->second.setChannelUserLimit(100);
+				it2->second.setChannelMode("l", false);
+			}
 			else if (flag == FLAG_ADD)
 			{
 				std::stringstream geek(modeParam);
 				int x = 0;
 				geek >> x;
+				if (x < 0)
+					return notEnoughParametersReply(clientSocket, "MODE"); 
+				if (x == 0)
+					return notEnoughParametersReply(clientSocket, "MODE");
+				if (x > 100)
+					x = 100;
 				it2->second.setChannelUserLimit(x);
+				it2->second.setChannelMode("l", true);
 			}
 		}
 		else if (modes[i].find('t') != std::string::npos)
 		{
-				std::map<std::string, Channels>::iterator	it2;
+			std::map<std::string, Channels>::iterator	it2;
 			for (it2 = this->channels.begin(); it2 != this->channels.end(); it2++)
 				if (it2->first == chanName)
 					break ;
@@ -162,15 +192,19 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 			if (it2->second.getifClientIsModerator(clientSocket) == false)
 				return notChannelOperatorReply(clientSocket, chanName);
 			if (flag == FLAG_REMOVE)
+			{
+				std::string msg = ":" + this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " MODE " + chanName + " -t" + "\r\n";
+				it2->second.sendBroadcastMessage(msg, clientSocket);
 				it2->second.setChannelTopicModeratorOnly(false);
+				it2->second.setChannelMode("t", false);
+			}
 			else if (flag == FLAG_ADD)
+			{
 				it2->second.setChannelTopicModeratorOnly(true);
+				std::string msg = ":" + this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " MODE " + chanName + " +t" + "\r\n";
+				it2->second.sendBroadcastMessage(msg, clientSocket);
+				it2->second.setChannelMode("t", true);
+			}
 		}
 	}
-
-
-
-
-
-	
 }
