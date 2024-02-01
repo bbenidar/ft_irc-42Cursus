@@ -30,7 +30,7 @@ bool Server::handleUserCommand( int clientSocket, std::string command, const std
 			if (i == 1)
 				this->clientStates[clientSocket].username = word;
 			else if (i == 2)
-				this->clientStates[clientSocket].hostname = word;
+				continue;
 			else if (i == 3)
 				this->clientStates[clientSocket].servername = word;
 			else if (i == 4)

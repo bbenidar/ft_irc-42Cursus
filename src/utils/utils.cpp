@@ -79,12 +79,6 @@ std::string	getParameters( int clientSocket, const std::string& command, const s
 	return parameters;
 }
 
-void sendwrongCommandMessage(int clientSocket)
-{
-	std::string wrongCommandMsg = FG_RED "   Wrong command\n" FG_DEFAULT;
-	send(clientSocket, wrongCommandMsg.c_str(), wrongCommandMsg.length(), 0);
-}
-
 void noMessageToSend(int clientSocket)
 {
 	std::string wrongCommandMsg = ":IRCServer 412 :No text to send\r\n";

@@ -43,50 +43,48 @@ void Server::send_message(const std::string& msge, int clientSocket)
 	size_t	begin = message.find_first_not_of(" \n\r", 0);
 	size_t	end = message.find_last_not_of(" \n\r", message.length() - 1);
 	if (begin == std::string::npos || end == std::string::npos)
-	{
-		noMessageToSend(clientSocket);
-		return ;
-	}
+		return noMessageToSend(clientSocket);
 	message =  message.substr(begin, end - begin + 1);
 	std::vector<std::string> channel;
 	channel = split(channels, ',');
 	channel = removeDpicates(channel);
+	if (message[0] == ':')
+		message.erase(0,1);
 	for (size_t i = 0; i < channel.size(); i++)
 	{
-		    if (channel[i].at(0) == '#')
+		if (channel[i].at(0) == '#')
+		{
+			if (this->channels.count(channel[i]) == 0)
+				return noSuchChannelReply(clientSocket, channel[i], "PRIVMSG ");
+			std::map<int, std::vector<ClientState> > tmp = this->channels[channel[i]].getChannelClients();
+			std::map<int, std::vector<ClientState> >::iterator iter;
+			if (tmp.count(clientSocket) == 0)
+				return notOnThatChannel(clientSocket, channel[i]);
+			for(iter = tmp.begin(); iter != tmp.end(); iter++)
 			{
-				if (this->channels.count(channel[i]) == 0)
-					return noSuchChannelReply(clientSocket, channel[i], "PRIVMSG ");
-				std::map<int, std::vector<ClientState> > tmp = this->channels[channel[i]].getChannelClients();
-				std::map<int, std::vector<ClientState> >::iterator iter;
-				if (tmp.count(clientSocket) == 0)
-					return notOnThatChannel(clientSocket, channel[i]);
-				for(iter = tmp.begin(); iter != tmp.end(); iter++)
+				if(iter->first != clientSocket)
 				{
-					if(iter->first != clientSocket)
-					{
-						std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel[i] + " :" + message + "\r\n";
-						send(iter->first, msg.c_str(), msg.length(), 0);
-					}
+					std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel[i] + " :" + message + "\r\n";
+					send(iter->first, msg.c_str(), msg.length(), 0);
 				}
 			}
-			else
+		}
+		else
+		{
+			for (size_t j = 0; j < this->fds.size(); j++)
 			{
-				for (size_t j = 0; j < this->fds.size(); j++)
+				if (this->clientStates[this->fds[j].fd].nickname == channel[i])
 				{
-					if (this->clientStates[this->fds[j].fd].nickname == channel[i])
-					{
-						std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel[i] + " :" + message + "\r\n";
-						send(this->fds[j].fd, msg.c_str(), msg.length(), 0);
-						break ;
-					}
-                    else if (j == this->fds.size() - 1)
-                    {
-						noSuchNickChannelReply(clientSocket, channel[i]);
-                        break ;
-                    }
+					std::string msg = ":" + this->clientStates[clientSocket].nickname + "!" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " PRIVMSG " + channel[i] + " :" + message + "\r\n";
+					send(this->fds[j].fd, msg.c_str(), msg.length(), 0);
+					break ;
+				}
+				else if (j == this->fds.size() - 1)
+				{
+					noSuchNickChannelReply(clientSocket, channel[i]);
+					break ;
 				}
 			}
+		}
 	}
-	return ;
 }

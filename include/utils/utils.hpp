@@ -35,14 +35,13 @@
 # define SETSOCKOPT				BOLD FG_RED "Error: setsockopt() failed"
 
 bool		setNonBlocking(int fd);
-bool		validCommands( const std::string& command );
-bool		validNickname( int clientSocket, const std::string& nickname );
-std::string	getCommand( int clientSocket, const std::string& message );
-std::string	getParameters( int clientSocket, const std::string& command, const std::string& message );
-void		sendwrongCommandMessage(int clientSocket);
-std::string	removeMsgCommand(const std::string& fullMessage);
-std::vector<std::string> split(std::string s, char del);
 void		noMessageToSend(int clientSocket);
+bool		validCommands( const std::string& command );
+std::vector<std::string> split(std::string s, char del);
+std::string	removeMsgCommand(const std::string& fullMessage);
 std::vector<std::string> splitIntoPairs(const std::string& input);
-//=================================================================================================
+std::string	getCommand( int clientSocket, const std::string& message );
+bool		validNickname( int clientSocket, const std::string& nickname );
+std::string	getParameters( int clientSocket, const std::string& command, const std::string& message );
+
 #endif
