@@ -80,7 +80,7 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 				if (it2->first == chanName)
 					break ;
 			if (it2 == this->channels.end())
-				return noSuchChannelReply(clientSocket, chanName, "MODE " + this->clientStates[clientSocket].nickname + " ");
+				return noSuchChannelReply(clientSocket, chanName, " MODE " + this->clientStates[clientSocket].nickname + " ");
 			if (it2->second.getifClientIsModerator(clientSocket) == false)
 				return notChannelOperatorReply(clientSocket, chanName);
 			if (flag == FLAG_REMOVE)
@@ -105,7 +105,7 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 				if (it2->first == chanName)
 					break ;
 			if (it2 == this->channels.end())
-				return noSuchChannelReply(clientSocket, chanName, "MODE" + this->clientStates[clientSocket].nickname + " ");
+				return noSuchChannelReply(clientSocket, chanName, "MODE " + this->clientStates[clientSocket].nickname + " ");
 			if (it2->second.getifClientIsModerator(clientSocket) == false)
 				return notChannelOperatorReply(clientSocket, chanName);
 			std::map<int, ClientState>::iterator	it;
@@ -127,7 +127,8 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 			{
 				std::vector<ClientState> tmp2 = tmp[it->first];
 				it2->second.setChannelModerators(it->first, tmp2, this->clientStates[clientSocket].nickname);
-				it2->second.printChannelClients();////need remove
+				std::string msg = ":" + this->clientStates[clientSocket].nickname + " MODE " + chanName + " +o " + modeParam + "\r\n";
+				it2->second.sendBroadcastMessage(msg, clientSocket);
 			}
 		}
 		else if (modes[i].find('k') != std::string::npos)
@@ -137,16 +138,20 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 				if (it2->first == chanName)
 					break ;
 			if (it2 == this->channels.end())
-				return noSuchChannelReply(clientSocket, chanName, "MODE" + this->clientStates[clientSocket].nickname + " ");
+				return noSuchChannelReply(clientSocket, chanName, " MODE " + this->clientStates[clientSocket].nickname + " ");
 			if (it2->second.getifClientIsModerator(clientSocket) == false)
 				return notChannelOperatorReply(clientSocket, chanName);
 			if (flag == FLAG_REMOVE)
 			{
+				std::string msg = ":" + this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " MODE " + chanName + " -k" + "\r\n";
+				it2->second.sendBroadcastMessage(msg, clientSocket);
 				it2->second.setChannelPassword("");
 				it2->second.setChannelMode("k", false);
 			}
 			else if (flag == FLAG_ADD)
 			{
+				std::string msg = ":" + this->clientStates[clientSocket].nickname + "!~" + this->clientStates[clientSocket].username + "@" + this->clientStates[clientSocket].hostname + " MODE " + chanName + " +k" + "\r\n";
+				it2->second.sendBroadcastMessage(msg, clientSocket);
 				it2->second.setChannelPassword(modeParam);
 				it2->second.setChannelMode("k", true);
 			}
@@ -158,7 +163,7 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 				if (it2->first == chanName)
 					break ;
 			if (it2 == this->channels.end())
-				return noSuchChannelReply(clientSocket, chanName, "MODE" + this->clientStates[clientSocket].nickname + " ");
+				return noSuchChannelReply(clientSocket, chanName, " MODE " + this->clientStates[clientSocket].nickname + " ");
 			if (it2->second.getifClientIsModerator(clientSocket) == false)
 				return notChannelOperatorReply(clientSocket, chanName);
 			if (flag == FLAG_REMOVE)
@@ -188,7 +193,7 @@ void Server::handleChannelMode(const std::string& msge, int clientSocket)
 				if (it2->first == chanName)
 					break ;
 			if (it2 == this->channels.end())
-				return noSuchChannelReply(clientSocket, chanName, "MODE" + this->clientStates[clientSocket].nickname + " ");
+				return noSuchChannelReply(clientSocket, chanName, " MODE " + this->clientStates[clientSocket].nickname + " ");
 			if (it2->second.getifClientIsModerator(clientSocket) == false)
 				return notChannelOperatorReply(clientSocket, chanName);
 			if (flag == FLAG_REMOVE)

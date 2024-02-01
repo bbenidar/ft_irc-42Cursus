@@ -56,7 +56,10 @@ void	Server::handlePartCommand( int clientSocket, std::string parameter )
 					this->channels[channel].sendBroadcastMessage(partMsg, clientSocket);
 					this->channels[channel].KickClient(clientSocket);
 					if (this->channels[channel].getChannelClients().size() == 0)
+					{
 						this->channels.erase(channel);
+						continue ;
+					}
 					if (this->channels[channel].getifClientIsModerator(clientSocket))
 					{
 						this->channels[channel].removeModerator(clientSocket);

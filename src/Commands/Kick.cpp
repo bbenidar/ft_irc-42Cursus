@@ -21,14 +21,19 @@ void Server::handleKickCommand(const std::string& msge, int clientSocket)
 {
 	(void)clientSocket;
 	std::string chanName = removeMsgCommand(msge);
+	std::string reason = "";
 	if (chanName.size() == 0)
-		return notEnoughParametersReply(clientSocket, "PRIVMSG");
+		return notEnoughParametersReply(clientSocket, "KICK");
 	std::string Nickname = msge.substr(msge.find(chanName) + chanName.length());
 	size_t	begin = Nickname.find_first_not_of(" \n\r", 0);
 	size_t	end = Nickname.find_first_of(" \n\r", begin);
-	if (begin == std::string::npos || end == std::string::npos)
-		return notEnoughParametersReply(clientSocket, "PRIVMSG");
+	if (begin == std::string::npos)
+		return notEnoughParametersReply(clientSocket, "KICK");
+	if (end != std::string::npos)
+		reason = Nickname.substr(end);
 	Nickname =  Nickname.substr(begin, end - begin);
+	// std::cout << "end :" << end - 1<< " | " <<  << std::endl;
+	std::cout<<"nick : " << Nickname << " chananme :" << chanName << std::endl;
 	std::vector<std::string> Nams = split(Nickname, ',');
 	std::vector<std::string> Chans = split(chanName, ',');
 	//kick => make the reason optional 
@@ -66,7 +71,7 @@ void Server::handleKickCommand(const std::string& msge, int clientSocket)
 				noSuchNickChannelReply(clientSocket, Nams[j]);
 				continue ;
 			}
-			this->channels[Chans[i]].sendBroadcastMessage(":" + clientStates[clientSocket].nickname + " KICK " + Chans[i] + " " + it->second.nickname + "\r\n", clientSocket);
+			this->channels[Chans[i]].sendBroadcastMessage(":" + clientStates[clientSocket].nickname + " KICK " + Chans[i] + " " + it->second.nickname + " "+ reason + "\r\n", clientSocket);
 			this->channels[Chans[i]].KickClient(it->first);
 			if (this->channels[Chans[i]].getChannelClients().size() == 0)
 			{

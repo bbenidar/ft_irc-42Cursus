@@ -58,7 +58,7 @@ void Channels::setChannelMode(const std::string& mode, bool add)
 {
 	std::cout << "mode : " << mode << std::endl;
 	if (add)
-		this->chanMode += mode;
+		this->chanMode += (this->chanMode.find(mode) != std::string::npos) ? "" : mode;
 	else
 	{
 		std::string::size_type i = this->chanMode.find(mode);

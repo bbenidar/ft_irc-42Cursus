@@ -77,9 +77,9 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 		pass = split(passwords, ',');
 	for (int i = 0; i < (int)channel.size(); i++)
 	{
+		std::cerr << "n : " << this->channels.count(channel[i]) << "\n";
 		if (channel[i].at(0) != '#')
 			channel[i] = "#" + channel[i];
-		std::cout<<"- " << channel[i] << std::endl;
 		if (!this->channels.count(channel[i])) {
             std::vector<ClientState> user;
             user.push_back(this->clientStates[clientSocket]);
