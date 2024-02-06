@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bbenidar <bbenidar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: moudrib <moudrib@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 18:25:32 by bbenidar          #+#    #+#             */
-/*   Updated: 2024/02/01 15:32:49 by bbenidar         ###   ########.fr       */
+/*   Updated: 2024/02/06 11:42:34 by moudrib          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ std::string returnpassonyl(const std::string& fullMessage)
 {
 	std::string pass;
 	std::vector<std::string> tmp = split(fullMessage, ' ');
-	if (tmp.size() < 1)
+	if (tmp.size() < 2)
 		return "";
 	pass = tmp[1];
 	return pass;
@@ -95,18 +95,33 @@ void Server::handleJoinchannel(const std::string& msge, int clientSocket, const 
 		else
 		{
 			if (channels[channel[i]].getClientisInChannel(clientSocket))
-				return alreadyOnChannel(clientSocket, channel[i], "");
+			{
+				alreadyOnChannel(clientSocket, channel[i], "");
+				continue ;
+			}
 			if (channels[channel[i]].getifClientIsBanned(clientSocket))
-				return cannotJoinChannel(clientSocket, "474", channel[i], "(+b)");
+			{
+				cannotJoinChannel(clientSocket, "474", channel[i], "(+b)");
+				continue ;
+			}
 			if (channels[channel[i]].getChannelClientsSize() >= channels[channel[i]].getChannelUserLimit())
-				return cannotJoinChannel(clientSocket, "471", channel[i], "(+l)");
+			{
+				cannotJoinChannel(clientSocket, "471", channel[i], "(+l)");
+				continue ;
+			}
 			if (channels[channel[i]].getifChannelIsPrivate() == true)
 				if(channels[channel[i]].getifClientIsInvited(clientSocket) == false)
-					return cannotJoinChannel(clientSocket, "473", channel[i], "(+i)");
+				{
+					cannotJoinChannel(clientSocket, "473", channel[i], "(+i)");
+					continue ;
+				}
 			if (channels[channel[i]].getPassMode())
 			{
                 if ((i < (int)pass.size() && pass[i] != channels[channel[i]].getChannelPassword()) || pass.empty() || i >= static_cast<int>(pass.size()) )
-					return cannotJoinChannel(clientSocket, "475", channel[i], "(+k)");
+				{
+					cannotJoinChannel(clientSocket, "475", channel[i], "(+k)");
+					continue ;
+				}
                 else if (i < (int)pass.size() && pass[i] == channels[channel[i]].getChannelPassword())
                 {
                     std::vector<ClientState> user;
